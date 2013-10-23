@@ -1,0 +1,69 @@
+/**
+ * VARS
+ */
+
+$dark : darken(#595659,20%);
+$light : #fff;
+$color : saturate(#97b8bf,30%);
+
+
+::-moz-selection{
+    color: #fff;
+    background: $color;
+}
+::selection{
+    color: #fff;
+    background: $color;
+}
+
+body {
+    color: $light;
+    background: $dark;
+}
+
+/* Links
+-------------------------------------------------------------- */
+
+a{
+    color: $color;
+}
+a:hover,
+a:active,
+a:focus {
+    color: darken($color,40%);
+}
+
+.header h1{
+    color: lighten($light,20%);
+}
+.header h2{
+    color: $color;
+}
+.header h3{
+    color: darken($color,15%);
+}
+.header h3 a{
+    color: saturate($color,20%);
+}
+.header h3 a:hover{
+    color: saturate($color,60%);
+}
+.header p a{
+    color: saturate($color,20%);
+}
+.header p a:hover{
+    color: saturate($color,20%);
+    border-bottom:1px solid saturate($color,20%);
+}
+
+/* Footer
+ -------------------------------------------------------------- */
+footer {
+    color: lighten($dark,50%);
+}
+footer a{
+    color: lighten($dark,50%);
+}
+footer a:hover{
+    color: lighten($dark,80%);
+}
