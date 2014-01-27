@@ -10,7 +10,7 @@ limit_posts:  0
 name:         "Volker Otto"
 description:  "Web Architect, Hamburg"
 keywords:     "volker otto,web architect,hamburg"
-url:          "http://localhost:4000"
+url:          "http://volkerotto.net"
 
 paginate:     10
 permalink:    pretty
