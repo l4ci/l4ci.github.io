@@ -1,0 +1,268 @@
+/* Typography
+-------------------------------------------------------------- */
+h1,.h1{
+  font-family: $font-family-primary;
+  @include font-size($size-h1);
+  line-height: 1.3em;
+  padding: 0 0;
+  margin: 1.5rem 0;
+  font-weight: bold;
+  color: $color-blue;
+  text-align: center;
+}
+h2,.h2{
+  font-family: $font-family-primary;
+  @include font-size($size-h2);
+  line-height: 1.3em;
+  padding: 0 0;
+  margin: 2.3rem 0 1.3rem 0;
+  font-weight: bold;
+  color: lighten($color-blue,10%);
+  text-align: center;
+}
+h3,.h3{
+  font-family: $font-family-primary;
+  @include font-size($size-h3);
+  line-height: 1.3em;
+  padding: 0 0;
+  margin: 2.4rem 0 1.3rem 0;
+  font-weight: bold;
+  color: lighten($color-blue,15%);
+  text-align: center;
+}
+h4,.h4{
+  font-family: $font-family-primary;
+  @include font-size($size-h4);
+  line-height: 1.3em;
+  padding: 0 0;
+  margin: 2.3rem 0 1.2rem 0;
+  font-weight: bold;
+  color: darken($color-blue,5%);
+  text-align: center;
+}
+h5,.h5{
+  font-family: $font-family-primary;
+  @include font-size($size-h5);
+  line-height: 1.3em;
+  padding: 0 0;
+  margin: 2.3rem 0 1.2rem 0;
+  font-weight: bold;
+  color: darken($color-blue,10%);
+  text-align: center;
+}
+h6,.h6{
+  font-family: $font-family-primary;
+  @include font-size($size-h6);
+  line-height: 1.3em;
+  padding: 0 0;
+  margin: 2.3rem 0 1.2rem 0;
+  font-weight: bold;
+  color: darken($color-blue,15%);
+  text-align: center;
+}
+
+p,.p{
+  @include font-size($size-p);
+  font-family: $font-family-serif;
+  line-height: 1.5em;
+  padding: 0 0;
+  margin: 1.2rem 0;
+}
+.hero{
+  @include font-size($size-hero);
+  line-height: 1.3em;
+  margin-top: 10rem;
+}
+.subheader{
+  margin-top: -0.5rem;
+}
+.no-margin{
+  margin: 0 0;
+}
+.lead{
+  font-weight: normal;
+}
+.split{
+  margin-bottom: 0.5rem;
+}
+.split-partner{
+  margin-top: 0.5rem;
+}
+
+/* Quote
+-------------------------------------------------------------- */
+blockquote{
+  text-align: center;
+  color: inherit; //lighten($color-dark,10%);
+  @include font-size($size-blockquote);
+  font-family: $font-family-serif;
+  line-height: 1.3em;
+  letter-spacing: -0.02em;
+  padding: 3rem 0;
+  margin: 1.5rem 0;
+  position: relative;
+
+  cite{
+    color: inherit; //lighten($color-dark,20%);
+    display: block;
+    @include font-size($size-small);
+    line-height: 1.3em;
+    letter-spacing: 0;
+    font-style: normal;
+    font-family: sans-serif;
+  }
+}
+/* Code
+-------------------------------------------------------------- */
+pre,code{
+  font-family: consolas,monospace,x;
+  color: $color-blue;
+}
+pre{
+  overflow-x: auto;
+  padding: 1rem;
+  border: 1px solid darken($color-light,5%);
+  border-left-width: 5px;
+  background-color: $color-light;
+  white-space: pre;
+}
+/* Lists
+-------------------------------------------------------------- */
+ul,ol{
+  li{
+    @include font-size($size-p);
+    font-family: $font-family-serif;
+    line-height: 1.5em;
+  }
+}
+dl{
+  margin: 0;
+  padding: 0;
+  margin: 1.2rem 0;
+
+  dt{
+    font-weight: bold;
+  }
+  dd{
+    margin: 0 0;
+    padding: 0 0;
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* Table
+-------------------------------------------------------------- */
+table.table{
+  max-width: 100%;
+  overflow-x: scroll;
+  margin: 1.2rem auto;
+
+  thead{
+    font-weight: bold;
+    border-bottom: 2px solid darken($color-light,10%);
+    tr{
+
+      th{
+        padding: 0.5rem 0.5rem;
+      }
+    }
+  }
+  tbody{
+    tr{
+      border-bottom: 1px solid darken($color-light,10%);
+
+      td{
+        padding: 0.3rem 0.5rem;
+      }
+    }
+  }
+  &.table--full{
+    width: 100%;
+  }
+  &.table--striped{
+    tr:nth-child(odd)>td{
+      background-color: rgba($color-dark,0.1);
+    }
+  }
+}
+
+/* Images
+-------------------------------------------------------------- */
+img{
+  margin: 1.2rem auto;
+  padding: 0 ;
+  border: none;
+  max-width: 100%;
+  vertical-align: middle;
+
+  &.img--circle{
+    border-radius: 50%;
+  }
+
+  &.img--border{
+    border: 0.6rem solid rgba(255,255,255,0.5);
+  }
+  &.img--border--dark{
+    border: 0.6rem solid rgba(0,0,0,0.1);
+  }
+}
+
+/* Links
+-------------------------------------------------------------- */
+
+a{
+  color: $color-blue;
+  text-decoration: none;
+
+  &:hover,
+  &:active,
+  &:focus {
+    color: darken($color-blue,10%);
+  }
+}
+
+.h1,.h2,.h3,.h4,.h5,.h6,
+h1,h2,h3,h4,h5,h6{
+  a{
+    color: inherit;
+  }
+}
+
+
+/* Text modifiers
+-------------------------------------------------------------- */
+
+.text-align--center{
+  text-align: center;
+}
+.text-align--left{
+  text-align: left;
+}
+.text-align--right{
+  text-align: right;
+}
+
+.text--dim{
+  color: lighten($color-dark,10%);
+}
+.text--darker{
+  color: darken($color-dark,20%);
+}
+.text--lighten{
+  color: lighten($color-dark,20%);
+}
+.text--upper{
+  text-transform: uppercase;
+}
+.text--lower{
+  text-transform: lowercase;
+}
+.text--deleted{
+  text-decoration:line-through;
+}
+.text-font-family--serif{
+  font-family: $font-family-serif;
+}
+.text-font-family--sans{
+  font-family: $font-family-primary;
+}

@@ -1,0 +1,156 @@
+/* Navigation
+-------------------------------------------------------------- */
+.nav--toggle{
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  @include font-size(1.7);
+  line-height: 3rem;
+  height: 3rem;
+  width: 3rem;
+  text-align: center;
+  display: block;
+  z-index: 3;
+  color: $color-light;
+  background: rgba($color-dark,0.2);
+  border-radius: 20%;
+  cursor: pointer;
+
+  &:hover{
+    background: rgba($color-dark,0.5);
+  }
+
+  &.nav--open{
+    color: darken($color-light,30%);
+    background: transparent;
+
+    &:hover{
+      color: darken($color-light,50%);
+    }
+  }
+}
+nav.main_nav{
+  font-family: $font-family-primary;
+  position: fixed;
+  top:0;
+  right: 0;
+  width: $nav-width;
+  padding: 2.3rem;
+  z-index: 1;
+  height: 100%;
+  min-height: 100%;
+  background: darken($color-light,5%); //#0C0C0C;
+  // border-left: 1px solid #ccc;
+  overflow-y: scroll;
+
+  @include font-size($size-small);
+  color: darken($color-light,40%);
+
+  .nav--close{
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    @include font-size(2);
+    line-height: 2.5rem;
+    height: 2.5rem;
+    width: 2.5rem;
+    text-align: center;
+    display: block;
+    color: $color-dark;
+    cursor: pointer;
+    z-index: 3;
+    display: none;
+  }
+
+  .inner{
+
+    ul.links{
+      list-style: none;
+      margin: 0.5rem 0 0;
+      padding: 0;
+
+      li{
+        a{
+          display: block;
+          padding: 0.3rem 0;
+        }
+      }
+    }
+    p{
+      font-family: inherit;
+      color: inherit;
+      @include font-size($size-milli);
+      line-height: inherit;
+      padding: 0 0;
+      margin: 0.5rem 0;
+    }
+
+    a{
+      color: inherit;
+
+      &:hover{
+        color: darken($color-light,60%);
+      }
+    }
+
+    .nav-recent-blogpost{
+      font-family: inherit;
+      display: block;
+      width: 100%;
+      cursor: pointer;
+      padding: 1rem 0;
+
+      .date{
+        @include font-size($size-milli);
+        display: block;
+      }
+      .title{
+        display: block;
+      }
+      .tags{
+        @include font-size($size-milli);
+        display: block;
+      }
+    }
+
+    ul.nav_social{
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      position: fixed;
+      bottom: 0;
+      right: 0;
+      background: darken($color-light,5%);
+      padding: 0.5rem 2rem 1rem;
+      width: $nav-width;
+      @include font-size($size-p);
+      text-align: center;
+
+      li{
+        display: inline-block;
+        padding: 0 0;
+        margin: 0 0;
+        width: 23%;
+
+        a{
+          display: inline;
+          i{
+            @include font-size(1);
+          }
+        }
+      }
+    }
+    .title{
+      font-family: inherit;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin: 1.6rem 0 0;
+      padding: 0 0;
+      color: darken($color-light,50%);
+
+      &.title-first{
+        margin: 0.7rem 0 0;
+      }
+    }
+  }
+}

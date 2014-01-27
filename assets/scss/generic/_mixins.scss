@@ -1,0 +1,237 @@
+//
+// Mixins
+// --------------------------------------------------
+
+@mixin font-size($sizeValue: 1.6) {
+  font-size: ($sizeValue * 10) + px;
+  font-size: $sizeValue + rem;
+}
+
+/**
+ * Create vendor-prefixed CSS in one go, e.g.
+ *
+   `@include vendor(border-radius, 4px);`
+ *
+ */
+@mixin vendor($property, $value){
+    -webkit-#{$property}:$value;
+       -moz-#{$property}:$value;
+        -ms-#{$property}:$value;
+         -o-#{$property}:$value;
+            #{$property}:$value;
+}
+
+/**
+ * Force overly long spans of text to truncate, e.g.:
+ *
+   `@include truncate(100%);`
+ *
+ * Where `$truncation-boundary` is a united measurement.
+ */
+@mixin truncate($truncation-boundary){
+    max-width:$truncation-boundary;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+/**
+ * Hide content off-screen without resorting to `display:none;`, also provide
+ * breakpoint specific hidden elements.
+ */
+@mixin invisible {
+  border:0!important;
+  clip:rect(0 0 0 0)!important;
+  height:1px!important;
+  margin:-1px!important;
+  overflow:hidden!important;
+  padding:0!important;
+  position: absolute!important;
+  width:1px!important;
+}
+
+/**
+ * Creates an css only arrow
+ *
+ * $direction: top, left, right, bottom, top-left, top-right, bottom-left, bottom-right
+ * $color: hex, rgb or rbga
+ * $size: px or em
+ */
+@mixin arrow($direction, $color, $size){
+    display: block;
+    height: 0;
+    width: 0;
+
+    @if $direction == 'top' {
+        border-left: $size solid transparent;
+      border-right: $size solid transparent;
+      border-bottom: $size solid $color;
+    } @else if $direction == 'right' {
+        border-top: $size solid transparent;
+        border-bottom: $size solid transparent;
+      border-left: $size solid $color;
+    } @else if $direction == 'bottom' {
+        border-top: $size solid $color;
+        border-right: $size solid transparent;
+        border-left: $size solid transparent;
+    } @else if $direction == 'left' {
+        border-top: $size solid transparent;
+      border-right: $size solid $color;
+      border-bottom: $size solid transparent;
+    } @else if $direction == 'top-left' {
+        border-top: $size solid $color;
+        border-right: $size solid transparent;
+    } @else if $direction == 'top-right' {
+        border-top: $size solid $color;
+        border-left: $size solid transparent;
+    } @else if $direction == 'bottom-left' {
+        border-bottom: $size solid $color;
+        border-right: $size solid transparent;
+    } @else if $direction == 'bottom-right' {
+        border-bottom: $size solid $color;
+        border-left: $size solid transparent;
+    }
+}
+
+// Sizing shortcuts
+@mixin size($width,$height) {
+  width: $width;
+  height: $height;
+}
+@mixin square($size) {
+  @include size($size, $size);
+}
+// Placeholder text
+@mixin placeholder($color: $input-color-placeholder) {
+  &:-moz-placeholder            { color: $color; } // Firefox 4-18
+  &::-moz-placeholder           { color: $color; } // Firefox 19+
+  &:-ms-input-placeholder       { color: $color; } // Internet Explorer 10+
+  &::-webkit-input-placeholder  { color: $color; } // Safari and Chrome
+}
+// Text overflow
+// Requires inline-block or block for proper styling
+@mixin text--overflow() {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// CSS image replacement
+@mixin text--hide() {
+  background-color: transparent;
+  color: transparent;
+  border: 0;
+  font: 0/0 a;
+  text-shadow: none;
+}
+
+// Box sizing
+@mixin box-sizing($boxmodel) {
+  -webkit-box-sizing: $boxmodel;
+     -moz-box-sizing: $boxmodel;
+          box-sizing: $boxmodel;
+}
+
+// User select
+// For selecting text on the page
+@mixin user-select($select) {
+  -webkit-user-select: $select;
+     -moz-user-select: $select;
+      -ms-user-select: $select; // IE10+
+       -o-user-select: $select;
+          user-select: $select;
+}
+
+// Opacity
+@mixin opacity($opacity) {
+  opacity: $opacity;
+  // IE8 filter
+  $opacity-ie: ($opacity * 100);
+  filter: "alpha(opacity=${opacity-ie})";
+}
+
+// Retina images
+//
+// Short retina mixin for setting background-image and -size
+
+@mixin img-retina($file-1x, $file-2x, $width-1x, $height-1x) {
+  background-image: url("${file-1x}");
+
+  @media
+  only screen and (-webkit-min-device-pixel-ratio: 2),
+  only screen and (   min--moz-device-pixel-ratio: 2),
+  only screen and (     -o-min-device-pixel-ratio: 2/1),
+  only screen and (        min-device-pixel-ratio: 2),
+  only screen and (                min-resolution: 192dpi),
+  only screen and (                min-resolution: 2dppx) {
+    background-image: url("${file-2x}");
+    background-size: $width-1x $height-1x;
+  }
+}
+
+// Breakpoint
+@mixin bp($point,$min:true) {
+	@if ($min){
+		@if $point == xs {
+	    @media (min-width: $breakpoint-xs-min) { @content; }
+	  }
+	  @else if $point == s {
+	    @media (min-width: $breakpoint-s-min) { @content; }
+	  }
+	  @else if $point == m {
+	    @media (min-width: $breakpoint-m-min)  { @content; }
+	  }
+	  @else if $point == l {
+	    @media (min-width: $breakpoint-l-min)  { @content; }
+	  }
+	  @else if $point == xl {
+	    @media (min-width: $breakpoint-xl-min)  { @content; }
+	  }
+	}
+	@else{
+		@if $point == xs {
+	    @media (max-width: $breakpoint-xs-max) { @content; }
+	  }
+	  @else if $point == s {
+	    @media (max-width: $breakpoint-s-max) { @content; }
+	  }
+	  @else if $point == m {
+	    @media (max-width: $breakpoint-m-max)  { @content; }
+	  }
+	  @else if $point == l {
+	    @media (max-width: $breakpoint-l-max)  { @content; }
+	  }
+	  @else if $point == xl {
+	    // @media (max-width: $breakpoint-xl-max)  { @content; }
+	  }
+	}
+}
+
+// Sets the specified background color and calculates a dark or light contrasted text color.
+// The arguments are passed through to the [contrast-color function](#function-contrast-color).
+@mixin contrasted(
+  $background-color,
+  $dark: $dark,
+  $light: $light,
+  $threshold: $contrasted-lightness-threshold
+) {
+  background-color: $background-color;
+  color: contrast-color($background-color, $dark, $light, $threshold);
+}
+
+//
+// Source: https://github.com/chriseppstein/compass/blob/stable/frameworks/compass/stylesheets/compass/utilities/color/_contrast.scss
+//
+// Returns the `$light` color when the `$color` is dark
+// and the `$dark` color when the `$color` is light.
+// The `$threshold` is a percent between `0%` and `100%` and it determines
+// when the lightness of `$color` changes from "dark" to "light".
+@function contrast-color(
+  $color,
+  $dark: $color-black,
+  $light: $color-white,
+  $threshold: 30%
+) {
+  @return if(lightness($color) < $threshold, $light, $dark)
+}
+

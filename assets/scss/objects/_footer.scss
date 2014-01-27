@@ -1,0 +1,32 @@
+/* Footer
+-------------------------------------------------------------- */
+footer.container {
+  color: lighten($color-dark,30%);
+  padding: 3rem 0 2rem 0;
+
+  p {
+    display: inline;
+    line-height: 1.3rem;
+    @include font-size($size-small);
+  }
+}
+
+.colophon{
+  color: lighten($color-dark,40%);
+  padding: 2rem 0;
+
+  p {
+    display: inline;
+    font-family: $font-family-primary;
+    line-height: 1.2rem;
+    @include font-size($size-micro);
+  }
+
+  a{
+    color: lighten($color-dark,30%);
+
+    &:hover{
+      color: lighten($color-dark,20%);
+    }
+  }
+}

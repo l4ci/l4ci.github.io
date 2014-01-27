@@ -1,0 +1,47 @@
+.post{
+  padding: 2rem 0 1.5rem 0;
+  border-bottom: 1px solid darken($color-light,5%);
+
+  .meta{
+    @include font-size($size-small);
+    color: darken($color-light,30%);
+    margin: 1rem 0 0;
+    font-style: italic;
+
+    .date{
+      display: inline-block;
+      margin-right: 1rem;
+    }
+    .tags{
+      list-style: none;
+      margin: 0 0;
+      padding: 0 0;
+      display: inline-block;
+
+      li{
+        display: inline-block;
+        margin: 0 0.5rem 0 0;
+        @include font-size($size-small);
+
+        a{
+          color: darken($color-light,30%);
+
+          &:hover{
+            color: darken($color-light,50%);
+          }
+        }
+      }
+    }
+  }
+  .title{
+    //color: $color-blue;
+    @include font-size($size-h3);
+    margin: 1rem 0 1rem 0;
+    font-weight: bold;
+    text-align: left;
+  }
+  .excerpt{
+    color: $color-dark;
+    margin: 1rem 0;
+  }
+}

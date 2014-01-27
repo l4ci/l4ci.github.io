@@ -1,0 +1,286 @@
+---
+title:     Styleguide
+layout:    post
+published: true
+tags:      projects
+excerpt:    This Styleguide should show anyone how this sites markup makes sense.
+---
+<div class="container">
+  <section class="center">
+    <div class="col-75">
+      <p>The Headline above has the class of <code>h1</code> and <code>hero</code>. The Subheadline is the class <code>lead</code> and is always a normal paragraph.</p>
+
+      <h2>Header Example</h2>
+      <p>The main page header of this site is an <code>h1</code> element. So don't use any more <code>h1</code> elements in the page. Use <code>h2</code> elements instead. They are the same size.</p>
+
+      <h3>Third Header</h3>
+      <p>
+      The header above is an <code>h3</code> element, which may be used for any form of page-level header which falls below the h2 header in a document hierarchy.
+      </p>
+
+      <h4>Fourth Header</h4>
+      <p>
+      The header above is an <code>h4</code> element, which may be used for any form of page-level header which falls below the h3 header in a document hierarchy.
+      </p>
+
+      <h5>Fifth Header</h5>
+      <p>
+      The header above is an <code>h5</code> element, which may be used for any form of page-level header which falls below the h4 header in a document hierarchy.
+      </p>
+      <h6>Sixth Header</h6>
+      <p>
+        The header above is an <code>h6</code> element, which may be used for any form of page-level header which falls below the h5 header in a document hierarchy.
+      </p>
+
+      <h4>Inline Elements</h4>
+      <p>You might have noticed all the monospaced text in this guide. There are a number of inline <abbr title="HyperText Markup Language">HTML</abbr> elements you may use anywhere within other elements, including <abbr title="Abbreviation">abbr</abbr>, <cite>cite</cite>, <code>code</code>, <del>del</del>, <em>em</em>, <ins>ins</ins>, <strong>strong</strong>, and <var>var</var>.</p>
+
+      <h4>Lists</h4>
+      <p>Then there are the lists. <code>ul</code> denotes an unordered list (ie. a list of loose items that don't require numbering, or a bulleted list). <code>ol</code> denotes an ordered list, and various numbering schemes are available through the <abbr>CSS</abbr> (including 1,2,3... a,b,c... i,ii,iii... and so on). Each item within the <code>ul</code> or <code>ol</code> requires a surrounding <code>&lt;li&gt;</code> and <code>&lt;/li&gt;</code> tag, to denote individual items within the list (as you may have guessed, <code>li</code> stands for list item).</p>
+      <ul>
+        <li>List item 1</li>
+        <li>List item 2</li>
+        <li>List item 3</li>
+      </ul>
+      <ol>
+        <li>List item 1</li>
+        <li>List item 2</li>
+        <li>List item 3</li>
+      </ol>
+
+      <p>Additionally, <code>dl</code> is another list type called a definition list. Instead of list items, the content of a <code>dl</code> consists of <code>dt</code> (Definition Term) and <code>dd</code> (Definition description) pairs. Though it may be called a "definition list", <code>dl</code> can apply to other scenarios where a parent/child relationship is applicable. For example, it may be used for marking up dialogues, with each <code>dt</code> naming a speaker, and each <code>dd</code> containing his or her words.</p>
+      <dl>
+        <dt>List item 1</dt>
+        <dd>List description for item 1</dd>
+        <dt>List item 2</dt>
+        <dd>List description for item </dd>
+      </dl>
+    </div>
+
+    <div class="col-75">
+      <h4>Tables</h4>
+    </div>
+    <div class="col-33">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Head 1</th>
+            <th>Head 2</th>
+            <th>Head 3</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Bla</td>
+            <td>Bli</td>
+            <td>Blup</td>
+          </tr>
+          <tr>
+            <td>Blo</td>
+            <td>Bla</td>
+            <td>Blöp</td>
+          </tr>
+          <tr>
+            <td>Blu</td>
+            <td>Bli</td>
+            <td>Bliep</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-66 margin--m--bottom">
+      <table class="table table--full table--striped">
+        <thead>
+          <tr>
+            <th>Head 1</th>
+            <th>Head 2</th>
+            <th>Head 3</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Bla</td>
+            <td>Bli</td>
+            <td>Blup</td>
+          </tr>
+          <tr>
+            <td>Blo</td>
+            <td>Bla</td>
+            <td>Blöp</td>
+          </tr>
+          <tr>
+            <td>Blu</td>
+            <td>Bli</td>
+            <td>Bliep</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<div class="container bg--green">
+  <section class="center">
+  <div class="col-75">
+    <h2>Simple Grid</h2>
+    <p>
+    A simple inline-block grid, based on percentages. It allows me to create great looking individual pages. Its even responsive with a very small logic: Its mobile-first, so originaly all the cols are <code>100%</code>. First Breakpoint - when a col is set to something below <code>50%</code> it gets displayed as <code>50%</code>. Everything above <code>50%</code> gets displayed <code>100%</code>. Second Breakpoint - display everything as intented. Third Breakpoint - same as the one before, but everything is bigger.
+    </p>
+    <p>
+      <strong>Confused?</strong> Resize the page to see it in action.
+    </p>
+  </div>
+  </section>
+
+  <section class="padding--l--bottom">
+    <div class="col-10 bg--green--light"><p>10%</p></div>
+    <div class="col-90 bg--green--dark"><p>90%</p></div>
+    <div class="col-20 bg--green--light"><p>20%</p></div>
+    <div class="col-80 bg--green--dark"><p>80%</p></div>
+
+    <div class="col-25 bg--green--light"><p>25%</p></div>
+    <div class="col-75 bg--green--dark"><p>75%</p></div>
+
+    <div class="col-30 bg--green--light"><p>30%</p></div>
+    <div class="col-70 bg--green--dark"><p>70%</p></div>
+
+    <div class="col-33 bg--green--light"><p>33%</p></div>
+    <div class="col-66 bg--green--dark"><p>66%</p></div>
+
+    <div class="col-40 bg--green--light"><p>40%</p></div>
+    <div class="col-60 bg--green--dark"><p>60%</p></div>
+
+    <div class="col-50 bg--green--light"><p>50%</p></div>
+    <div class="col-50 bg--green--dark"><p>50%</p></div>
+  </section>
+</div>
+
+<div class="container padding--m--bottom">
+    <section>
+    <div class="col-75">
+      <h2>Readability</h2>
+      <p>
+        <code>abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVXYZ1234678-70</code>
+      </p>
+      <p>
+        The best reading experience comes from a nice font, the right size, the right line-height and a just-right amount of words per line. <a href="http://baymard.com/blog/line-length-readability">Experts</a> fight about the exact number, but it should be somewhere between 50 and 75 characters. This one has 70 to 75 depending on screen size.
+      </p>
+      <ul>
+        <li>Line-height: ~130%</li>
+        <li>Characters per line: 50-70</li>
+      </ul>
+    </div>
+    <div class="col-50">
+      <h3>Source Sans Pro</h3>
+      <p>Used on the headings and very small text.</p>
+      <p>
+        Source® Sans Pro, Adobe's first open source typeface family, was designed by Paul D. Hunt. It is a sans serif typeface intended to work well in user interfaces.
+        <a href="http://www.google.com/fonts/specimen/Source+Sans+Pro">Read more</a>
+      </p>
+      <p>
+        Different col sizes have a different number of characters per line. This one has only 50.
+      </p>
+    </div>
+     <div class="col-50">
+      <h3 class="text-font-family--serif">Droid Serif</h3>
+      <p>Used as regular paragraph font.</p>
+      <p>
+        The Droid Serif font family features a contemporary appearance and was designed for comfortable reading on screen. Designed by Steve Matteson, Type Director of Ascender Corp, Droid Serif features slightly condensed letterforms to maximize the amount of text displayed on small screens. <a href="http://www.google.com/fonts/specimen/Droid+Serif">Read more</a>
+      </p>
+    </div>
+  </section>
+</div>
+
+<div class="container padding--m bg--red ">
+    <section>
+    <div class="col-75">
+      <h2 class="split-partner">Accessibility</h2>
+      <h3>Links</h3>
+      <p>
+        Many links have title attributes which describe the link in greater detail, unless the text of the link already fully describes the target (such as the headline of an article).
+      </p>
+      <p>
+        There are no <code>javascript:</code> pseudo-links. All links can be followed in any browser, even if scripting is turned off. There are no links that open new windows without warning.
+      </p>
+
+      <h3>Visual design</h3>
+      <p>
+        This site uses cascading style sheets for visual layout. If your browser or browsing device does not support stylesheets at all, the content of each page is still readable.
+      </p>
+      <p>
+        The layout is liquid, simply filling its window. It happily accommodates resizing text and, as relative units have been used, text can even be re-sized in Internet Explorer for Windows.
+      </p>
+    </div>
+  </section>
+</div>
+
+<div class="container padding--m--bottom">
+  <section class="center">
+    <div class="col-75">
+      <h2><span class="text-color--red">C</span>o<span class="text-color--orange">l</span><span class="text-color--green">o</span><span class="text-color--purple">r</span><span class="text-color--grey--dark">s</span></h2>
+      <p>The primary color is a light saturated blue. Every color comes in a light and dark variation, that differse 5% from the original color.</p>
+    </div>
+  </section>
+  <section>
+    <div class="col-33 bg--blue">
+      <h6 class="padding--m no-margin">#4a92b2</h6>
+    </div>
+    <div class="col-33 bg--blue--light">
+      <h6 class="padding--m no-margin">lighter</h6>
+    </div>
+    <div class="col-33 bg--blue--dark">
+      <h6 class="padding--m no-margin">darker</h6>
+    </div>
+  </section>
+
+  <section>
+    <div class="col-75">
+      <p>Blue is not the only color. We use some other colors, that play nice together. They are used to highlight other parts of the site and give the reader a better seperation of different text blocks.</p>
+    </div>
+  </section>
+  <section>
+    <div class="col-20 bg--red">
+      <h6 class="padding--m no-margin">#b24a4a</h6>
+    </div>
+    <div class="col-20 bg--green">
+      <h6 class="padding--m no-margin">#4ab266</h6>
+    </div>
+    <div class="col-20 bg--orange">
+      <h6 class="padding--m no-margin">#efa004</h6>
+    </div>
+    <div class="col-20 bg--purple">
+      <h6 class="padding--m no-margin">#7d57a4</h6>
+    </div>
+  </section>
+
+  <section>
+    <div class="col-75">
+      <p>Some additional grey tones, that are easy on the eyes. They are mainly used in the navigation.</p>
+    </div>
+  </section>
+  <section>
+    <div class="col-33 bg--grey">
+      <h6 class="padding--s no-margin">#e1e1e1</h6>
+    </div>
+    <div class="col-33 bg--grey--dark">
+      <h6 class="padding--s no-margin">darken(#e1e1e1,5%)</h6>
+    </div>
+    <div class="col-33 bg--grey--light">
+      <h6 class="padding--s no-margin">lighten(#e1e1e1,5%)</h6>
+    </div>
+  </section>
+
+  <section>
+    <div class="col-75">
+      <p>The page doesnt use black, because you never should use a full <code>#000000</code> on any site. The same with white: Don't use <code>#ffffff</code>! We use a little lighter grey.</p>
+    </div>
+  </section>
+  <section>
+    <div class="col-50 bg--dark">
+      <h6 class="padding--m no-margin">#333333</h6>
+    </div>
+    <div class="col-50 bg--light">
+      <h6 class="padding--m no-margin">#F9F9F9</h6>
+    </div>
+  </section>
+</div>

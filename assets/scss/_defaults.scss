@@ -1,0 +1,64 @@
+// Define min width
+$breakpoint-s:   18.75em; // 300px;
+$breakpoint-m:   37.5em;  // 600px;
+$breakpoint-l:   62.5em;  // 1000px;
+$breakpoint-xl:  87.5em;  // 1400px;
+
+$grid-max-width: 1200px;
+$nav-width: 15rem;
+
+/**
+ * Colors
+ */
+$color-dark : #333; //lighten(#474747,5%);
+$color-light : #F9F9F9;
+$color-grey  : #e1e1e1; //#F9F9F9;
+$color-grey--dark: darken($color-grey,5%);
+$color-grey--light: lighten($color-grey,5%);
+
+$color-blue  : #4a92b2;
+$color-blue--dark: darken($color-blue,5%);
+$color-blue--light: lighten($color-blue,5%);
+
+$color-red   : #b24a4a;//#b23b52;
+$color-red--dark: darken($color-red,5%);
+$color-red--light: lighten($color-red,5%);
+
+$color-green : #4ab266; //#8eb13b;
+$color-green--dark: darken($color-green,5%);
+$color-green--light: lighten($color-green,5%);
+
+$color-purple: #7d57a4; //#492e8b;
+$color-orange: #efa004; //#FBB829; //#F49700;
+
+
+$color_names: dark, light,grey,grey--light,grey--dark, blue, blue--light,blue--dark, red,red--light,red--dark, green,green--light,green--dark, purple, orange;
+$color_codes: $color-dark, $color-light,$color-grey,$color-grey--light,$color-grey--dark, $color-blue,$color-blue--light,$color-blue--dark,$color-red,$color-red--light,$color-red--dark,$color-green,$color-green--light,$color-green--dark,$color-purple,$color-orange;
+
+
+/**
+ * Google Webfonts
+ */
+$google-fonts: unquote("Droid+Serif|Source+Sans+Pro:300,400,700,400italic");
+$font-family-primary: 'Source Sans Pro', "Helvetica Neue", Arial, sans-serif;
+$font-family-serif: 'Droid Serif',Georgia,Cambria,"Times New Roman",Times,serif;
+
+/**
+ * Font sizes
+ */
+$size-blockquote:             3;
+
+$size-p:                      1;
+$size-hero:                   5;
+
+$size-h1:                			4;
+$size-h2:                			4; // same size as h1 - because h1 is never used
+$size-h3:                			2;
+$size-h4:                			1.5;
+$size-h5:                			1.2;
+$size-h6:                			1;
+
+$size-small:                  1;
+$size-milli:                  0.9;
+$size-micro:                  0.8;
+

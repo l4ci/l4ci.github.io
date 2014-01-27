@@ -1,0 +1,53 @@
+/*
+ * Colors
+ */
+
+.container{
+  background: $color-light;
+}
+
+@for $i from 1 through length($color_names) {
+
+  $this-color: nth($color_codes, $i);
+  $this-light: lighten($this-color,20%);
+  $this-dark:  darken($this-color,20%);
+
+  .bg--#{nth($color_names, $i)}{
+    background: $this-color;
+
+    &{
+      color: contrast-color($this-color,$color-dark,$color-light,50%);
+    }
+
+    h1,.h1{
+      color: contrast-color($this-color,darken($this-color,50%),lighten($this-color,50%),50%);
+    }
+    h2,.h2,
+    h3,.h3,
+    h4,.h4{
+      color: contrast-color($this-color,darken($this-color,40%),lighten($this-color,40%),50%);
+    }
+    h5,.h5,
+    h6,.h6{
+      color: contrast-color($this-color,darken($this-color,30%),lighten($this-color,30%),50%);
+    }
+
+    a{
+      color: contrast-color($this-color,$this-light,$this-dark);
+
+      &:hover{
+        border-bottom: 2px solid contrast-color($this-color,$this-light,$this-dark);
+      }
+    }
+    code{
+      color: contrast-color($this-color,$this-light,$this-dark);
+    }
+  }
+
+  .text-color--#{nth($color_names, $i)}{
+    color: $this-color;
+  }
+  .border-color--#{nth($color_names, $i)}{
+    border-color: $this-color;
+  }
+}

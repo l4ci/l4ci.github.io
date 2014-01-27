@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<!--[if lte IE 8]><html class="ie"><![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"><!--<![endif]-->
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="index,follow" />
+
+  <title>{{ page.title }} | {{ site.name }}</title>
+
+{% if page.description %}
+  <meta name="description" content="{{page.description}}" />
+{% else %}
+  <meta name="description" content="{{site.description}}" />
+{% endif %}
+
+{% if page.keywords %}
+  <meta name="keywords" content="{{page.keywords}}" />
+{% else %}
+  <meta name="keywords" content="{{site.keywords}}" />
+{% endif %}
+
+  <link rel="canonical" href="{{ site.url }}{{ page.url | remove:'index.html'}}" />
+
+  <link rel="stylesheet" href="{{ site.url }}/assets/css/main.min.css">
+
+  <meta name="apple-mobile-web-app-title" content="{{ page.title }} | {{ site.name }}">
+
+<!--[if lt IE 9]><script src="{{ site.url }}/assets/js/html5shiv.js"></script><![endif]-->
+</head>
+
+<body class="animated fadeIn">
+
+  <div class="nav--toggle"><i class="fa fa-bars"></i></div>
+
+  {% include nav.html %}
+
+  <div class="layout is--pushed-up">

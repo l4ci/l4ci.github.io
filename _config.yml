@@ -1,0 +1,27 @@
+source:       .
+destination:  ./_site
+layouts:      ./_layouts
+keep_files:   ['.git','.svn']
+exclude:      ['.editorconfig','*.sublime-project','*.sublime-workspace','README.md','CNAME']
+timezone:     Europe/Berlin
+future:       true
+limit_posts:  0
+
+name:         "Volker Otto"
+description:  "Web Architect, Hamburg"
+keywords:     "volker otto,web architect,hamburg"
+url:          "http://localhost:4000"
+
+paginate:     10
+permalink:    pretty
+
+me:
+  phone:      +49 (0) 157/752 121 65
+  email:      hello@volkerotto.net
+  twitter:    hellovolker
+  facebook:   volker.otto
+  linkedin:   211323021
+  googleplus: 101109760577750566740
+  github:     l4ci
+  dribbble:   l4ci
+  pinboard:   l4ci
