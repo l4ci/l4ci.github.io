@@ -64,7 +64,10 @@ h6,.h6{
 p,.p{
   @include font-size($size-p);
   font-family: $font-family-serif;
+  font-weight: normal;
+  font-style: normal;
   line-height: 1.5em;
+  letter-spacing: 0.01rem;
   padding: 0 0;
   margin: 1.2rem 0;
 }
