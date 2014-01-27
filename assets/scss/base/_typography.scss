@@ -2,7 +2,7 @@
 -------------------------------------------------------------- */
 h1,.h1{
   font-family: $font-family-primary;
-  @include font-size($size-h1);
+  @include font-size($size-h1-small);
   line-height: 1.3em;
   padding: 0 0;
   margin: 1.5rem 0;
@@ -12,7 +12,7 @@ h1,.h1{
 }
 h2,.h2{
   font-family: $font-family-primary;
-  @include font-size($size-h2);
+  @include font-size($size-h1-small);
   line-height: 1.3em;
   padding: 0 0;
   margin: 2.3rem 0 1.3rem 0;
@@ -69,9 +69,9 @@ p,.p{
   margin: 1.2rem 0;
 }
 .hero{
-  @include font-size($size-hero);
+  @include font-size($size-hero-small);
   line-height: 1.3em;
-  margin-top: 10rem;
+  margin-top: 4rem;
 }
 .subheader{
   margin-top: -0.5rem;
@@ -87,6 +87,62 @@ p,.p{
 }
 .split-partner{
   margin-top: 0.5rem;
+}
+
+@media (min-width : $breakpoint-m) {
+  h1,.h1{
+    @include font-size($size-h1);
+    line-height: 1.3em;
+    margin: 1.5rem 0;
+  }
+  h2,.h2{
+    @include font-size($size-h2);
+    line-height: 1.3em;
+    margin: 2.3rem 0 1.3rem 0;
+  }
+  h3,.h3{
+    font-family: $font-family-primary;
+    @include font-size($size-h3);
+    line-height: 1.3em;
+    margin: 2.4rem 0 1.3rem 0;
+  }
+  h4,.h4{
+    font-family: $font-family-primary;
+    @include font-size($size-h4);
+    line-height: 1.3em;
+    margin: 2.3rem 0 1.2rem 0;
+  }
+  h5,.h5{
+    font-family: $font-family-primary;
+    @include font-size($size-h5);
+    line-height: 1.3em;
+    margin: 2.3rem 0 1.2rem 0;
+  }
+  h6,.h6{
+    font-family: $font-family-primary;
+    @include font-size($size-h6);
+    line-height: 1.3em;
+    margin: 2.3rem 0 1.2rem 0;
+  }
+
+  p,.p{
+    @include font-size($size-p);
+    line-height: 1.5em;
+    margin: 1.2rem 0;
+  }
+  .hero{
+    @include font-size($size-hero);
+    line-height: 1.3em;
+    margin-top: 10rem;
+  }
+}
+
+@media (min-width : $breakpoint-l) {
+
+}
+
+@media (min-width : $breakpoint-xl) {
+
 }
 
 /* Quote
