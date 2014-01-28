@@ -39,9 +39,9 @@ $color_codes: $color-dark, $color-light,$color-grey,$color-grey--light,$color-gr
 /**
  * Google Webfonts
  */
-$google-fonts: unquote("Droid+Serif|Source+Sans+Pro:300,400,700,400italic");
+$google-fonts: unquote("Source+Sans+Pro:300,400,700,400italic");//Droid+Serif
 $font-family-primary: 'Source Sans Pro', "Helvetica Neue", Arial, sans-serif;
-$font-family-serif: 'Droid Serif',Georgia,Cambria,"Times New Roman",Times,serif;
+$font-family-serif: $font-family-primary; //'Source Sans Pro','Droid Serif',Georgia,Cambria,"Times New Roman",Times,serif;
 
 /**
  * Font sizes
