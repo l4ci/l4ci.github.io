@@ -1,0 +1,35 @@
+{% include header.html %}
+
+<div class="container {% if page.color %}bg--{{ page.color }}{% else %}bg--blue{% endif %} {% if page.cover-class %}{{ page.cover-class }}{% endif%}" {% if page.cover %}style="background-image:url(/assets/img/cover/{{ page.cover }});"{% endif %}>
+  <div class="container--overlay"></div>
+  <section class="center">
+    <div class="col-70">
+      <h1 class="hero">{{ page.title }}</h1>
+      <p class="subheader text-align--center">
+        {{ page.date | date_to_string }}
+        {% if page.tags %}
+          {% for tag in page.tags %}
+            <a href="{{ site.url }}/{{ tag }}">{{ tag }}</a>
+          {% endfor %}
+        {% endif %}
+      </p>
+    </div>
+    {% if page.excerpt %}
+      <div class="col-70 margin--m--bottom">
+        <p class="subheader lead">{{ page.excerpt }}</p>
+      </div>
+    {% endif %}
+  </section>
+</div>
+
+<div class="container">
+  <section class="center">
+    <div class="col-70">
+      {{ content }}
+    </div>
+  </section>
+</div>
+
+{% include nextblogpost.html %}
+{% include social_footer.html %}
+{% include footer.html %}

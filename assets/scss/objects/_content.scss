@@ -1,3 +1,9 @@
+.avatar{
+  border-radius: 50%;
+  border: 3px solid #FFF;
+  box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.3);
+}
+
 .post{
   padding: 2rem 0 1.5rem 0;
   border-bottom: 1px solid darken($color-light,5%);

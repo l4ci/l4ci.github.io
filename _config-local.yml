@@ -6,6 +6,7 @@ exclude:      ['.editorconfig','*.sublime-project','*.sublime-workspace','README
 timezone:     Europe/Berlin
 future:       true
 limit_posts:  0
+markdown:     redcarpet
 
 name:         "Volker Otto"
 description:  "Web Architect, Hamburg"

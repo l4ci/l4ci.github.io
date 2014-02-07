@@ -10,7 +10,7 @@ $nav-width: 15rem;
 /**
  * Colors
  */
-$color-dark : #333; //lighten(#474747,5%);
+$color-dark : lighten(#474747,5%);
 $color-light : #F9F9F9;
 $color-grey  : #e1e1e1; //#F9F9F9;
 $color-grey--dark: darken($color-grey,5%);
@@ -39,9 +39,9 @@ $color_codes: $color-dark, $color-light,$color-grey,$color-grey--light,$color-gr
 /**
  * Google Webfonts
  */
-$google-fonts: unquote("Source+Sans+Pro:300,400,700,400italic");//Droid+Serif
+$google-fonts: unquote("Source+Sans+Pro:300,400,700,400italic|Roboto+Slab:300");//Droid+Serif
 $font-family-primary: 'Source Sans Pro', "Helvetica Neue", Arial, sans-serif;
-$font-family-serif: $font-family-primary; //'Source Sans Pro','Droid Serif',Georgia,Cambria,"Times New Roman",Times,serif;
+$font-family-serif: 'Roboto Slab',Georgia,Cambria,"Times New Roman",Times,serif;
 
 /**
  * Font sizes
@@ -49,13 +49,13 @@ $font-family-serif: $font-family-primary; //'Source Sans Pro','Droid Serif',Geor
 $size-blockquote:             3;
 
 $size-p:                      1;
-$size-hero:                   5;
+$size-hero:                   3;
 
-$size-h1:                			4;
-$size-h2:                			4; // same size as h1 - because h1 is never used
+$size-h1:                			3;
+$size-h2:                			3; // same size as h1 - because h1 is never used
 
-$size-h3:                			2;
-$size-h4:                			1.5;
+$size-h3:                			1.5;
+$size-h4:                			1.3;
 $size-h5:                			1.2;
 $size-h6:                			1;
 
