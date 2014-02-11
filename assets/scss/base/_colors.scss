@@ -9,7 +9,7 @@
   $this-dark:  darken($this-color,20%);
 
   .bg--#{nth($color_names, $i)}{
-    background: $this-color !important;
+    background: $this-color;
 
     &{
       color: contrast-color($this-color,$color-dark,$color-light,50%);
