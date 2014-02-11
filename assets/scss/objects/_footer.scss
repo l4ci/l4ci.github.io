@@ -2,7 +2,8 @@
 -------------------------------------------------------------- */
 footer.container {
   color: lighten($color-dark,30%);
-  padding: 3rem 0 2rem;
+  padding-top: 3rem;
+  padding-bottom: 2rem;
 
   p {
     display: inline;
@@ -15,7 +16,8 @@ footer.container {
   color: lighten($color-dark,40%);
 
   aside.container{
-    padding: 2rem 0;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
   }
 
   p {
