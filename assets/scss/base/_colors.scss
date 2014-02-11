@@ -2,10 +2,6 @@
  * Colors
  */
 
-.container{
-  background: $color-light;
-}
-
 @for $i from 1 through length($color_names) {
 
   $this-color: nth($color_codes, $i);
@@ -13,7 +9,7 @@
   $this-dark:  darken($this-color,20%);
 
   .bg--#{nth($color_names, $i)}{
-    background: $this-color;
+    background: $this-color !important;
 
     &{
       color: contrast-color($this-color,$color-dark,$color-light,50%);

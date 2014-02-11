@@ -5,8 +5,8 @@ published: true
 tags:      projects
 excerpt:    This Styleguide should show anyone how this sites markup makes sense.
 ---
-<div class="container">
-  <section class="center">
+<div class="outer">
+  <section class="container">
     <div class="col-75">
       <p>The Headline above has the class of <code>h1</code> and <code>hero</code>. The Subheadline is the class <code>lead</code> and is always a normal paragraph.</p>
 
@@ -119,20 +119,20 @@ excerpt:    This Styleguide should show anyone how this sites markup makes sense
   </section>
 </div>
 
-<div class="container bg--green">
-  <section class="center">
-  <div class="col-75">
-    <h2>Simple Grid</h2>
-    <p>
-    A simple inline-block grid, based on percentages. It allows me to create great looking individual pages. Its even responsive with a very small logic: Its mobile-first, so originaly all the cols are <code>100%</code>. First Breakpoint - when a col is set to something below <code>50%</code> it gets displayed as <code>50%</code>. Everything above <code>50%</code> gets displayed <code>100%</code>. Second Breakpoint - display everything as intented. Third Breakpoint - same as the one before, but everything is bigger.
-    </p>
-    <p>
-      <strong>Confused?</strong> Resize the page to see it in action.
-    </p>
-  </div>
+<div class="outer bg--green">
+  <section class="container">
+    <div class="col-75">
+      <h2>Simple Grid</h2>
+      <p>
+      A simple inline-block grid, based on percentages. It allows me to create great looking individual pages. Its even responsive with a very small logic: Its mobile-first, so originaly all the cols are <code>100%</code>. First Breakpoint - when a col is set to something below <code>50%</code> it gets displayed as <code>50%</code>. Everything above <code>50%</code> gets displayed <code>100%</code>. Second Breakpoint - display everything as intented. Third Breakpoint - same as the one before, but everything is bigger.
+      </p>
+      <p>
+        <strong>Confused?</strong> Resize the page to see it in action.
+      </p>
+    </div>
   </section>
 
-  <section class="padding--l--bottom">
+  <section class="container padding--l--bottom">
     <div class="col-10 bg--green--light"><p>10%</p></div>
     <div class="col-90 bg--green--dark"><p>90%</p></div>
     <div class="col-20 bg--green--light"><p>20%</p></div>
@@ -155,8 +155,8 @@ excerpt:    This Styleguide should show anyone how this sites markup makes sense
   </section>
 </div>
 
-<div class="container padding--m--bottom">
-    <section>
+<div class="outer padding--m--bottom">
+  <section class="container">
     <div class="col-75">
       <h2>Readability</h2>
       <p>
@@ -181,7 +181,7 @@ excerpt:    This Styleguide should show anyone how this sites markup makes sense
         Different col sizes have a different number of characters per line. This one has only 50.
       </p>
     </div>
-     <div class="col-50">
+    <div class="col-50">
       <h3>Roboto Slab</h3>
       <p>Used for headings and attention grabbers.</p>
       <p>
@@ -191,8 +191,8 @@ excerpt:    This Styleguide should show anyone how this sites markup makes sense
   </section>
 </div>
 
-<div class="container padding--m bg--red ">
-    <section>
+<div class="outer padding--m bg--red">
+  <section class="container">
     <div class="col-75">
       <h2 class="split-partner">Accessibility</h2>
       <h3>Links</h3>
@@ -214,14 +214,14 @@ excerpt:    This Styleguide should show anyone how this sites markup makes sense
   </section>
 </div>
 
-<div class="container padding--m--bottom">
-  <section class="center">
+<div class="outer padding--m--bottom">
+  <section class="container">
     <div class="col-75">
       <h2><span class="text-color--red">C</span>o<span class="text-color--orange">l</span><span class="text-color--green">o</span><span class="text-color--purple">r</span><span class="text-color--grey--dark">s</span></h2>
       <p>The primary color is a light saturated blue. Every color comes in a light and dark variation, that differse 5% from the original color.</p>
     </div>
   </section>
-  <section>
+  <section class="container">
     <div class="col-33 bg--blue">
       <h6 class="padding--m no-margin">#4a92b2</h6>
     </div>
@@ -233,12 +233,13 @@ excerpt:    This Styleguide should show anyone how this sites markup makes sense
     </div>
   </section>
 
-  <section>
+  <section class="container">
     <div class="col-75">
       <p>Blue is not the only color. We use some other colors, that play nice together. They are used to highlight other parts of the site and give the reader a better seperation of different text blocks.</p>
     </div>
   </section>
-  <section>
+
+  <section class="container">
     <div class="col-20 bg--red">
       <h6 class="padding--m no-margin">#b24a4a</h6>
     </div>
@@ -253,12 +254,13 @@ excerpt:    This Styleguide should show anyone how this sites markup makes sense
     </div>
   </section>
 
-  <section>
+  <section class="container">
     <div class="col-75">
       <p>Some additional grey tones, that are easy on the eyes. They are mainly used in the navigation.</p>
     </div>
   </section>
-  <section>
+
+  <section class="container">
     <div class="col-33 bg--grey">
       <h6 class="padding--s no-margin">#e1e1e1</h6>
     </div>
@@ -270,12 +272,13 @@ excerpt:    This Styleguide should show anyone how this sites markup makes sense
     </div>
   </section>
 
-  <section>
+  <section class="container">
     <div class="col-75">
       <p>The page doesnt use black, because you never should use a full <code>#000000</code> on any site. The same with white: Don't use <code>#ffffff</code>! We use a little lighter grey.</p>
     </div>
   </section>
-  <section>
+
+  <section class="container">
     <div class="col-50 bg--dark">
       <h6 class="padding--m no-margin">#333333</h6>
     </div>

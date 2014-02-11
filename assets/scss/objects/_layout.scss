@@ -30,23 +30,24 @@
     transition: transform .5s,opacity 0 .6s;
   }
 }
-.container{
+.outer{
   width: 100%;
   z-index: 20;
   position: relative;
   text-align: center;
+  background: $color-light;
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
 
-  &.container-image--top{
+  &.outer-image--top{
     background-position: top center;
   }
-  &.container-image--bottom{
+  &.outer-image--bottom{
     background-position: bottom center;
   }
 
-  .container--overlay{
+  .outer--overlay{
     display: block;
     position: absolute;
     z-index: 0;
@@ -58,10 +59,5 @@
     background-image: -webkit-gradient(linear, left top, left bottom, color-stop(20%, rgba(68, 68, 68, 0.3)), color-stop(100%, rgba(0, 0, 0, 0.6)));
     background-image: -webkit-linear-gradient(-410deg, rgba(68, 68, 68, 0.3) 20%, rgba(0, 0, 0, 0.5));
     background-image: linear-gradient(140deg,rgba(68, 68, 68, 0.3) 20%, rgba(0, 0, 0, 0.5));
-  }
-
-  section{
-    z-index: 10;
-    position: relative;
   }
 }

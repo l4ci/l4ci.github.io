@@ -6,7 +6,9 @@
 @-ms-viewport {
   width: device-width;
 }
-section{
+.container{
+  z-index: 10;
+  position: relative;
   margin: 0 auto;
   padding: 0 1rem;
   font-size: 0; // get rid of whitespaces between inline-blocks

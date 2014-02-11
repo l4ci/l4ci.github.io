@@ -1,11 +1,15 @@
 jQuery(document).ready(function($) {
   // Dropdown
-  $('.nav--toggle').click(function(e){
+  $('.nav--toggle').click(function(e) {
+    toggleMenu(e);
+  });
+
+  function toggleMenu(e){
     e.preventDefault();
     $('.layout').toggleClass('is--pushed-down is--pushed-up');
-    $(this).toggleClass('nav--open');
-    $(this).find('i').toggleClass('fa-bars fa-times');
-  });
+    $('.nav--toggle').toggleClass('nav--open');
+    $('.nav--toggle').find('i').toggleClass('fa-bars fa-times');
+  }
 
   // $('.nav--close').click(function(e){
   //   e.preventDefault();

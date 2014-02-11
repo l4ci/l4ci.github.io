@@ -1,8 +1,9 @@
 {% include header.html %}
 
-<div class="container {% if page.color %}bg--{{ page.color }}{% else %}bg--blue{% endif %} {% if page.cover-class %}{{ page.cover-class }}{% endif%}" {% if page.cover %}style="background-image:url(/assets/img/cover/{{ page.cover }});"{% endif %}>
-  <div class="container--overlay"></div>
-  <section class="center">
+<article>
+<div class="outer {% if page.color %}bg--{{ page.color }}{% else %}bg--blue{% endif %} {% if page.cover-class %}{{ page.cover-class }}{% endif%}" {% if page.cover %}style="background-image:url(/assets/img/cover/{{ page.cover }});"{% endif %}>
+  <div class="outer--overlay"></div>
+  <section class="container">
     <div class="col-70">
       <h1 class="hero">{{ page.title }}</h1>
       <p class="subheader text-align--center">
@@ -25,6 +26,8 @@
 </div>
 
 {{ content }}
+
+</article>
 
 {% include nextblogpost.html %}
 {% include social_footer.html %}
