@@ -18,10 +18,6 @@ html {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -webkit-text-size-adjust: 100%;
-  font-feature-settings: "kern";
-  -webkit-font-feature-settings: "kern";
-  -moz-font-feature-settings: "kern";
-  -moz-font-feature-settings: "kern=1";
 }
 
 @media (min-width : $breakpoint-m) {
