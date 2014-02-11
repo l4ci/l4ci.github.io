@@ -1,8 +1,8 @@
 /* Footer
 -------------------------------------------------------------- */
-footer.container {
+footer {
   color: lighten($color-dark,30%);
-  padding: 3rem 0 2rem 0;
+  margin: 3rem auto 2rem;
 
   p {
     display: inline;
@@ -13,7 +13,10 @@ footer.container {
 
 .colophon{
   color: lighten($color-dark,40%);
-  padding: 2rem 0;
+
+  aside{
+    margin: 2rem auto;
+  }
 
   p {
     display: inline;
