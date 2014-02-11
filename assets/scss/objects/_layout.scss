@@ -4,6 +4,7 @@
 .layout{
   z-index: 2;
   position: relative;
+  background: $color-light;
 
   &.is--pushed-down{
     -webkit-transform: translate3d(-$nav-width,0,0);
@@ -35,7 +36,6 @@
   z-index: 20;
   position: relative;
   text-align: center;
-  background: $color-light;
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
