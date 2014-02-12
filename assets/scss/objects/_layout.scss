@@ -56,8 +56,32 @@
     bottom: 0;
     left: 0;
     background-color: rgba(saturate($color-blue,90%), 0.6);
-    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(20%, rgba(68, 68, 68, 0.3)), color-stop(100%, rgba(0, 0, 0, 0.6)));
-    background-image: -webkit-linear-gradient(-410deg, rgba(68, 68, 68, 0.3) 20%, rgba(0, 0, 0, 0.5));
-    background-image: linear-gradient(140deg,rgba(68, 68, 68, 0.3) 20%, rgba(0, 0, 0, 0.5));
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(20%, rgba(68, 68, 68, 0.1)), color-stop(100%, rgba(0, 0, 0, 0.4))), -webkit-linear-gradient(-410deg, rgba(68, 68, 68, 0.1) 20%, rgba(0, 0, 0, 0.3)), linear-gradient(140deg,rgba(68, 68, 68, 0.1) 20%, rgba(0, 0, 0, 0.3));
+
+    &.outer--overlay_color--orange{
+      background-color: $color-orange;
+      background-image: -webkit-gradient(linear, left top, left bottom, color-stop(20%, rgba(darken($color-orange,10%), 0.1)), color-stop(100%, rgba(darken($color-orange,25%),0.2))), -webkit-linear-gradient(-410deg, rgba(darken($color-orange,10%), 0.1) 20%, rgba(darken($color-orange,25%),0.1)), linear-gradient(140deg,rgba(darken($color-orange,10%), 0.1) 20%, rgba(darken($color-orange,25%),0.2));
+    }
+    &.outer--overlay_color--red{
+      background-color: $color-red;
+      background-image: -webkit-gradient(linear, left top, left bottom, color-stop(20%, rgba(darken($color-red,10%), 0.1)), color-stop(100%, rgba(darken($color-red,25%),0.2))), -webkit-linear-gradient(-410deg, rgba(darken($color-red,10%), 0.1) 20%, rgba(darken($color-red,25%),0.1)), linear-gradient(140deg,rgba(darken($color-red,10%), 0.1) 20%, rgba(darken($color-red,25%),0.2));
+    }
+    &.outer--overlay_color--green{
+      background-color: $color-green;
+      background-image: -webkit-gradient(linear, left top, left bottom, color-stop(20%, rgba(darken($color-green,10%), 0.1)), color-stop(100%, rgba(darken($color-green,25%),0.2))), -webkit-linear-gradient(-410deg, rgba(darken($color-green,10%), 0.1) 20%, rgba(darken($color-green,25%),0.1)), linear-gradient(140deg,rgba(darken($color-green,10%), 0.1) 20%, rgba(darken($color-green,25%),0.2));
+    }
+    &.outer--overlay_color--purple{
+      background-color: $color-purple;
+      background-image: -webkit-gradient(linear, left top, left bottom, color-stop(20%, rgba(darken($color-purple,10%), 0.1)), color-stop(100%, rgba(darken($color-purple,25%),0.2))), -webkit-linear-gradient(-410deg, rgba(darken($color-purple,10%), 0.1) 20%, rgba(darken($color-purple,25%),0.1)), linear-gradient(140deg,rgba(darken($color-purple,10%), 0.1) 20%, rgba(darken($color-purple,25%),0.2));
+    }
+    &.outer--overlay_color--grey{
+      background-color: $color-grey;
+    }
+    &.outer--overlay_color--dark{
+      background-color: $color-dark;
+    }
+    &.outer--overlay_color--light{
+      background-color: $color-light;
+    }
   }
 }

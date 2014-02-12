@@ -6,6 +6,7 @@
 @-ms-viewport {
   width: device-width;
 }
+
 .container{
   z-index: 10;
   position: relative;
@@ -14,10 +15,8 @@
   font-size: 0; // get rid of whitespaces between inline-blocks
   width: 100%;
   max-width: $grid-max-width;
+  text-align: center;
 
-  &.center{
-    text-align: center;
-  }
   &.left{
     text-align: left;
   }
@@ -154,6 +153,37 @@
     }
     .col-10{
       width: 10%;
+    }
+  }
+}
+
+/**
+ * Figure for showing images in a scrollable list on smaller screens
+ */
+figure.container{
+  @media (max-width : $breakpoint-l) {
+    overflow: hidden;
+    overflow-x: scroll;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+
+    width: 100%;
+    height: 12.5rem;
+    clear: both;
+    position: relative;
+
+    [class*='col-'] {
+      display: inline;
+      text-align: center;
+      margin: 0 1rem 0 -2rem;
+
+      img{
+        margin: 0 0;
+        height: 12.5rem;
+        width: auto;
+        max-width: 100%;
+
+      }
     }
   }
 }
