@@ -1,6 +1,6 @@
 figure.clients{
   height: auto;
-  padding-bottom: 2rem;
+  padding-bottom: 1rem;
 
   [class*='col-'] {
     text-align: center;
@@ -11,7 +11,7 @@ figure.clients{
     display: inline-block;
 
     img{
-      opacity: 0.6;
+      opacity: 0.3;
       margin: 0;
       padding: 0;
 
@@ -22,7 +22,7 @@ figure.clients{
 
       border-radius: 5px;
       border: 1px solid #efefef;
-      height: 5rem;
+      height: 7rem;
 
       filter: grayscale(100%);
       -webkit-filter: grayscale(100%);
@@ -33,9 +33,9 @@ figure.clients{
       filter: gray;
       -webkit-filter: grayscale(1);
 
-      @media (min-width : $breakpoint-m) {
-        height: 7rem;
-      }
+      // @media (min-width : $breakpoint-m) {
+      //   height: 7rem;
+      // }
 
       @media (min-width : $breakpoint-l) {
         height: auto;
