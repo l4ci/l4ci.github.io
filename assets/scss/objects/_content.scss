@@ -1,3 +1,62 @@
+figure.clients{
+  height: auto;
+  padding-bottom: 2rem;
+
+  [class*='col-'] {
+    text-align: center;
+  }
+  .client{
+    display: block;
+    margin: 2rem auto 0;
+    display: inline-block;
+
+    img{
+      opacity: 0.6;
+      margin: 0;
+      padding: 0;
+
+      -webkit-transition: opacity .5s ease-in-out;
+      -moz-transition: opacity .5s ease-in-out;
+      -o-transition: opacity .5s ease-in-out;
+      transition: opacity .5s ease-in-out;
+
+      border-radius: 5px;
+      border: 1px solid #efefef;
+      height: 5rem;
+
+      filter: grayscale(100%);
+      -webkit-filter: grayscale(100%);
+      -moz-filter: grayscale(100%);
+      -ms-filter: grayscale(100%);
+      -o-filter: grayscale(100%);
+      filter: url(desaturate.svg#greyscale);
+      filter: gray;
+      -webkit-filter: grayscale(1);
+
+      @media (min-width : $breakpoint-m) {
+        height: 7rem;
+      }
+
+      @media (min-width : $breakpoint-l) {
+        height: auto;
+      }
+
+
+
+      &:hover{
+        opacity: 1;
+        filter: grayscale(0%);
+        -webkit-filter: grayscale(0%);
+        -moz-filter: grayscale(0%);
+        -ms-filter: grayscale(0%);
+        -o-filter: grayscale(0%);
+        filter: none;
+      }
+    }
+
+  }
+}
+
 .avatar{
   border-radius: 50%;
   border: 3px solid #FFF;
