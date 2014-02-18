@@ -2,7 +2,9 @@ jQuery(document).ready(function($) {
 
   $('html').removeClass('no-js');
 
-  // Navigation Toggle
+  /**
+   * Navigation Toggle
+   */
   $('.nav--toggle').click(function(e) {
     toggleMenu(e);
   });
@@ -14,16 +16,20 @@ jQuery(document).ready(function($) {
     $('.nav--toggle').find('i').toggleClass('fa-bars fa-times');
   }
 
-  // Frontpage Header
-  if ( $( window ).width() >= 600 ){
-    $('#hello').css( 'height', $( window ).height() );
+  /**
+   * Frontpage Header
+   */
+  var hello = $('#hello');
+  var minHeight = 700;
+  if ( ($( window ).width() >= 600) && ($( window ).height() > minHeight) ){
+    hello.css( 'height', $( window ).height() );
   }
 
   $( window ).resize(function() {
-    if ( $( window ).width() >= 600){
-      $('#hello').css( 'height', $( window ).height() );
+    if ( ($( window ).width() >= 600) && ($( window ).height() > minHeight) ){
+      hello.css( 'height', $( window ).height() );
     }else{
-      $('#hello').css( 'height', '');
+      hello.css( 'height', '');
     }
   });
 
