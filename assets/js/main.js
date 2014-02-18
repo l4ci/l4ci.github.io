@@ -1,7 +1,8 @@
 jQuery(document).ready(function($) {
+
   $('html').removeClass('no-js');
 
-  // Dropdown
+  // Navigation Toggle
   $('.nav--toggle').click(function(e) {
     toggleMenu(e);
   });
@@ -12,5 +13,18 @@ jQuery(document).ready(function($) {
     $('.nav--toggle').toggleClass('nav--open');
     $('.nav--toggle').find('i').toggleClass('fa-bars fa-times');
   }
+
+  // Frontpage Header
+  if ( $( window ).width() >= 600 ){
+    $('#hello').css( 'height', $( window ).height() );
+  }
+
+  $( window ).resize(function() {
+    if ( $( window ).width() >= 600){
+      $('#hello').css( 'height', $( window ).height() );
+    }else{
+      $('#hello').css( 'height', '');
+    }
+  });
 
 });
