@@ -3,5 +3,5 @@
 /psd
 *.sublime-project
 *.sublime-workspace
-
 codekit-config.json
+*.psd
