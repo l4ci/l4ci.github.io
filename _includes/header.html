@@ -13,8 +13,8 @@
 
   <title>{{ page.title }} | {{ site.name }}</title>
 
-{% if page.description %}
-  <meta name="description" content="{{page.description}}" />
+{% if page.excerpt %}
+  <meta name="description" content="{{page.excerpt}}" />
 {% else %}
   <meta name="description" content="{{site.description}}" />
 {% endif %}
@@ -26,16 +26,13 @@
 {% endif %}
 
   <link rel="canonical" href="{{ site.url }}{{ page.url | remove:'index.html'}}" />
-
   <link rel="stylesheet" href="{{ site.url }}/assets/css/main.min.css">
-
-  <meta name="apple-mobile-web-app-title" content="{{ site.name }}">
-
   <!--[if lt IE 9]>
   <script src="{{ site.url }}/assets/js/vendor/html5shiv.js"></script>
   <![endif]-->
 
   <!--
+
   Hey fellow devs,
   have a nice day!
 
@@ -48,8 +45,8 @@
     `88..8'   888   888  888   888888.    888ooo888  888          888   888   888     888   888   888
      `888'    888   888  888   888 `88b.  888    .o  888          888   888   888 .   888 . 888   888
       `8'     `Y8bod8P' o888o o888o o888o `Y8bod8P' d888b         `Y8bod8P'   "888"   "888" `Y8bod8P'
-  -->
 
+  -->
 </head>
 
 <body class="animated fadeIn">

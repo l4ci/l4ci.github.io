@@ -4,14 +4,14 @@ layout: default
 ---
 <div class="outer bg--blue" style="background-image:url(/assets/img/cover/cover_big_me.jpg);" id="hello">
   <div class="outer--overlay"></div>
-  <div class="container">
+  <div class="container" itemscope itemtype="http://schema.org/Person">
     <div class="col-70">
-      <h1 class="hero">Volker Otto</h1>
-      <h2 class="h3 subheader">Web Architect, Hamburg</h2>
+      <h1 class="hero" itemprop="name">Volker Otto</h1>
+      <h2 class="h3 subheader" itemprop="jobTitle">Web Architect, Hamburg</h2>
     </div>
     <div class="col-60 margin--m--bottom">
       <hr>
-      <p class="lead">Freelancer and consultant around the web. Creator of <a href="https://github.com/{{site.me.github}}/reddix">reddix</a> - a reddit chrome extension, <a href="https://github.com/{{site.me.github}}/Br4ckets-Theme">Br4ckets</a> - a Sublime Text color scheme. See who <a href="/clients">worked with me</a>.</p>
+      <p class="lead" itemprop="description">Freelancer and consultant around the web. Creator of <a href="https://github.com/{{site.me.github}}/reddix">reddix</a> - a reddit chrome extension, <a href="https://github.com/{{site.me.github}}/Br4ckets-Theme">Br4ckets</a> - a Sublime Text color scheme. See who <a href="/clients">worked with me</a>.</p>
     </div>
   </div>
 </div>

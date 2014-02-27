@@ -1,31 +1,33 @@
 {% include header.html %}
 
-<article>
-<div class="outer {% if page.cover-class %}{{ page.cover-class }}{% endif%} {% if page.color %}bg--{{ page.color }}{% else %}bg--blue{% endif %}" {% if page.cover %}style="background-image:url(/assets/img/cover/{{ page.cover }});"{% endif %}>
-  <div class="outer--overlay {% if page.color %}outer--overlay_color--{{ page.color }}{% endif %}"></div>
-  <section class="container">
-    <div class="col-70">
-      <h1 class="hero">{{ page.title }}</h1>
-      <p class="subheader text-align--center">
-        {{ page.date | date_to_string }}
-        {% if page.tags %}
-          •
-          {% for tag in page.tags %}
-            <a href="{{ site.url }}/{{ tag }}">{{ tag }}</a>
-          {% endfor %}
-        {% endif %}
-      </p>
-    </div>
-    {% if page.excerpt %}
-      <div class="col-70 margin--m--bottom">
-        <hr>
-        <p class="subheader lead">{{ page.excerpt }}</p>
+<article itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="outer {% if page.cover-class %}{{ page.cover-class }}{% endif%} {% if page.color %}bg--{{ page.color }}{% else %}bg--blue{% endif %}" {% if page.cover %}style="background-image:url(/assets/img/cover/{{ page.cover }});"{% endif %}>
+    <div class="outer--overlay {% if page.color %}outer--overlay_color--{{ page.color }}{% endif %}"></div>
+    <section class="container">
+      <div class="col-70">
+        <h1 class="hero" itemprop="name headline">{{ page.title }}</h1>
+        <p class="subheader text-align--center">
+          <time itemprop="datePublished" datetime="{{ page.date }}">{{ page.date | date_to_string }}</time>
+          {% if page.tags %}
+            •
+            {% for tag in page.tags %}
+              <a href="{{ site.url }}/{{ tag }}">{{ tag }}</a>
+            {% endfor %}
+          {% endif %}
+        </p>
       </div>
-    {% endif %}
-  </section>
-</div>
+      {% if page.excerpt %}
+        <div class="col-70 margin--m--bottom">
+          <hr>
+          <p class="subheader lead" itemprop="description">{{ page.excerpt }}</p>
+        </div>
+      {% endif %}
+    </section>
+  </div>
 
-{{ content }}
+  <div itemprop="articleBody">
+    {{ content }}
+  </div>
 
 </article>
 
