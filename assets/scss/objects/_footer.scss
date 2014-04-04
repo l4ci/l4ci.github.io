@@ -10,6 +10,9 @@ footer.container {
     line-height: 1.3rem;
     @include font-size($size-small);
   }
+  &.small{
+    color: #fff;
+  }
 }
 
 .colophon{
