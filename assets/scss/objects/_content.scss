@@ -64,7 +64,7 @@ figure.clients{
 }
 
 .post{
-  padding: 2rem 0 1.5rem 0;
+  padding: 2rem 0;
   border-bottom: 1px solid darken($color-light,5%);
 
   .meta{
@@ -101,7 +101,7 @@ figure.clients{
   .title{
     //color: $color-blue;
     @include font-size($size-h3);
-    margin: 1rem 0 1rem 0;
+    margin: 0 0 1rem 0;
     font-weight: 500;
     text-align: left;
   }

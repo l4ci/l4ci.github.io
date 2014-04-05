@@ -5,11 +5,6 @@ footer.container {
   padding-top: 2rem;
   padding-bottom: 2rem;
 
-  p {
-    display: inline;
-    line-height: 1.3rem;
-    @include font-size($size-small);
-  }
   &.small{
     color: #fff;
   }
