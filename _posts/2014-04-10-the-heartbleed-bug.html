@@ -50,13 +50,17 @@ excerpt:   There is a serious bug in the popular OpenSSL software. Wait, what do
       </ul>
 
       <p>
-        If you have some servers of your own, that use SSL/TLS (OpenSSL 1.0.1 through 1.0.1f (inclusive) are vulnerable) - go and update to the latest version for your operating system. Also regenerate your SSL certificate, because if you've been compromised, someone probably has your keys, and will be able to decrypt your traffic. You also should regenerating your session cookie and force your users to authenticate again.
+        If you have some servers of your own, that use SSL/TLS (OpenSSL 1.0.1 through 1.0.1f (inclusive) are vulnerable) - go and update to the latest version for your operating system.
       </p>
       <ul>
         <li><a href="http://www.ubuntu.com/usn/usn-2165-1/">Ubuntu</a></li>
         <li><a href="http://lists.centos.org/pipermail/centos-announce/2014-April/020249.html">CentOS</a></li>
         <li><a href="https://lists.fedoraproject.org/pipermail/announce/2014-April/003205.html">Fedora</a></li>
       </ul>
+
+      <p>
+         Also regenerate your SSL certificate, because if you've been compromised, someone probably has your keys, and will be able to decrypt your traffic. You also should regenerating your session cookie and force your users to authenticate again.
+      </p>
 
       <h2>More Information</h2>
       <p>The bug was first mentioned on the <a href="https://www.openssl.org/news/secadv_20140407.txt">openssl.org</a> vulnerabilities news site, but it quickly spread to other popular sites like <a href="http://blog.cloudflare.com/staying-ahead-of-openssl-vulnerabilities">cloudflare.com</a> and twitter, where I read about it.</p>
