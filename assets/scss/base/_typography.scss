@@ -9,7 +9,7 @@ p,.p,h1,.h1,h2,.h2,h3,.h3,h4,.h4,h5,.h5,h6,.h6,blockquote,li{
 }
 h1,.h1{
   font-family: $font-family-serif;
-  @include font-size(1.6);
+  @include font-size($size-h1);
   line-height: 1.3em;
   padding: 0 0;
   margin: 1.5rem 0;
@@ -19,18 +19,17 @@ h1,.h1{
 }
 h2,.h2{
   font-family: $font-family-serif;
-  @include font-size(1.6);
+  @include font-size($size-h2);
   line-height: 1.3em;
   padding: 0 0;
   margin: 2.3rem 0 1.3rem 0;
   font-weight: 300;
   color: lighten($color-blue,5%);
   text-align: left;
-  border-bottom: 3px solid $color-blue;
 }
 h3,.h3{
   font-family: $font-family-serif;
-  @include font-size(1.2);
+  @include font-size($size-h3);
   line-height: 1.3em;
   padding: 0 0;
   margin: 2.4rem 0 1.3rem 0;
@@ -40,7 +39,7 @@ h3,.h3{
 }
 h4,.h4{
   font-family: $font-family-serif;
-  @include font-size(1.1);
+  @include font-size($size-h4);
   line-height: 1.3em;
   padding: 0 0;
   margin: 2.3rem 0 1.2rem 0;
@@ -50,7 +49,7 @@ h4,.h4{
 }
 h5,.h5{
   font-family: $font-family-primary;
-  @include font-size(1);
+  @include font-size($size-h5);
   line-height: 1.3em;
   padding: 0 0;
   margin: 2.3rem 0 1.2rem 0;
@@ -60,7 +59,7 @@ h5,.h5{
 }
 h6,.h6{
   font-family: $font-family-primary;
-  @include font-size(1);
+  @include font-size($size-h6);
   line-height: 1.3em;
   padding: 0 0;
   margin: 2.3rem 0 1.2rem 0;
