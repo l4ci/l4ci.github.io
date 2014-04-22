@@ -21,15 +21,15 @@ html {
 }
 
 @media (min-width : $breakpoint-m) {
-  html{ font-size: 20px }
+  html{ font-size: 16px }
 }
 
 @media (min-width : $breakpoint-l) {
-  html{ font-size: 22px }
+  html{ font-size: 18px }
 }
 
 @media (min-width : $breakpoint-xl) {
-  html{ font-size: 24px;}
+  html{ font-size: 20px;}
 }
 
 body {
