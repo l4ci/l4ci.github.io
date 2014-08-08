@@ -39,9 +39,9 @@ $color_codes: $color-dark, $color-light,$color-grey,$color-grey--light,$color-gr
 /**
  * Google Webfonts
  */
-$google-fonts: unquote("Source+Sans+Pro:300,400,700,400italic|Roboto+Slab:300");//Droid+Serif
+$google-fonts: unquote("Source+Sans+Pro:300,400,700,400italic|Playfair+Display:700");//Droid+Serif | Roboto+Slab:300
 $font-family-primary: 'Source Sans Pro', "Helvetica Neue", Arial, sans-serif;
-$font-family-serif: 'Roboto Slab',Georgia,Cambria,"Times New Roman",Times,serif;
+$font-family-serif: 'Playfair Display',Georgia,Cambria,"Times New Roman",Times,serif; // 'Roboto Slab'
 
 /**
  * Font sizes
