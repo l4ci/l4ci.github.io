@@ -36,7 +36,11 @@
     <div class="container">
       <ul>
         <li><a href="{{ site.url }}/blog" class="backToBlog"> <i class="fa fa-list-ul"></i> Back</a></li>
-        <li><a href="blogpost.html">Nächster Blogpost:</a></li>
+        {% if page.previous.url %}
+          <li><a href="{{page.previous.url}}" title="Previous Post: {{page.previous.title}}">Previous Post: {{page.previous.title}}</a></li>
+        {% else if page.next.url %}
+          <li><a href="{{page.next.url}}" title="Next Post:{{page.next.title}}">Next Post: {{page.next.title}}</a></li>
+        {% endif %}
       </ul>
     </div><!-- .container -->
   </div><!-- .blogControl -->
