@@ -31,17 +31,18 @@
 
   {{ content }}
 
+
+  <div class="blogControl blogControl--bottom">
+    <div class="container">
+      <ul>
+        <li><a href="{{ site.url }}/blog" class="backToBlog"> <i class="fa fa-list-ul"></i> Back</a></li>
+        <li><a href="blogpost.html">Nächster Blogpost:</a></li>
+      </ul>
+    </div><!-- .container -->
+  </div><!-- .blogControl -->
+
 </main><!--.content-->
 
 </article>
-
-<div class="blogControl blogControl--bottom">
-  <div class="container">
-    <ul>
-      <li><a href="{{ site.url }}/blog" class="backToBlog"> <i class="fa fa-list-ul"></i> Back</a></li>
-      <li><a href="blogpost.html">Nächster Blogpost:</a></li>
-    </ul>
-  </div><!-- .container -->
-</div><!-- .blogControl -->
 
 {% include footer.html %}
