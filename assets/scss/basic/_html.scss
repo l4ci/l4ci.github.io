@@ -1,0 +1,19 @@
+/**
+ * BASICS
+ */
+html{
+  font-size: 100%;
+  line-height: 1.5;
+  box-sizing: border-box;
+}
+*,*:before,*:after{
+  box-sizing: inherit;
+}
+body{
+  color: $grey;//#333;
+  background: white;
+  font-family: 'proxima-nova','Helvetica Neue',Helvetica,Arial,sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

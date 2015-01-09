@@ -2,40 +2,37 @@
 title:     "CSS Background Image Blur without blurry edges"
 layout:    post
 published: true
-tags:      blog
 excerpt:   Trying to get rid of the blurry edges when using filter:blur() on a background image.
-cover:     cover_big_city.jpg
 ---
-<div class="outer">
-  <section class="container padding--m--bottom">
-    <div class="col-75">
-      <p>
-        Using <code>filter: blur(2px)</code> on a background image that is set to be the cover image of the whole page, <del>can</del> will result in ugly edges.
-      </p>
-      <p>I tried to get rid of them with various techniques.</p>
+<section class="article">
+  <div class="container">
+    <p>
+      Using <code>filter: blur(2px)</code> on a background image that is set to be the cover image of the whole page, <del>can</del> will result in ugly edges.
+    </p>
+    <p>I tried to get rid of them with various techniques.</p>
 
-      <h2>Negative absolute positioning</h2>
-      <p>The parent wrapper has <code>overflow: hidden</code> so anything inside it even when over <code>100%</code> should not make the viewport wider.</p>
-      <p>Using negative <code>top|bottom|left|right: -1%</code> values and increased the <code>width|height: 102%</code> moved the background image to the right position. But the blurry edges still were there. Damn.</p>
+    <h3>Negative absolute positioning</h3>
+    <p>The parent wrapper has <code>overflow: hidden</code> so anything inside it even when over <code>100%</code> should not make the viewport wider.</p>
+    <p>Using negative <code>top|bottom|left|right: -1%</code> values and increased the <code>width|height: 102%</code> moved the background image to the right position. But the blurry edges still were there. Damn.</p>
 
-      <h2>Negative margin</h2>
-      <p>Setting a negative <code>margin: -2%</code> had no effect either.</p>
+    <h3>Negative margin</h3>
+    <p>Setting a negative <code>margin: -2%</code> had no effect either.</p>
 
-      <h2>Clipping the image</h2>
-      <p>Some people did suggest using <code>clip:rect()</code>. What does work when using an <code>img</code> with known dimensions. But unfortunately <code>clip:rect()</code> does not support percentage values, which we would need to crop a full size background image with unknown width/height.</p>
+    <h3>Clipping the image</h3>
+    <p>Some people did suggest using <code>clip:rect()</code>. What does work when using an <code>img</code> with known dimensions. But unfortunately <code>clip:rect()</code> does not support percentage values, which we would need to crop a full size background image with unknown width/height.</p>
 
-      <h2>Solution</h2>
-      <p>Enough talking what didn't work - here is what did:</p>
-      <p>Simply scaling the background image to <code>110%</code> by using <code>transform: scale(1.1)</code> makes the background image heigher and wider. Blurry edges gone. Perfect.</p>
+    <h2>Solution</h2>
+    <p>Enough talking what didn't work - here is what did:</p>
+    <p>Simply scaling the background image to <code>110%</code> by using <code>transform: scale(1.1)</code> makes the background image heigher and wider. Blurry edges gone. Perfect.</p>
 
-      <p><strong>But don't forget the vendor prefixes for <code>transform: scale</code></strong></p>
+    <p><strong>But don't forget the vendor prefixes for <code>transform: scale</code></strong></p>
 
-      <p>Check out this codepen for the final markup and css.</p>
+    <p>Check out this codepen for the final markup and css.</p>
 
-      <p data-height="268" data-theme-id="0" data-slug-hash="ujhGk" data-default-tab="result" class='codepen'>See the Pen <a href='http://codepen.io/l4ci/pen/ujhGk/'>CSS Background Image Blur without blurry edges</a> by Volker Otto (<a href='http://codepen.io/l4ci'>@l4ci</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
-      <script async src="//codepen.io/assets/embed/ei.js"></script>
+    <p data-height="268" data-theme-id="0" data-slug-hash="ujhGk" data-default-tab="result" class='codepen'>See the Pen <a href='http://codepen.io/l4ci/pen/ujhGk/'>CSS Background Image Blur without blurry edges</a> by Volker Otto (<a href='http://codepen.io/l4ci'>@l4ci</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+    <script async src="//codepen.io/assets/embed/ei.js"></script>
 
-      <p>Hope I could help some of you.</p>
-    </div>
-  </section>
-</div>
+    <p>Hope I could help some of you.</p>
+
+  </div><!-- .container -->
+</section>

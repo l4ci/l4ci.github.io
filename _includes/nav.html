@@ -1,54 +1,19 @@
-<nav class="main_nav" role="navigation">
-  <div class="nav--close"><i class="fa fa-times"></i></div>
-  <div class="inner">
+<body class=" ">
 
-    <p class="title title-first">Navigation</p>
-    <ul class="links">
-      <li><a href="{{ site.url }}">Home</a></li>
-      <li><a href="{{ site.url }}/blog">Blog</a></li>
-      <li><a href="{{ site.url }}/projects">Projects</a></li>
-      <li><a href="{{ site.url }}/clients">Clients</a></li>
-    </ul>
+<header>
+  <div class="container">
+    <a href="/" class="brand">
+      {% include logo.svg %}
+      <span class="slogan"><span>volker</span>otto</span>
+    </a>
+    <nav role="navigation">
+      <ul>
+        <li><a href="{{ site.url }}" class="active">About</a></li>
+        <!-- <li><a href="{{ site.url }}/work">Work</a></li> -->
+        <li><a href="{{ site.url }}/blog">Blog</a></li>
+        <li><a href="mailto:{{ site.me.email }}">Contact</a></li>
+      </ul>
 
-    <p class="title">Hire me</p>
-    <p><a href="mailto:{{ site.me.email }}">Available for hire.</a></p>
-
-    <p class="title">Recent Posts</p>
-    {% for post in site.posts limit:2 %}
-      <a class="nav-recent-blogpost" href="{{ site.url }}{{ post.url }}">
-        <span class="date">{{ post.date | date_to_string }}</span>
-        {{ post.title }}
-      </a>
-    {% endfor %}
-
-    <ul class="nav_social">
-      <!-- <li>
-        <a href="https://www.facebook.com/{{site.me.facebook}}">
-          <i class="fa fa-facebook"></i>
-        </a>
-      </li> -->
-      <!-- // Who uses Google+ anyway? -->
-      <li>
-        <a href="https://plus.google.com/{{site.me.googleplus}}" rel="author">
-          <i class="fa fa-google-plus"></i>
-        </a>
-      </li>
-      <li>
-        <a href="https://twitter.com/{{site.me.twitter}}">
-          <i class="fa fa-twitter"></i>
-        </a>
-      </li>
-      <li>
-        <a href="https://github.com/{{site.me.github}}">
-          <i class="fa fa-github"></i>
-        </a>
-      </li>
-      <li>
-        <a href="http://linkedin.com/profile/view?id={{site.me.linkedin}}">
-          <i class="fa fa-linkedin"></i>
-        </a>
-      </li>
-    </ul>
-
-  </div><!-- .inner -->
-</nav>
+    </nav>
+  </div><!--.container-->
+</header>

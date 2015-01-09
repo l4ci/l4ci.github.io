@@ -1,36 +1,47 @@
 {% include header.html %}
 
 <article itemscope itemtype="http://schema.org/BlogPosting" role="main">
-  <div class="outer {% if page.cover-class %}{{ page.cover-class }}{% endif%} {% if page.color %}bg--{{ page.color }}{% else %}bg--blue{% endif %}" {% if page.cover %}style="background-image:url(/assets/img/cover/{{ page.cover }});"{% endif %}>
-    <div class="outer--overlay {% if page.color %}outer--overlay_color--{{ page.color }}{% endif %}"></div>
-    <section class="container animated fadeInDown">
-      <div class="col-70">
-        <h1 class="hero" itemprop="name headline">{{ page.title }}</h1>
-        <p class="subheader text-align--center">
-          <time itemprop="datePublished" datetime="{{ page.date }}">{{ page.date | date_to_string }}</time>
-          {% if page.tags %}
-            •
-            {% for tag in page.tags %}
-              <a href="{{ site.url }}/{{ tag }}">{{ tag }}</a>
-            {% endfor %}
-          {% endif %}
-        </p>
-      </div>
-      {% if page.excerpt %}
-        <div class="col-70 margin--m--bottom">
-          <hr>
-          <p class="subheader lead" itemprop="description">{{ page.excerpt }}</p>
-        </div>
-      {% endif %}
-    </section>
-  </div>
 
-  <div itemprop="articleBody">
-    {{ content }}
-  </div>
+  <div class="intro bg" {% if page.cover %}style="background: url(/assets/img/cover/{{ page.cover }}) no-repeat center center; background-size: cover;"{% endif %}>
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <h1 itemprop="name headline">{{ page.title }}</h1>
+          {% if page.excerpt %}
+            <p class="lead" itemprop="description">
+              {{ page.excerpt }}
+            </p>
+          {% endif %}
+        </div><!-- .col -->
+      </div><!-- .row -->
+    </div><!--.container-->
+  </div><!--.intro-->
+
+  <main class="content">
+
+    <div class="blogControl">
+      <div class="container">
+        <ul>
+          <li><a href="{{ site.url }}/blog" class="backToBlog"> <i class="fa fa-list-ul"></i> Back</a></li>
+          <li><span itemprop="datePublished" datetime="{{ page.date }}">{{ page.date | date_to_string }}</span></li>
+        </ul>
+      </div><!-- .container -->
+    </div><!-- .blogControl -->
+
+
+  {{ content }}
+
+</main><!--.content-->
 
 </article>
 
-{% include nextblogpost.html %}
+<div class="blogControl blogControl--bottom">
+  <div class="container">
+    <ul>
+      <li><a href="{{ site.url }}/blog" class="backToBlog"> <i class="fa fa-list-ul"></i> Back</a></li>
+      <li><a href="blogpost.html">Nächster Blogpost:</a></li>
+    </ul>
+  </div><!-- .container -->
+</div><!-- .blogControl -->
 
 {% include footer.html %}

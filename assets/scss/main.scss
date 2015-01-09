@@ -1,45 +1,18 @@
-@charset "utf-8";
-
 /**
- * Load all default variables, which can be overwritten later
+ * volkerotto.net - Main Scss File
+ * * * *
+ * @Author Volker Otto <hello@volkerotto.net>
+ * @Year 2014
  */
-@import "defaults";
 
-/**
- * Google Webfonts
- */
-@if ($google-fonts != false){
-	@import url("http://fonts.googleapis.com/css?family=#{$google-fonts}");
-}
+@import 'vendor/normalize';
+@import url(//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css);
 
-/**
- * Load all generic classes
- */
-@import "ext/normalize"; 		// Normalize.css
-@import "ext/animate.min"; 	// Animate.css
-
-@import "generic/mixins";
-@import "generic/helpers";
-
-/**
- * Load extensions
- */
-@import "ext/font-awesome.min"; // Font-Awesome
-@import "ext/grid";
-@import "ext/syntax";
-
-/**
- * Load all base classes
- */
-@import "base/basics";
-@import "base/typography";
-@import "base/colors";
-
-/**
- * Load all objects
- */
-@import "objects/layout";
-@import "objects/header";
-@import "objects/nav";
-@import "objects/content";
-@import "objects/footer";
+@import 'basic/vars';
+@import 'basic/html';
+@import 'basic/grid';
+@import 'basic/header';
+@import 'basic/typo';
+@import 'basic/button';
+@import 'basic/content';
+@import 'basic/footer';

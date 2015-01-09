@@ -1,3 +1,5 @@
+# www.robotstxt.org/
+
 User-Agent: *
 Disallow: /_drafts
 Disallow: /_includes

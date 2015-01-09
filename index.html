@@ -1,42 +1,99 @@
 ---
-title: Web Architect, Hamburg
+title: Volker Otto Web Architect, Hamburg
 layout: default
 ---
-<div class="outer bg--blue" style="background-image:url(/assets/img/cover/cover_big_me.jpg);" id="hello" role="banner">
-  <div class="outer--overlay"></div>
-  <div class="container" itemscope itemtype="http://schema.org/Person">
-    <div class="col-70">
-      <h1 class="hero animated fadeInDown" itemprop="name">Volker Otto</h1>
-      <h2 class="h3 text-align--center subheader animated fadeInDown" itemprop="jobTitle">Web Architect, Hamburg</h2>
-    </div>
-    <div class="col-60 margin--m--bottom animated fadeInDown">
-      <hr>
-      <p class="lead" itemprop="description">Freelancer and consultant around the web. Creator of <a href="https://github.com/{{site.me.github}}/reddix">reddix</a> - a reddit chrome extension, <a href="https://github.com/{{site.me.github}}/Br4ckets-Theme">Br4ckets</a> - a Sublime Text color scheme. See who <a href="/clients">worked with me</a>.</p>
-    </div>
-  </div>
-</div>
-
-<div class="outer">
+<div class="intro">
   <div class="container">
-    <div class="col-75">
-    {% for post in site.posts limit:1 %}
-      <article class="post">
-        <h3 class="title">
-          <a href="{{ post.url }}">{{ post.title }}</a>
-        </h3>
-        <p class="excerpt">{{ post.excerpt }}</p>
-        <div class="meta">
-          <div class="date">{{ post.date | date_to_string }}</div>
-          {% if post.tags %}
-          <ul class="tags">
-          {% for tag in post.tags %}
-            <li><a href="{{ site.url }}/{{ tag }}">{{ tag }}</a></li>
-          {% endfor %}
-          </ul>
-          {% endif %}
-        </div>
-      </article>
-    {% endfor %}
-    </div>
-  </div>
-</div>
+    <div class="row">
+      <div class="col">
+        <h1>Making your dream<br> come to web</h1>
+        <p class="lead">As a Web Architect I work for companys/agencys to create their web appearence from building the right foundation to ongoing optimization and support. Design, development, crafting, sales. I uncover problems and solve them.</p>
+        <p class="lead">In short, I try to make the web a better place.</p>
+      </div><!-- .col -->
+    </div><!-- .row -->
+  </div><!--.container-->
+</div><!--.intro-->
+
+<main class="content">
+
+  <div class="service">
+    <div class="container">
+
+      <div class="row row--centered">
+          <div class="col-75">
+            <h2 class="">From small things<br>to great change</h2>
+            <p class="lead">
+              I aim to build long lasting partnerships with my customers. I want to share the responsibility for the quality of my customers products and services, from the smallest design details to long term impact and strategic direction.
+            </p>
+          </div><!-- .col -->
+      </div><!-- .row -->
+
+      <div class="row breath service--listing">
+        <div class="col-25">
+          <span class="preH">1. Briefing</span>
+          <h2 class="h3">Consulting</h2>
+          <p>Figuring out what you want and need is a very important question. I help you answer them and find solutions that fit your budget.</p>
+        </div><!-- .col -->
+        <div class="col-25">
+          <span class="preH">2. Blueprint</span>
+          <h2 class="h3">Design</h2>
+          <p>Also known as Front-End Development: Setting the mood, fitting the corporate identify and defining the layout in a responsive manner.</p>
+        </div><!-- .col -->
+        <div class="col-25">
+          <span class="preH">3. Construction</span>
+          <h2 class="h3">Development</h2>
+          <p>Also known as Back-End Development: Setting up and configurating or developing a cms or custom built solution.</p>
+        </div><!-- .col -->
+        <div class="col-25">
+          <span class="preH">4. Maintenance</span>
+          <h2 class="h3">Analyse</h2>
+          <p>Once the site is up my job is not over. Its very important to react to visitor data - once enough analytics has happend.</p>
+        </div><!-- .col -->
+      </div><!-- .row -->
+    </div><!-- .container -->
+  </div><!-- .service -->
+
+  <div class="clients">
+    <div class="container">
+
+      <div class="row row--centered">
+          <div class="col-75">
+              <h2>My Clients</h2>
+              <p class="lead">
+                I work with corporations, institutions and startups in a wide range of industries. Here are some of the clients I have had the pleasure working with:
+              </p>
+          </div><!-- .col -->
+      </div><!-- .row -->
+
+      <div class="row breath clients--listing">
+        <div class="col-25"><img src="{{ site.url }}/assets/img/clients/pepperhill.png" alt=""></div><!-- .col -->
+        <div class="col-25"><img src="{{ site.url }}/assets/img/clients/kreativmarkt.png" alt=""></div><!-- .col -->
+        <div class="col-25"><img src="{{ site.url }}/assets/img/clients/schokoladenseite.png" alt=""></div><!-- .col -->
+        <div class="col-25"><img src="{{ site.url }}/assets/img/clients/swallows.png" alt=""></div><!-- .col -->
+        <div class="col-25"><img src="{{ site.url }}/assets/img/clients/marry.png" alt=""></div><!-- .col -->
+        <div class="col-25"><img src="{{ site.url }}/assets/img/clients/schmitz.png" alt=""></div><!-- .col -->
+        <div class="col-25"><img src="{{ site.url }}/assets/img/clients/iomiqs.png" alt=""></div><!-- .col -->
+        <div class="col-25"><img src="{{ site.url }}/assets/img/clients/gofreaks.png" alt=""></div><!-- .col -->
+      </div><!-- .row -->
+    </div><!-- .container -->
+  </div><!-- .clients -->
+
+
+
+  <div class="contact bg--animated">
+    <div class="container">
+
+      <div class="row row--centered">
+          <div class="col-75 text-center">
+              <h2 class="">Let's talk</h2>
+              <p class="lead">
+                I would love to chat with you. I live in Hamburg, Germany GMT+1 timezone. Drop me a line and I'll get back to you in no time.
+              </p>
+              <a href="mailto:{{ site.me.email }}" class="btn">Leave me a message!</a>
+          </div><!-- .col -->
+      </div><!-- .row -->
+
+    </div><!-- .container -->
+  </div><!-- .contact -->
+
+</main><!--.content-->

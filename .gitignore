@@ -5,3 +5,4 @@
 *.sublime-workspace
 codekit-config.json
 *.psd
+.DS_Store

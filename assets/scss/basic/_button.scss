@@ -1,0 +1,109 @@
+/**
+ * BUTTONS
+ */
+
+// DEFAULT BUTTON
+.btn{
+  display: inline-block;
+  padding: .6em 1.5em;
+
+  //border: .15em solid $primary;
+  background: $primary;
+  color: white;
+  font-weight: normal;
+  text-transform: uppercase;
+  font-size: .9rem;
+  border-radius: 3px;
+  text-decoration: none;
+  transition: all .2s linear;
+
+  @media (min-width: $bp-small){
+    font-size: 1rem;
+  }
+  @media (min-width: $bp-medium){
+    font-size: 1.1rem;
+  }
+
+  &:hover{
+    color: white;
+    background: darken($primary,5%);
+  }
+  &:active{
+    color: white;
+    background: lighten($primary,5%);
+  }
+
+  &.btn--blue{
+    border-color: $blue;
+    background: $blue;
+
+    &:hover{
+      background: darken($blue,10%);
+    }
+    &:active{
+      background: lighten($blue,5%);
+    }
+  }
+  &.btn--white{
+    border-color: white;
+    color: white;
+
+    &:hover{
+      background: white;
+      color: $grey;
+    }
+    &:active{
+      background: rgba(white,.9);
+    }
+  }
+}
+
+
+// BACK TO TOP ARROW
+.backToTop{
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1rem;
+  z-index: 1002;
+  display: none;
+  //padding: .2rem .7rem;
+  text-align: center;
+  border: .15em solid rgba($grey,.3);
+  color: rgba($grey,.3);
+  border-radius: 3px;
+  text-decoration: none;
+
+  transition: all .2s linear;
+  width: 2rem;
+  padding: .1em 0;
+
+  &:hover{
+    color: $grey;
+    border-color: $grey;
+  }
+
+  &:before{
+    font-family: FontAwesome;
+    //content: "\f077";
+    content: "\f106";
+  }
+}
+
+// SOCIAL BUTTONS
+.social{
+  margin: 1rem 0;
+
+  i{
+    display: inline-block;
+    text-align: center;
+    width: 2rem;
+    padding: .5em 0;
+    color: lighten($grey,5%);
+    border-radius: 3px;
+    transition: all .2s linear;
+
+    &:hover{
+      color: lighten($grey,20%);
+    }
+  }
+}
