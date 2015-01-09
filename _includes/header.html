@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>{{ page.title }} | {{ site.name }}</title>
-    <meta name="description" content="{% if page.excerpt %}{{page.excerpt}}{% else %}{{site.description}}{% endif %}" />
+    <meta name="description" content="{% if page.excerpt %}{{ post.excerpt | remove: '<p>' | remove: '</p>' }}{% else %}{{site.description}}{% endif %}" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="index,follow" />
 

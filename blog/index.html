@@ -15,7 +15,8 @@ layout: default
 
 <main class="content">
 
-{% for post in site.posts limit:1 %}
+{% for post in site.posts %}
+
   <article class="article bullet" id="first_one">
     <div class="container">
       <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
@@ -24,9 +25,10 @@ layout: default
       </div><!-- .preH -->
       <p class="lead">
         {{ post.excerpt }}
-      </p>
+      </p><!-- .lead -->
     </div><!-- .container -->
   </article>
+
 {% endfor %}
 
 </main><!--.content-->
