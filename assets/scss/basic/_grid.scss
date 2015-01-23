@@ -16,6 +16,7 @@
     margin: 0 auto;
     padding-right: 1rem;
     padding-left: 1rem;
+    max-width: 1000px;
 
     @media (min-width: $bp-xs){
       width: 95%;
@@ -23,10 +24,6 @@
 
     @media (min-width: $bp-small){
         width: 90%;
-        //max-width: 800px;
-    }
-    @media (min-width: $bp-large){
-        max-width: 1000px;
     }
 }
 

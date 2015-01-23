@@ -22,7 +22,7 @@
     <div class="blogControl">
       <div class="container">
         <ul>
-          <li><a href="{{ site.url }}/blog" class="backToBlog"> <i class="fa fa-list-ul"></i> Back</a></li>
+          <li><a href="{{ site.url }}/blog" class="backToBlog">Back to overview</a></li>
           <li><span itemprop="datePublished" datetime="{{ page.date }}">{{ page.date | date_to_string }}</span></li>
         </ul>
       </div><!-- .container -->
@@ -35,7 +35,7 @@
   <div class="blogControl blogControl--bottom">
     <div class="container">
       <ul>
-        <li><a href="{{ site.url }}/blog" class="backToBlog"> <i class="fa fa-list-ul"></i> Back</a></li>
+        <li><a href="{{ site.url }}/blog" class="backToBlog">Back to overview</a></li>
         {% if page.previous.url %}
           <li><a href="{{page.previous.url}}" title="Previous Post: {{page.previous.title}}">Previous Post: {{page.previous.title}}</a></li>
         {% else if page.next.url %}

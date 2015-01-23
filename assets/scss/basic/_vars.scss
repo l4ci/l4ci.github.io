@@ -3,16 +3,16 @@
  */
 
 // COLORS
-$red: #de5f5f;//desaturate(#F14C4C,20%);
+$red: #de5f5f;
 $green: desaturate(lighten(#B4D544,5%),20%);
-$blue: #5fa9de;//desaturate(lighten(invert($red),20%),40%);
+$blue: #5fa9de;
 
-$grey: #585858;
+$grey: #333;
 
 $primary: $red;
 
 // BREAKPOINTS
-$bp-xs : 29.375em; // 470px;
-$bp-small: 53em;   //  848px;
-$bp-medium: 62.5em; // 1000px
+$bp-xs : 29.375em;  //  470px;
+$bp-small: 53em;    //  848px;
+$bp-medium: 62.5em; // 1000px;
 $bp-large: 75em;    // 1200px;

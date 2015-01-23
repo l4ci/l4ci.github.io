@@ -8,7 +8,6 @@ header{
   left: 0;
   right: 0;
   text-align: center;
-  //background: rgba($primary,1);
   border-bottom: 1px solid rgba(255,255,255, .1);
 
   @media (min-width: $bp-xs){
@@ -24,7 +23,6 @@ header{
     display: none;
     text-align: center;
     background: rgba($primary,.9);
-    //border-bottom: .2em solid rgba($grey,.1);
 
     &.js-active{
       display: block;
@@ -36,17 +34,17 @@ header{
         padding: .7rem 0;
       }
       svg,.slogan{
-        fill: white; //rgba(white,.7); //rgba($grey,.5);
-        color: white; //rgba(white,.7); //rgba($grey,.5);
+        fill: white;
+        color: white;
       }
     }
     nav{
       padding: 1.25rem 0;
       a{
-        color: rgba(white,.7); //rgba($grey,.5);
+        color: rgba(white,.7);
         &:hover,
         &.active{
-          color: white; //$grey;
+          color: white;
         }
       }
     }
@@ -88,7 +86,6 @@ header{
     display: inline-block;
     color: white;
     font-size: 1.2rem;
-    //font-weight: bold;
     padding: 0 0 0 .3em;
     letter-spacing: .02em;
     vertical-align: middle;
@@ -171,8 +168,8 @@ nav{
     }
 }
 .intro{
-  background: $primary; // url('../img/bg/coffee.jpg') no-repeat center center;
-  background-image: linear-gradient(to bottom, $primary, desaturate(darken($primary,5%),20%) );
+  background: $primary;
+  background-image: linear-gradient(to bottom, $primary, darken($primary,7%) );
   background-size: cover;
   padding: 10rem 0 2rem;
   color: white;
@@ -206,7 +203,6 @@ nav{
     }
 
     &:hover{
-      //transform: scale(1.2) rotate(15deg);
       transform: scale(1.1);
       cursor: pointer;
     }
@@ -215,8 +211,6 @@ nav{
   p{
     display: inline-block;
     color: rgba(white,.9);
-    // background: rgba(black,.6);
-    // padding: .1em .2em;
   }
   .col{
     @extend .col-75;
