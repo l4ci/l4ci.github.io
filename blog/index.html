@@ -34,7 +34,7 @@ layout: default
         {{ post.excerpt }}
       </p><!-- .lead -->
       <div class="preH">
-        {{ post.date | date_to_string }}
+        {{ post.date | date: "%-d %B %Y" }}
       </div><!-- .preH -->
       <div class="preH">
         {% if site.readtime %}
