@@ -11,15 +11,15 @@ footer{
   padding: 1rem 0;
   background: #333;
   background-image: linear-gradient(to bottom, #333, darken(#333,5%) );
-  color: lighten($grey,10%);
+  color: lighten($grey,15%);
   text-align: center;
 
   a{
-    color: lighten($grey,15%);
+    color: lighten($grey,20%);
     text-decoration: none;
 
     &:hover{
-      color: lighten($grey,25%);
+      color: lighten($grey,30%);
     }
   }
 
@@ -30,10 +30,10 @@ footer{
 
     svg{
       text-align: center;
-      fill: lighten($grey,10%);
+      fill: lighten($grey,15%);
 
       &:hover{
-        fill: lighten($grey,20%);
+        fill: lighten($grey,25%);
         transform: none;
       }
     }
