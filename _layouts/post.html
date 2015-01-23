@@ -17,13 +17,25 @@
     </div><!--.container-->
   </div><!--.intro-->
 
-  <main class="content">
+  <main class="content content--blog">
 
     <div class="blogControl">
       <div class="container">
         <ul>
           <li><a href="{{ site.url }}/blog" class="backToBlog">Back to overview</a></li>
           <li><span itemprop="datePublished" datetime="{{ page.date }}">{{ page.date | date_to_string }}</span></li>
+          <li>
+            {% if site.readtime %}
+              {% if readtime > 60 %}
+              {% assign readtime_hours = readtime | divided_by: 60 %}
+              {% assign readtime_minutes = readtime | modulo:60 %}
+                {% if readtime_hours > 1 and readtime_hours < 2 %}1 hour
+                {% else %}<span class="hour">{{ readtime_hours }}</span> hours
+                {% endif %}{% if readtime_minutes < 1 %}{% elsif readtime_minutes > 1 and readtime_minutes < 1.5 %} and 1 minute {% elsif readtime_minutes > 1.5 %} and <span class="time">{{ readtime_minutes }}</span> minutes{% endif %}
+              {% else %}
+                {% if readtime < 1 %}Less than 1 minute {% elsif readtime > 1 and readtime < 1.5 %}1 minute {% elsif readtime > 1.5 %}<span class="time">{{ readtime }}</span> minutes {% endif %}{% endif %} read
+            {% endif %}
+          </li>
         </ul>
       </div><!-- .container -->
     </div><!-- .blogControl -->

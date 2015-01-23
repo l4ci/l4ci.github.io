@@ -16,6 +16,9 @@ url:          "http://volkerotto.net"
 paginate:     10
 permalink:    pretty
 
+readtime:     true
+wpm:          200
+
 me:
   phone:      +49 (0) 157/752 121 65
   email:      hello@volkerotto.net

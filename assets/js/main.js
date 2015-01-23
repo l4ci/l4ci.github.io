@@ -19,17 +19,13 @@ $(function() {
       scrollUp = 0,
       scrollDown = 0;
 
-  // DEBOUNCE HELPER
-  // function debounce(fn, delay) {
-  //   var timer = null;
-  //   return function () {
-  //     var context = this, args = arguments;
-  //     clearTimeout(timer);
-  //     timer = setTimeout(function () {
-  //       fn.apply(context, args);
-  //     }, delay);
-  //   };
-  // }
+
+  $(".time").text(function (index, value) {
+    return Math.round(parseFloat(value));
+  });
+  $(".hour").text(function (index, value) {
+    return Math.floor(parseFloat(value));
+  });
 
 
 
