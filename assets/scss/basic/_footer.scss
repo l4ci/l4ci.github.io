@@ -9,17 +9,17 @@ footer{
   right: 0;
   z-index: -1;
   padding: 1rem 0;
-  background: #333; //#f7f7f7;//#fafafa;
+  background: #333;
   background-image: linear-gradient(to bottom, #333, darken(#333,5%) );
-  color: $grey;
+  color: lighten($grey,10%);
   text-align: center;
 
   a{
-    color: lighten($grey,5%);
+    color: lighten($grey,15%);
     text-decoration: none;
 
     &:hover{
-      color: lighten($grey,20%);
+      color: lighten($grey,25%);
     }
   }
 
@@ -30,7 +30,7 @@ footer{
 
     svg{
       text-align: center;
-      fill: lighten($grey,5%);
+      fill: lighten($grey,10%);
 
       &:hover{
         fill: lighten($grey,20%);
@@ -52,7 +52,7 @@ aside{
     padding: 1rem 0 0 0;
     display: inline-block;
     list-style: none;
-    border-top: 1px solid rgba($grey,.5);
+    border-top: 1px solid rgba(lighten($grey,10%),.5);
   }
 
   li{
