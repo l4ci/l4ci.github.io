@@ -1,5 +1,13 @@
 {% include header.html %}
 
+{% if site.readtime %}
+  {% if site.wpm %}
+    {% assign readtime = page.content | strip_html | number_of_words | append: '.0' | divided_by:site.wpm %}
+  {% else %}
+    {% assign readtime = page.content | strip_html | number_of_words | append: '.0' | divided_by:180 %}
+  {% endif %}
+{% endif %}
+
 <article itemscope itemtype="http://schema.org/BlogPosting" role="main">
 
   <div class="intro bg" {% if page.cover %}style="background: url(/assets/img/cover/{{ page.cover }}) no-repeat center center; background-size: cover;"{% endif %}>

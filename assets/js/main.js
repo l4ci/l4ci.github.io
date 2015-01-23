@@ -20,12 +20,12 @@ $(function() {
       scrollDown = 0;
 
 
-  // $(".time").text(function (index, value) {
-  //   return Math.round(parseFloat(value));
-  // });
-  // $(".hour").text(function (index, value) {
-  //   return Math.floor(parseFloat(value));
-  // });
+  $(".time").text(function (index, value) {
+    return Math.round(parseFloat(value));
+  });
+  $(".hour").text(function (index, value) {
+    return Math.floor(parseFloat(value));
+  });
 
 
 

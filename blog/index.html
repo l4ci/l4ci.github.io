@@ -19,6 +19,14 @@ layout: default
 
 {% for post in site.posts %}
 
+  {% if site.readtime %}
+    {% if site.wpm %}
+      {% assign readtime = post.content | strip_html | number_of_words | append: '.0' | divided_by:site.wpm %}
+    {% else %}
+      {% assign readtime = post.content | strip_html | number_of_words | append: '.0' | divided_by:180 %}
+    {% endif %}
+  {% endif %}
+
   <article class="article bullet {% cycle '', 'article--grey' %}" id="{{ post.title | slugify }}">
     <div class="container">
       <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
