@@ -11,7 +11,7 @@ markdown:     redcarpet
 name:         "Volker Otto"
 description:  "Web Architect, Hamburg"
 keywords:     "volker otto,web architect,hamburg"
-url:          "http://volkerotto.net"
+url:          "https://volkerotto.net"
 
 paginate:     10
 permalink:    pretty
