@@ -1,9 +1,5 @@
 <body class="{{ page.title | slugify }}">
 
-<!-- TYPEKIT -->
-<script src="//use.typekit.net/fzu8znl.js"></script>
-<script>try{Typekit.load();}catch(e){}</script>
-
 <header>
   <div class="container">
     <a href="/" class="brand">
@@ -16,7 +12,6 @@
     <nav role="navigation">
       <ul>
         <li><a href="{{ site.url }}" {% if current[1] != 'blog' %}class="active"{% endif %}>About</a></li>
-        <!-- <li><a href="{{ site.url }}/work">Work</a></li> -->
         <li><a href="{{ site.url }}/blog" {% if current[1] == 'blog' %}class="active"{% endif %}>Blog</a></li>
         <li><a href="mailto:{{ site.me.email }}">Contact</a></li>
       </ul>
