@@ -1,8 +1,5 @@
 /_site
 /_drafts
-/psd
-*.sublime-project
-*.sublime-workspace
 codekit-config.json
 *.psd
 .DS_Store
