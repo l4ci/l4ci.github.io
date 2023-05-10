@@ -8,6 +8,4 @@
 # TECHNOLOGY COLOPHON
 
     CSS3, HTML5, SASS, JS
-    Normalize.css
-    Codekit, Sublime Text
     Github, Jekyll
