@@ -221,6 +221,21 @@ sup {
 .lines-mask svg path {
   transform-origin: 50% 50%;
 }
+.lines-mask .p1 {
+  -webkit-animation: spin infinite 120s linear;
+          animation: spin infinite 120s linear;
+}
+.lines-mask .p2 {
+  -webkit-animation: spin infinite 220s linear;
+          animation: spin infinite 220s linear;
+}
+.lines-mask .p3 {
+  -webkit-animation: spin infinite 80s linear;
+          animation: spin infinite 80s linear;
+}
+.lines-mask .p4 {
+  animation: spin infinite 80s linear reverse;
+}
 .dark .lines-mask.first-right path:not(.p3) {
   stroke: var(--lightgrey);
 }
@@ -229,33 +244,8 @@ sup {
     stroke: var(--lightgrey);
   }
 }
-.lines-mask.first-right .p1 {
-  -webkit-animation: spin infinite 120s linear;
-          animation: spin infinite 120s linear;
-}
-.lines-mask.first-right .p2 {
-  -webkit-animation: spin infinite 220s linear;
-          animation: spin infinite 220s linear;
-}
-.lines-mask.first-right .p3 {
-  -webkit-animation: spin infinite 80s linear;
-          animation: spin infinite 80s linear;
-}
-.lines-mask.first-right .p4 {
-  animation: spin infinite 80s linear reverse;
-}
 .lines-mask.first-left {
   top: 50vh;
-  left: -200px;
-}
-@media (min-width: 1000px) {
-  .lines-mask.first-left {
-    top: 40vh;
-    left: 0;
-  }
-}
-.lines-mask.first-left path {
-  transform-origin: 50% 50%;
 }
 .dark .lines-mask.first-left path:not(.p2) {
   stroke: var(--lightgrey);
@@ -265,33 +255,12 @@ sup {
     stroke: var(--lightgrey);
   }
 }
-.lines-mask.first-left .p1 {
-  -webkit-animation: spin infinite 120s linear;
-          animation: spin infinite 120s linear;
-}
-.lines-mask.first-left .p2 {
-  animation: spin infinite 220s linear reverse;
-}
-.lines-mask.first-left .p3 {
-  -webkit-animation: spin infinite 80s linear;
-          animation: spin infinite 80s linear;
-}
 .lines-mask.bottom {
-  display: none;
-  width: 1034px;
-  height: 792px;
+  top: auto;
   bottom: 0;
   left: 50%;
-  transform: translate(-50%, -50%);
-}
-@media (min-width: 1000px) {
-  .lines-mask.bottom {
-    display: block;
-    top: 0;
-  }
-}
-.lines-mask.bottom path {
-  transform-origin: 50% 50%;
+  transform: translateX(-50%);
+  max-width: 100%;
 }
 .dark .lines-mask.bottom path:not(.p2) {
   stroke: var(--lightgrey);
@@ -301,53 +270,59 @@ sup {
     stroke: var(--lightgrey);
   }
 }
-.lines-mask.bottom .p1 {
-  -webkit-animation: spin infinite 120s linear;
-          animation: spin infinite 120s linear;
-}
-.lines-mask.bottom .p2 {
-  -webkit-animation: spin infinite 80s linear;
-          animation: spin infinite 80s linear;
-}
-.lines-mask.bottom .p3 {
-  animation: spin infinite 120s linear reverse;
-}
 .bg {
   position: absolute;
-  top: -2rem;
-  left: -1rem;
-  right: -1rem;
-  bottom: -2rem;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
   z-index: -1;
   opacity: 0.9;
   transition: all 0.3s ease;
   border-radius: 8px;
 }
-@media (min-width: 800px) {
+@media (min-width: 1200px) {
   .bg {
-    top: -2rem;
-    left: -2rem;
-    right: -2rem;
-    bottom: -2rem;
+    position: absolute;
+    top: -1rem;
+    left: -1rem;
+    right: -1rem;
+    bottom: -1rem;
   }
 }
 .bg-lightgrey {
   background: var(--lightgrey);
-  transform: rotate(3deg);
+}
+@media (min-width: 1200px) {
+  .bg-lightgrey {
+    transform: rotate(3deg);
+  }
 }
 .bg-blue {
   z-index: -2;
   background: var(--blue);
-  transform: rotate(-3deg);
+}
+@media (min-width: 1200px) {
+  .bg-blue {
+    transform: rotate(-3deg);
+  }
 }
 .bg-yellow {
   background: var(--yellow);
-  transform: rotate(3deg);
+}
+@media (min-width: 1200px) {
+  .bg-yellow {
+    transform: rotate(3deg);
+  }
 }
 .bg-purple {
   z-index: -2;
   background: var(--purple);
-  transform: rotate(-3deg);
+}
+@media (min-width: 1200px) {
+  .bg-purple {
+    transform: rotate(-3deg);
+  }
 }
 
 .cl-purple {
@@ -553,5 +528,6 @@ dl dd {
 .footer {
   position: relative;
   text-align: center;
+  margin-bottom: 0;
   color: var(--white);
 }
