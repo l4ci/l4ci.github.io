@@ -23,18 +23,38 @@
 
 html {
   scroll-behavior: smooth;
-  font-size: 20px;
-  height: 100vh;
-  width: 100vw;
+  font-size: 16px;
   overflow: hidden;
   overflow-y: auto;
 }
+@media (min-width: 500px) {
+  html {
+    font-size: 17px;
+  }
+}
+@media (min-width: 700px) {
+  html {
+    font-size: 18px;
+  }
+}
+@media (min-width: 800px) {
+  html {
+    font-size: 19px;
+  }
+}
+@media (min-width: 1000px) {
+  html {
+    font-size: 20px;
+  }
+}
+@media (min-width: 1200px) {
+  html {
+    font-size: 21px;
+  }
+}
 
 body {
-  position: relative;
-  height: auto;
   margin: 0 auto;
-  padding: 0;
   line-height: 1.5;
   font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   color: var(--black);
@@ -128,12 +148,24 @@ sup {
   position: relative;
   margin-left: auto;
   margin-right: auto;
+  width: 90%;
   max-width: 63rem;
   padding: 2rem;
 }
 @media (min-width: 800px) {
   .jail {
-    padding: 5rem;
+    padding: 3rem;
+  }
+}
+@media (min-width: 1000px) {
+  .jail {
+    padding: 4rem;
+  }
+}
+@media (min-width: 1200px) {
+  .jail {
+    padding-top: 5rem;
+    padding-bottom: 5rem;
   }
 }
 .jail-big {
@@ -144,7 +176,7 @@ sup {
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
 }
-@media (min-width: 800px) {
+@media (min-width: 1000px) {
   .px {
     padding-top: 1rem;
     padding-bottom: 1rem;
@@ -154,7 +186,7 @@ sup {
   padding-top: 1.25rem;
   padding-bottom: 1.25rem;
 }
-@media (min-width: 800px) {
+@media (min-width: 1000px) {
   .px-2 {
     padding-top: 2rem;
     padding-bottom: 2rem;
@@ -164,95 +196,87 @@ sup {
   padding-top: 2rem;
   padding-bottom: 2rem;
 }
-@media (min-width: 800px) {
+@media (min-width: 1000px) {
   .px-3 {
     padding-top: 3rem;
     padding-bottom: 3rem;
   }
 }
 
-.lines {
+.lines-mask {
   position: absolute;
   z-index: 0;
   pointer-events: none;
+  overflow: hidden;
+  width: 100%;
+  top: 0;
+  left: 0;
 }
-.lines.first-right {
-  width: 1158px;
-  height: 1329px;
-  top: -600px;
-  right: -160px;
+.lines-mask svg {
+  position: relative;
+  top: 0;
+  left: 0;
+  right: 0;
 }
-@media (min-width: 800px) {
-  .lines.first-right {
-    top: -300px;
-    right: 0;
-  }
-}
-.lines.first-right path {
+.lines-mask svg path {
   transform-origin: 50% 50%;
 }
-.dark .lines.first-right path:not(.p3) {
+.dark .lines-mask.first-right path:not(.p3) {
   stroke: var(--lightgrey);
 }
 @media (prefers-color-scheme: dark) {
-  .lines.first-right path:not(.p3) {
+  .lines-mask.first-right path:not(.p3) {
     stroke: var(--lightgrey);
   }
 }
-.lines.first-right .p1 {
+.lines-mask.first-right .p1 {
   -webkit-animation: spin infinite 120s linear;
           animation: spin infinite 120s linear;
 }
-.lines.first-right .p2 {
+.lines-mask.first-right .p2 {
   -webkit-animation: spin infinite 220s linear;
           animation: spin infinite 220s linear;
 }
-.lines.first-right .p3 {
+.lines-mask.first-right .p3 {
   -webkit-animation: spin infinite 80s linear;
           animation: spin infinite 80s linear;
 }
-.lines.first-right .p4 {
+.lines-mask.first-right .p4 {
   animation: spin infinite 80s linear reverse;
 }
-.lines.first-left {
-  display: none;
-  width: 1111px;
-  height: 1176px;
-  max-width: 1111px;
-  max-height: 1176px;
+.lines-mask.first-left {
   top: 50vh;
   left: -200px;
 }
-@media (min-width: 800px) {
-  .lines.first-left {
-    display: block;
+@media (min-width: 1000px) {
+  .lines-mask.first-left {
     top: 40vh;
     left: 0;
   }
 }
-.lines.first-left path {
+.lines-mask.first-left path {
   transform-origin: 50% 50%;
 }
-.dark .lines.first-left path:not(.p2) {
+.dark .lines-mask.first-left path:not(.p2) {
   stroke: var(--lightgrey);
 }
 @media (prefers-color-scheme: dark) {
-  .lines.first-left path:not(.p2) {
+  .lines-mask.first-left path:not(.p2) {
     stroke: var(--lightgrey);
   }
 }
-.lines.first-left .p1 {
+.lines-mask.first-left .p1 {
   -webkit-animation: spin infinite 120s linear;
           animation: spin infinite 120s linear;
 }
-.lines.first-left .p2 {
+.lines-mask.first-left .p2 {
   animation: spin infinite 220s linear reverse;
 }
-.lines.first-left .p3 {
+.lines-mask.first-left .p3 {
   -webkit-animation: spin infinite 80s linear;
           animation: spin infinite 80s linear;
 }
-.lines.bottom {
+.lines-mask.bottom {
   display: none;
   width: 1034px;
   height: 792px;
@@ -260,32 +284,32 @@ sup {
   left: 50%;
   transform: translate(-50%, -50%);
 }
-@media (min-width: 800px) {
-  .lines.bottom {
+@media (min-width: 1000px) {
+  .lines-mask.bottom {
     display: block;
     top: 0;
   }
 }
-.lines.bottom path {
+.lines-mask.bottom path {
   transform-origin: 50% 50%;
 }
-.dark .lines.bottom path:not(.p2) {
+.dark .lines-mask.bottom path:not(.p2) {
   stroke: var(--lightgrey);
 }
 @media (prefers-color-scheme: dark) {
-  .lines.bottom path:not(.p2) {
+  .lines-mask.bottom path:not(.p2) {
     stroke: var(--lightgrey);
   }
 }
-.lines.bottom .p1 {
+.lines-mask.bottom .p1 {
   -webkit-animation: spin infinite 120s linear;
           animation: spin infinite 120s linear;
 }
-.lines.bottom .p2 {
+.lines-mask.bottom .p2 {
   -webkit-animation: spin infinite 80s linear;
           animation: spin infinite 80s linear;
 }
-.lines.bottom .p3 {
+.lines-mask.bottom .p3 {
   animation: spin infinite 120s linear reverse;
 }
 .bg {
@@ -361,6 +385,12 @@ sup {
   margin-bottom: 2.5rem;
 }
 @media (min-width: 800px) {
+  .section {
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+  }
+}
+@media (min-width: 1000px) {
   .section {
     margin-top: 4rem;
     margin-bottom: 4rem;
