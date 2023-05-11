@@ -1,6 +1,6 @@
 :root {
   --yellow: #fad722;
-  --blue: rgba(89, 195, 255, 1);
+  --blue: #59C3FF;
   --purple: #9759ee;
   --red: #ee5959;
   --white: #fff;
@@ -241,6 +241,26 @@ sup {
 
   &.first-left {
     top: 55vh;
+
+    path {
+      .dark &:not(.p2) {
+        stroke: var(--lightgrey);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        &:not(.p2) {
+          stroke: var(--lightgrey);
+        }
+      }
+    }
+  }
+
+  &.second-right {
+    top: 120vh;
+
+    @media (min-width: 1200px) {
+      top: 150vh;
+    }
 
     path {
       .dark &:not(.p2) {
