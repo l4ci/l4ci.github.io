@@ -1,13 +1,13 @@
 :root {
-  --yellow: #FAD722;
+  --yellow: #fad722;
   --blue: rgba(89, 195, 255, 1);
-  --purple: #9759EE;
-  --red: #EE5959;
-  --white: #FFF;
-  --lightgrey: #EBEBEB;
-  --grey: #AFAFAF;
-  --black: #3A3A3A;
-  --black-50: rgba(58, 58, 58, .5);
+  --purple: #9759ee;
+  --red: #ee5959;
+  --white: #fff;
+  --lightgrey: #ebebeb;
+  --grey: #afafaf;
+  --black: #3a3a3a;
+  --black-50: rgba(58, 58, 58, 0.5);
   --border-width: 2px;
   --border-radius: 8px;
   --fs-hero: 2.25rem;
@@ -29,39 +29,9 @@
 
 html {
   scroll-behavior: smooth;
-  font-size: 16px;
   overflow: hidden;
   overflow-y: auto;
-}
-
-@media (min-width: 500px) {
-  html {
-    font-size: 17px;
-  }
-}
-
-@media (min-width: 700px) {
-  html {
-    font-size: 18px;
-  }
-}
-
-@media (min-width: 800px) {
-  html {
-    font-size: 19px;
-  }
-}
-
-@media (min-width: 1000px) {
-  html {
-    font-size: 20px;
-  }
-}
-
-@media (min-width: 1200px) {
-  html {
-    font-size: 21px;
-  }
+  font-size: calc(15px + 0.390625vw);
 }
 
 body {
@@ -538,6 +508,18 @@ sup {
 
 @media (min-width: 800px) {
   .header .headline {
+    font-size: 4.5rem;
+  }
+}
+
+@media (min-width: 1000px) {
+  .header .headline {
+    font-size: 5rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .header .headline {
     font-size: 6rem;
   }
 }
@@ -557,7 +539,7 @@ body.dark .header p {
   }
 }
 
-@media (min-width: 800px) {
+@media (min-width: 1000px) {
   .header p {
     font-size: var(--fs-hero);
   }

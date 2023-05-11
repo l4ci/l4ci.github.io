@@ -1,13 +1,13 @@
 :root {
-  --yellow: #FAD722;
+  --yellow: #fad722;
   --blue: rgba(89, 195, 255, 1);
-  --purple: #9759EE;
-  --red: #EE5959;
-  --white: #FFF;
-  --lightgrey: #EBEBEB;
-  --grey: #AFAFAF;
-  --black: #3A3A3A;
-  --black-50: rgba(58, 58, 58, .5);
+  --purple: #9759ee;
+  --red: #ee5959;
+  --white: #fff;
+  --lightgrey: #ebebeb;
+  --grey: #afafaf;
+  --black: #3a3a3a;
+  --black-50: rgba(58, 58, 58, 0.5);
 
   --border-width: 2px;
   --border-radius: 8px;
@@ -17,7 +17,6 @@
   --fs: 1rem;
   --fs-tiny: 0.875rem;
 }
-
 
 /**
  * BASE
@@ -32,35 +31,17 @@
 
 html {
   scroll-behavior: smooth;
-  font-size: 16px;
   overflow: hidden;
   overflow-y: auto;
-
-  @media (min-width: 500px) {
-    font-size: 17px;
-  }
-
-  @media (min-width: 700px) {
-    font-size: 18px;
-  }
-
-  @media (min-width: 800px) {
-    font-size: 19px;
-  }
-
-  @media (min-width: 1000px) {
-    font-size: 20px;
-  }
-
-  @media (min-width: 1200px) {
-    font-size: 21px;
-  }
+  font-size: calc(15px + 0.390625vw);
 }
 
 body {
   margin: 0 auto;
   line-height: 1.5;
-  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol";
   color: var(--black);
 
   &.dark {
@@ -107,7 +88,6 @@ sup {
   white-space: nowrap;
 }
 
-
 /**
  * ANIMATIONS
  */
@@ -135,7 +115,6 @@ sup {
     background-position: 0% 50%;
   }
 }
-
 
 /**
  * Structure
@@ -269,15 +248,15 @@ sup {
     transform: translateX(-50%);
     max-width: 100%;
 
-    @media (min-width:800px) {
+    @media (min-width: 800px) {
       bottom: -3rem;
     }
 
-    @media (min-width:1000px) {
+    @media (min-width: 1000px) {
       bottom: -4rem;
     }
 
-    @media (min-width:1200px) {
+    @media (min-width: 1200px) {
       bottom: -5rem;
     }
 
@@ -313,7 +292,7 @@ sup {
   border-bottom: none;
   border-radius: 50%;
   border: 2px solid var(--lightgrey);
-  padding: .5em;
+  padding: 0.5em;
   font-size: 0.875rem;
   line-height: 1;
   text-align: center;
@@ -331,14 +310,12 @@ sup {
   }
 }
 
-
 /**
  * SECTIONS
  */
 
 .section {
   position: relative;
-
 
   @media (min-width: 800px) {
     margin-top: 3rem;
@@ -358,15 +335,14 @@ sup {
 
 .section__bg {
   position: absolute;
-  top: .5rem;
-  left: .5rem;
-  bottom: .5rem;
-  right: .5rem;
+  top: 0.5rem;
+  left: 0.5rem;
+  bottom: 0.5rem;
+  right: 0.5rem;
   z-index: -1;
-  opacity: .7;
-  transition: all .3s ease;
+  opacity: 0.7;
+  transition: all 0.3s ease;
   border-radius: var(--border-radius);
-
 
   @media (min-width: 800px) {
     top: -2rem;
@@ -462,7 +438,10 @@ sup {
 
   .headline {
     display: inline-block;
-    background: linear-gradient(-45deg, var(--purple), var(--red), var(--yellow));
+    background: linear-gradient(-45deg,
+        var(--purple),
+        var(--red),
+        var(--yellow));
     background-size: 400% 400%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -474,6 +453,14 @@ sup {
     animation: gradient 5s ease infinite;
 
     @media (min-width: 800px) {
+      font-size: 4.5rem;
+    }
+
+    @media (min-width: 1000px) {
+      font-size: 5rem;
+    }
+
+    @media (min-width: 1200px) {
       font-size: 6rem;
     }
   }
@@ -490,7 +477,7 @@ sup {
       color: var(--grey);
     }
 
-    @media (min-width: 800px) {
+    @media (min-width: 1000px) {
       font-size: var(--fs-hero);
     }
 
@@ -542,8 +529,6 @@ sup {
   }
 }
 
-
-
 .hashtags {
   margin: 2rem 0;
   color: var(--black-50);
@@ -587,14 +572,13 @@ dl {
   }
 }
 
-
 .social-links {
   display: block;
   margin: 2rem 0 0;
 
   li {
     display: inline-block;
-    margin-right: .5rem;
+    margin-right: 0.5rem;
 
     @media (min-width: 800px) {
       margin-right: 1rem;
