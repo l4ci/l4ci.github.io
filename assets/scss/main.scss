@@ -508,21 +508,24 @@ sup {
   }
 
   nav {
-    font-size: 1rem;
-    text-align: center;
-
-    @media (min-width: 1000px) {
-      text-align: left;
-    }
+    font-size: var(--fz);
+    line-height: 2;
 
     p {
-      font-size: inherit;
+      font-size: var(--fz);
     }
 
     li {
-      display: inline-block;
-      margin-right: 1rem;
-      color: var(--black);
+      display: block;
+
+      @media (min-width: 500px) {
+        display: inline-block;
+        margin-right: .5rem;
+      }
+
+      @media (min-width: 1000px) {
+        margin-right: 1rem;
+      }
 
       body.dark & {
         color: var(--lightgrey);
