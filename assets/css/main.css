@@ -249,6 +249,28 @@ sup {
   animation: spin infinite 80s linear reverse;
 }
 
+.lines-mask.first-right {
+  top: 0;
+}
+
+@media (min-width: 800px) {
+  .lines-mask.first-right {
+    top: -20%;
+  }
+}
+
+@media (min-width: 1000px) {
+  .lines-mask.first-right {
+    top: -30%;
+  }
+}
+
+@media (min-width: 1200px) {
+  .lines-mask.first-right {
+    top: -40%;
+  }
+}
+
 .dark .lines-mask.first-right path:not(.p3) {
   stroke: var(--lightgrey);
 }
@@ -260,7 +282,7 @@ sup {
 }
 
 .lines-mask.first-left {
-  top: 50vh;
+  top: 55vh;
 }
 
 .dark .lines-mask.first-left path:not(.p2) {
@@ -313,34 +335,6 @@ sup {
   color: var(--purple);
 }
 
-.darkmode-toggle {
-  position: fixed;
-  top: 0.25rem;
-  left: 0.25rem;
-  z-index: 1;
-  border-bottom: none;
-  border-radius: 50%;
-  border: 2px solid var(--lightgrey);
-  padding: 0.5em;
-  font-size: 0.875rem;
-  line-height: 1;
-  text-align: center;
-}
-
-.dark .darkmode-toggle {
-  border-color: var(--grey);
-}
-
-@media (prefers-color-scheme: dark) {
-  .darkmode-toggle {
-    border-color: var(--grey);
-  }
-}
-
-.darkmode-toggle:active {
-  border-color: var(--lightgrey);
-}
-
 /**
  * SECTIONS
  */
@@ -376,7 +370,7 @@ sup {
   bottom: 0.5rem;
   right: 0.5rem;
   z-index: -1;
-  opacity: 0.7;
+  opacity: 0.85;
   transition: all 0.3s ease;
   border-radius: var(--border-radius);
 }
@@ -395,11 +389,21 @@ sup {
   }
 }
 
+body.dark .section__bg {
+  opacity: 0.9;
+}
+
+@media (prefers-color-scheme: dark) {
+  .section__bg {
+    opacity: 0.9;
+  }
+}
+
 .section__bg--lightgrey {
-  background: linear-gradient(-45deg, var(--purple), var(--lightgrey));
-  -webkit-animation: gradient 25s linear infinite;
-  animation: gradient 25s linear infinite;
-  background-size: 300% 300%;
+  background: linear-gradient(-60deg, var(--purple), var(--lightgrey));
+  -webkit-animation: gradient 12s linear infinite;
+  animation: gradient 12s linear infinite;
+  background-size: 400% 400%;
   transform: rotate(2deg);
 }
 
@@ -411,10 +415,10 @@ sup {
 
 .section__bg--blue {
   z-index: -2;
-  background: linear-gradient(-45deg, var(--purple), var(--blue));
-  -webkit-animation: gradient 25s linear infinite;
-  animation: gradient 25s linear infinite;
-  background-size: 300% 300%;
+  background: linear-gradient(-60deg, var(--purple), var(--blue));
+  -webkit-animation: gradient 12s linear infinite;
+  animation: gradient 12s linear infinite;
+  background-size: 400% 400%;
   transform: rotate(-2deg);
 }
 
@@ -425,10 +429,10 @@ sup {
 }
 
 .section__bg--yellow {
-  background: linear-gradient(-45deg, var(--yellow), var(--red));
-  -webkit-animation: gradient 25s linear infinite;
-  animation: gradient 25s linear infinite;
-  background-size: 300% 300%;
+  background: linear-gradient(-60deg, var(--yellow), var(--red));
+  -webkit-animation: gradient 12s linear infinite;
+  animation: gradient 12s linear infinite;
+  background-size: 400% 400%;
   transform: rotate(2deg);
 }
 
@@ -440,10 +444,10 @@ sup {
 
 .section__bg--purple {
   z-index: -2;
-  background: linear-gradient(-45deg, var(--purple), var(--red));
-  -webkit-animation: gradient 25s linear infinite;
-  animation: gradient 25s linear infinite;
-  background-size: 300% 300%;
+  background: linear-gradient(-60deg, var(--purple), var(--red));
+  -webkit-animation: gradient 12s linear infinite;
+  animation: gradient 12s linear infinite;
+  background-size: 400% 400%;
   transform: rotate(-2deg);
 }
 
@@ -478,12 +482,24 @@ sup {
   display: block;
   font-weight: bold;
   padding: 1rem 0;
-  color: var(--black);
+  text-align: center;
+}
+
+@media (min-width: 1000px) {
+  .section__label {
+    text-align: left;
+  }
 }
 
 .header {
   position: relative;
-  padding: 20vh 0 5vh;
+  padding: 10vh 0 5vh;
+}
+
+@media (min-width: 1000px) {
+  .header {
+    padding: 20vh 0 5vh;
+  }
 }
 
 .header .header-text {
@@ -569,6 +585,13 @@ body.dark .header p strong {
 
 .header nav {
   font-size: 1rem;
+  text-align: center;
+}
+
+@media (min-width: 1000px) {
+  .header nav {
+    text-align: left;
+  }
 }
 
 .header nav p {
@@ -597,7 +620,26 @@ body.dark .header nav li {
 
 .hashtags {
   margin: 2rem 0;
-  color: var(--black-50);
+  color: var(--black);
+  text-align: center;
+}
+
+@media (min-width: 1000px) {
+  .hashtags {
+    text-align: left;
+  }
+}
+
+body.dark .hashtags {
+  color: black;
+  opacity: 0.5;
+}
+
+@media (prefers-color-scheme: dark) {
+  .hashtags {
+    color: black;
+    opacity: 0.5;
+  }
 }
 
 .hashtags li {
@@ -645,6 +687,13 @@ dl dd {
 .social-links {
   display: block;
   margin: 2rem 0 0;
+  text-align: center;
+}
+
+@media (min-width: 1000px) {
+  .social-links {
+    text-align: left;
+  }
 }
 
 .social-links li {

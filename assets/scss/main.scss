@@ -212,6 +212,20 @@ sup {
   }
 
   &.first-right {
+    top: 0;
+
+    @media (min-width: 800px) {
+      top: -20%;
+    }
+
+    @media (min-width: 1000px) {
+      top: -30%;
+    }
+
+    @media (min-width: 1200px) {
+      top: -40%;
+    }
+
     path {
       .dark &:not(.p3) {
         stroke: var(--lightgrey);
@@ -226,7 +240,7 @@ sup {
   }
 
   &.first-left {
-    top: 50vh;
+    top: 55vh;
 
     path {
       .dark &:not(.p2) {
@@ -284,32 +298,6 @@ sup {
   }
 }
 
-.darkmode-toggle {
-  position: fixed;
-  top: 0.25rem;
-  left: 0.25rem;
-  z-index: 1;
-  border-bottom: none;
-  border-radius: 50%;
-  border: 2px solid var(--lightgrey);
-  padding: 0.5em;
-  font-size: 0.875rem;
-  line-height: 1;
-  text-align: center;
-
-  .dark & {
-    border-color: var(--grey);
-  }
-
-  @media (prefers-color-scheme: dark) {
-    border-color: var(--grey);
-  }
-
-  &:active {
-    border-color: var(--lightgrey);
-  }
-}
-
 /**
  * SECTIONS
  */
@@ -335,12 +323,12 @@ sup {
 
 .section__bg {
   position: absolute;
-  top: 0.5rem;
-  left: 0.5rem;
-  bottom: 0.5rem;
-  right: 0.5rem;
+  top: .5rem;
+  left: .5rem;
+  bottom: .5rem;
+  right: .5rem;
   z-index: -1;
-  opacity: 0.7;
+  opacity: .85;
   transition: all 0.3s ease;
   border-radius: var(--border-radius);
 
@@ -354,10 +342,19 @@ sup {
     bottom: -3rem;
   }
 
+  body.dark & {
+    opacity: 0.9;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    opacity: 0.9;
+  }
+
+
   &--lightgrey {
-    background: linear-gradient(-45deg, var(--purple), var(--lightgrey));
-    animation: gradient 25s linear infinite;
-    background-size: 300% 300%;
+    background: linear-gradient(-60deg, var(--purple), var(--lightgrey));
+    animation: gradient 12s linear infinite;
+    background-size: 400% 400%;
     transform: rotate(2deg);
 
     @media (min-width: 800px) {
@@ -367,9 +364,9 @@ sup {
 
   &--blue {
     z-index: -2;
-    background: linear-gradient(-45deg, var(--purple), var(--blue));
-    animation: gradient 25s linear infinite;
-    background-size: 300% 300%;
+    background: linear-gradient(-60deg, var(--purple), var(--blue));
+    animation: gradient 12s linear infinite;
+    background-size: 400% 400%;
     transform: rotate(-2deg);
 
     @media (min-width: 800px) {
@@ -378,9 +375,9 @@ sup {
   }
 
   &--yellow {
-    background: linear-gradient(-45deg, var(--yellow), var(--red));
-    animation: gradient 25s linear infinite;
-    background-size: 300% 300%;
+    background: linear-gradient(-60deg, var(--yellow), var(--red));
+    animation: gradient 12s linear infinite;
+    background-size: 400% 400%;
     transform: rotate(2deg);
 
     @media (min-width: 800px) {
@@ -390,9 +387,9 @@ sup {
 
   &--purple {
     z-index: -2;
-    background: linear-gradient(-45deg, var(--purple), var(--red));
-    animation: gradient 25s linear infinite;
-    background-size: 300% 300%;
+    background: linear-gradient(-60deg, var(--purple), var(--red));
+    animation: gradient 12s linear infinite;
+    background-size: 400% 400%;
     transform: rotate(-2deg);
 
     @media (min-width: 800px) {
@@ -424,12 +421,20 @@ sup {
   display: block;
   font-weight: bold;
   padding: 1rem 0;
-  color: var(--black);
+  text-align: center;
+
+  @media (min-width: 1000px) {
+    text-align: left;
+  }
 }
 
 .header {
   position: relative;
-  padding: 20vh 0 5vh;
+  padding: 10vh 0 5vh;
+
+  @media (min-width: 1000px) {
+    padding: 20vh 0 5vh;
+  }
 
   .header-text {
     position: relative;
@@ -504,6 +509,11 @@ sup {
 
   nav {
     font-size: 1rem;
+    text-align: center;
+
+    @media (min-width: 1000px) {
+      text-align: left;
+    }
 
     p {
       font-size: inherit;
@@ -531,7 +541,22 @@ sup {
 
 .hashtags {
   margin: 2rem 0;
-  color: var(--black-50);
+  color: var(--black);
+  text-align: center;
+
+  @media (min-width: 1000px) {
+    text-align: left;
+  }
+
+  body.dark & {
+    color: black;
+    opacity: .5;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    color: black;
+    opacity: .5;
+  }
 
   li {
     display: inline-block;
@@ -575,6 +600,11 @@ dl {
 .social-links {
   display: block;
   margin: 2rem 0 0;
+  text-align: center;
+
+  @media (min-width: 1000px) {
+    text-align: left;
+  }
 
   li {
     display: inline-block;
