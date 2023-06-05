@@ -1,6 +1,6 @@
 :root {
   --yellow: #fad722;
-  --blue: #59C3FF;
+  --blue: #59c3ff;
   --purple: #9759ee;
   --red: #ee5959;
   --white: #fff;
@@ -40,14 +40,24 @@ body {
   font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   color: var(--black);
 }
-
 body.dark {
   background: #111;
+  color: var(--lightgrey);
 }
-
 @media (prefers-color-scheme: dark) {
   body {
     background: #111;
+    color: var(--lightgrey);
+  }
+}
+body.light {
+  background: #fff;
+  color: var(--black);
+}
+@media (prefers-color-scheme: light) {
+  body {
+    background: #fff;
+    color: var(--black);
   }
 }
 
@@ -58,13 +68,10 @@ a {
   border-color: transparent;
   transition: 0.1s ease;
 }
-
-a:hover,
-a:focus {
+a:hover, a:focus {
   border-color: var(--yellow);
   outline: none;
 }
-
 a:active {
   border-color: var(--blue);
 }
@@ -89,54 +96,25 @@ sup {
 /**
  * ANIMATIONS
  */
-@-webkit-keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 @keyframes spin {
   from {
     transform: rotate(0deg);
   }
-
   to {
     transform: rotate(360deg);
   }
 }
-
-@-webkit-keyframes gradient {
-  0% {
-    background-position: 0% 50%;
-  }
-
-  50% {
-    background-position: 100% 50%;
-  }
-
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
 @keyframes gradient {
   0% {
     background-position: 0% 50%;
   }
-
   50% {
     background-position: 100% 50%;
   }
-
   100% {
     background-position: 0% 50%;
   }
 }
-
 /**
  * Structure
  */
@@ -146,32 +124,28 @@ sup {
   margin-right: auto;
   max-width: 60rem;
   padding: 2rem;
+  z-index: 1;
 }
-
 @media (min-width: 800px) {
   .container {
     padding: 2.5rem;
   }
 }
-
 @media (min-width: 1000px) {
   .container {
     padding: 3rem;
   }
 }
-
 @media (min-width: 1200px) {
   .container {
     padding: 4rem;
   }
 }
-
 @media (min-width: 1400px) {
   .container {
     padding: 5rem;
   }
 }
-
 .container-big {
   max-width: 74rem;
 }
@@ -180,31 +154,26 @@ sup {
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
 }
-
 @media (min-width: 1000px) {
   .px {
     padding-top: 1rem;
     padding-bottom: 1rem;
   }
 }
-
 .px-2 {
   padding-top: 1.25rem;
   padding-bottom: 1.25rem;
 }
-
 @media (min-width: 1000px) {
   .px-2 {
     padding-top: 2rem;
     padding-bottom: 2rem;
   }
 }
-
 .px-3 {
   padding-top: 2rem;
   padding-bottom: 2rem;
 }
-
 @media (min-width: 1000px) {
   .px-3 {
     padding-top: 3rem;
@@ -221,100 +190,77 @@ sup {
   top: 0;
   left: 0;
 }
-
 .lines-mask svg {
   position: relative;
 }
-
 .lines-mask svg path {
   transform-origin: 50% 50%;
 }
-
 .lines-mask .p1 {
-  -webkit-animation: spin infinite 120s linear;
   animation: spin infinite 120s linear;
 }
-
 .lines-mask .p2 {
-  -webkit-animation: spin infinite 220s linear;
   animation: spin infinite 220s linear;
 }
-
 .lines-mask .p3 {
-  -webkit-animation: spin infinite 80s linear;
   animation: spin infinite 80s linear;
 }
-
 .lines-mask .p4 {
   animation: spin infinite 80s linear reverse;
 }
-
 .lines-mask.first-right {
   top: 0;
 }
-
 @media (min-width: 800px) {
   .lines-mask.first-right {
     top: -20%;
   }
 }
-
 @media (min-width: 1000px) {
   .lines-mask.first-right {
     top: -30%;
   }
 }
-
 @media (min-width: 1200px) {
   .lines-mask.first-right {
     top: -40%;
   }
 }
-
 .dark .lines-mask.first-right path:not(.p3) {
   stroke: var(--lightgrey);
 }
-
 @media (prefers-color-scheme: dark) {
   .lines-mask.first-right path:not(.p3) {
     stroke: var(--lightgrey);
   }
 }
-
 .lines-mask.first-left {
   top: 55vh;
 }
-
 .dark .lines-mask.first-left path:not(.p2) {
   stroke: var(--lightgrey);
 }
-
 @media (prefers-color-scheme: dark) {
   .lines-mask.first-left path:not(.p2) {
     stroke: var(--lightgrey);
   }
 }
-
 .lines-mask.second-right {
   top: 120vh;
 }
-
 @media (min-width: 1200px) {
   .lines-mask.second-right {
     top: 150vh;
   }
 }
-
 .dark .lines-mask.second-right path:not(.p2) {
   stroke: var(--lightgrey);
 }
-
 @media (prefers-color-scheme: dark) {
   .lines-mask.second-right path:not(.p2) {
     stroke: var(--lightgrey);
   }
 }
-
 .lines-mask.bottom {
   top: auto;
   bottom: 0;
@@ -322,35 +268,29 @@ sup {
   transform: translateX(-50%);
   max-width: 100%;
 }
-
 @media (min-width: 800px) {
   .lines-mask.bottom {
     bottom: -3rem;
   }
 }
-
 @media (min-width: 1000px) {
   .lines-mask.bottom {
     bottom: -4rem;
   }
 }
-
 @media (min-width: 1200px) {
   .lines-mask.bottom {
     bottom: -5rem;
   }
 }
-
 .dark .lines-mask.bottom path:not(.p2) {
   stroke: var(--lightgrey);
 }
-
 @media (prefers-color-scheme: dark) {
   .lines-mask.bottom path:not(.p2) {
     stroke: var(--lightgrey);
   }
 }
-
 .cl--purple {
   color: var(--purple);
 }
@@ -361,21 +301,18 @@ sup {
 .section {
   position: relative;
 }
-
 @media (min-width: 800px) {
   .section {
     margin-top: 3rem;
     margin-bottom: 3rem;
   }
 }
-
 @media (min-width: 1000px) {
   .section {
     margin-top: 4rem;
     margin-bottom: 4rem;
   }
 }
-
 @media (min-width: 1200px) {
   .section {
     margin-top: 5rem;
@@ -394,98 +331,32 @@ sup {
   transition: all 0.3s ease;
   border-radius: var(--border-radius);
 }
-
-@media (min-width: 800px) {
-  .section__bg {
-    top: -2rem;
-    bottom: -2rem;
-  }
-}
-
-@media (min-width: 1400px) {
-  .section__bg {
-    top: -3rem;
-    bottom: -3rem;
-  }
-}
-
 body.dark .section__bg {
   opacity: 0.9;
 }
-
 @media (prefers-color-scheme: dark) {
   .section__bg {
     opacity: 0.9;
   }
 }
-
 .section__bg--lightgrey {
-  background: linear-gradient(-60deg, var(--purple), var(--lightgrey));
-  -webkit-animation: gradient 12s linear infinite;
-  animation: gradient 12s linear infinite;
-  background-size: 400% 400%;
-  transform: rotate(2deg);
+  background: linear-gradient(100deg, var(--purple), var(--blue));
 }
-
-@media (min-width: 800px) {
-  .section__bg--lightgrey {
-    transform: rotate(3deg);
-  }
-}
-
 .section__bg--blue {
   z-index: -2;
-  background: linear-gradient(-60deg, var(--purple), var(--blue));
-  -webkit-animation: gradient 12s linear infinite;
-  animation: gradient 12s linear infinite;
-  background-size: 400% 400%;
-  transform: rotate(-2deg);
+  background: linear-gradient(100deg, var(--blue), var(--yellow));
 }
-
-@media (min-width: 800px) {
-  .section__bg--blue {
-    transform: rotate(-3deg);
-  }
-}
-
 .section__bg--yellow {
-  background: linear-gradient(-60deg, var(--yellow), var(--red));
-  -webkit-animation: gradient 12s linear infinite;
-  animation: gradient 12s linear infinite;
-  background-size: 400% 400%;
-  transform: rotate(2deg);
-}
-
-@media (min-width: 800px) {
-  .section__bg--yellow {
-    transform: rotate(3deg);
-  }
-}
-
-.section__bg--purple {
-  z-index: -2;
-  background: linear-gradient(-60deg, var(--purple), var(--red));
-  -webkit-animation: gradient 12s linear infinite;
-  animation: gradient 12s linear infinite;
-  background-size: 400% 400%;
-  transform: rotate(-2deg);
-}
-
-@media (min-width: 800px) {
-  .section__bg--purple {
-    transform: rotate(-3deg);
-  }
+  background: linear-gradient(100deg, var(--lightgrey), var(--purple));
 }
 
 .section__text {
   position: relative;
   z-index: 1;
 }
-
 .section__text p {
   font-size: var(--fs);
 }
-
 @media (min-width: 800px) {
   .section__text p {
     font-size: var(--fs-lead);
@@ -504,7 +375,6 @@ body.dark .section__bg {
   padding: 1rem 0;
   text-align: center;
 }
-
 @media (min-width: 1000px) {
   .section__label {
     text-align: left;
@@ -515,18 +385,53 @@ body.dark .section__bg {
   position: relative;
   padding: 10vh 0 5vh;
 }
-
 @media (min-width: 1000px) {
   .header {
     padding: 20vh 0 5vh;
   }
 }
-
 .header .header-text {
   position: relative;
   z-index: 1;
 }
-
+.header .header-text p {
+  color: var(--black-50);
+}
+body.dark .header .header-text p {
+  color: var(--grey);
+}
+@media (prefers-color-scheme: dark) {
+  .header .header-text p {
+    color: var(--grey);
+  }
+}
+body.light .header .header-text p {
+  color: var(--black-50);
+}
+@media (prefers-color-scheme: light) {
+  .header .header-text p {
+    color: var(--black-50);
+  }
+}
+.header .header-text strong {
+  color: var(--black);
+}
+body.dark .header .header-text strong {
+  color: var(--lightgrey);
+}
+@media (prefers-color-scheme: dark) {
+  .header .header-text strong {
+    color: var(--lightgrey);
+  }
+}
+body.light .header .header-text strong {
+  color: var(--black);
+}
+@media (prefers-color-scheme: light) {
+  .header .header-text strong {
+    color: var(--black);
+  }
+}
 .header .headline {
   display: inline-block;
   background: linear-gradient(-45deg, var(--purple), var(--red), var(--yellow));
@@ -538,141 +443,79 @@ body.dark .section__bg {
   font-size: 4rem;
   font-weight: bold;
   font-style: italic;
-  -webkit-animation: gradient 5s ease infinite;
   animation: gradient 5s ease infinite;
 }
-
 @media (min-width: 800px) {
   .header .headline {
     font-size: 4.5rem;
   }
 }
-
 @media (min-width: 1000px) {
   .header .headline {
     font-size: 5rem;
   }
 }
-
 @media (min-width: 1200px) {
   .header .headline {
     font-size: 6rem;
   }
 }
-
 .header p {
   font-size: var(--fs-lead);
-  color: var(--black-50);
 }
-
-body.dark .header p {
-  color: var(--grey);
-}
-
-@media (prefers-color-scheme: dark) {
-  .header p {
-    color: var(--grey);
-  }
-}
-
 @media (min-width: 1000px) {
   .header p {
     font-size: var(--fs-hero);
   }
 }
-
-.header p strong {
-  color: var(--black);
-}
-
-body.dark .header p strong {
-  color: var(--lightgrey);
-}
-
-@media (prefers-color-scheme: dark) {
-  .header p strong {
-    color: var(--lightgrey);
-  }
-}
-
 .header p a {
   border-color: var(--yellow);
 }
-
 .header p a:hover {
   border-color: var(--red);
 }
-
 .header nav {
+  position: relative;
   font-size: var(--fz);
   line-height: 2;
+  z-index: 1;
 }
-
 .header nav p {
   font-size: var(--fz);
 }
-
 .header nav li {
   display: block;
+  color: inherit;
 }
-
 @media (min-width: 500px) {
   .header nav li {
     display: inline-block;
     margin-right: 0.5rem;
   }
 }
-
 @media (min-width: 1000px) {
   .header nav li {
     margin-right: 1rem;
   }
 }
-
-body.dark .header nav li {
-  color: var(--lightgrey);
-}
-
-@media (prefers-color-scheme: dark) {
-  .header nav li {
-    color: var(--lightgrey);
-  }
-}
-
 .header nav a {
   font-weight: bold;
 }
 
 .hashtags {
   margin: 2rem 0;
-  color: var(--black);
   text-align: center;
 }
-
 @media (min-width: 1000px) {
   .hashtags {
     text-align: left;
   }
 }
-
-body.dark .hashtags {
-  color: black;
-  opacity: 0.5;
-}
-
-@media (prefers-color-scheme: dark) {
-  .hashtags {
-    color: black;
-    opacity: 0.5;
-  }
-}
-
 .hashtags li {
   display: inline-block;
   font-style: italic;
   margin-right: 0.5rem;
 }
-
 .hashtags li::before {
   content: "#";
 }
@@ -681,13 +524,11 @@ dl {
   display: block;
   margin: 1rem 0;
 }
-
 dl dt {
   display: block;
   color: var(--black-50);
   font-style: italic;
 }
-
 @media (min-width: 600px) {
   dl dt {
     display: inline-block;
@@ -695,12 +536,10 @@ dl dt {
     text-align: right;
   }
 }
-
 dl dd {
   display: block;
   margin-bottom: 1rem;
 }
-
 @media (min-width: 600px) {
   dl dd {
     display: inline-block;
@@ -713,40 +552,45 @@ dl dd {
   display: block;
   margin: 2rem 0 0;
   text-align: center;
+  font-size: 0.875rem;
 }
-
 @media (min-width: 1000px) {
   .social-links {
     text-align: left;
   }
 }
-
 .social-links li {
   display: inline-block;
   margin-right: 0.5rem;
+  margin-bottom: 0.25rem;
 }
-
 @media (min-width: 800px) {
   .social-links li {
     margin-right: 1rem;
   }
 }
-
 .social-links li a {
+  position: relative;
   display: block;
   vertical-align: middle;
-  font-weight: bold;
+  background: hsla(0, 0%, 100%, 0.2);
+  border-radius: 8px;
+  padding: 0.25rem 0.5rem 0.25rem 2rem;
+  letter-spacing: 0.5px;
 }
-
 .social-links li img {
+  position: absolute;
+  top: 50%;
+  left: 0.5rem;
+  transform: translateY(-50%);
   width: 21px;
   height: 21px;
-  vertical-align: middle;
 }
 
 .footer {
   position: relative;
   text-align: center;
   margin-bottom: 0;
-  color: var(--white);
 }
+
+/*# sourceMappingURL=main.css.map */

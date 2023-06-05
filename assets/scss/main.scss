@@ -1,6 +1,6 @@
 :root {
   --yellow: #fad722;
-  --blue: #59C3FF;
+  --blue: #59c3ff;
   --purple: #9759ee;
   --red: #ee5959;
   --white: #fff;
@@ -46,10 +46,22 @@ body {
 
   &.dark {
     background: #111;
+    color: var(--lightgrey);
   }
 
   @media (prefers-color-scheme: dark) {
     background: #111;
+    color: var(--lightgrey);
+  }
+
+  &.light {
+    background: #fff;
+    color: var(--black);
+  }
+
+  @media (prefers-color-scheme: light) {
+    background: #fff;
+    color: var(--black);
   }
 }
 
@@ -126,6 +138,7 @@ sup {
   margin-right: auto;
   max-width: 60rem;
   padding: 2rem;
+  z-index: 1;
 
   @media (min-width: 800px) {
     padding: 2.5rem;
@@ -318,6 +331,7 @@ sup {
   }
 }
 
+
 /**
  * SECTIONS
  */
@@ -343,24 +357,14 @@ sup {
 
 .section__bg {
   position: absolute;
-  top: .5rem;
-  left: .5rem;
-  bottom: .5rem;
-  right: .5rem;
+  top: 0.5rem;
+  left: 0.5rem;
+  bottom: 0.5rem;
+  right: 0.5rem;
   z-index: -1;
-  opacity: .85;
+  opacity: 0.85;
   transition: all 0.3s ease;
   border-radius: var(--border-radius);
-
-  @media (min-width: 800px) {
-    top: -2rem;
-    bottom: -2rem;
-  }
-
-  @media (min-width: 1400px) {
-    top: -3rem;
-    bottom: -3rem;
-  }
 
   body.dark & {
     opacity: 0.9;
@@ -370,51 +374,17 @@ sup {
     opacity: 0.9;
   }
 
-
   &--lightgrey {
-    background: linear-gradient(-60deg, var(--purple), var(--lightgrey));
-    animation: gradient 12s linear infinite;
-    background-size: 400% 400%;
-    transform: rotate(2deg);
-
-    @media (min-width: 800px) {
-      transform: rotate(3deg);
-    }
+    background: linear-gradient(100deg, var(--purple), var(--blue));
   }
 
   &--blue {
     z-index: -2;
-    background: linear-gradient(-60deg, var(--purple), var(--blue));
-    animation: gradient 12s linear infinite;
-    background-size: 400% 400%;
-    transform: rotate(-2deg);
-
-    @media (min-width: 800px) {
-      transform: rotate(-3deg);
-    }
+    background: linear-gradient(100deg, var(--blue), var(--yellow));
   }
 
   &--yellow {
-    background: linear-gradient(-60deg, var(--yellow), var(--red));
-    animation: gradient 12s linear infinite;
-    background-size: 400% 400%;
-    transform: rotate(2deg);
-
-    @media (min-width: 800px) {
-      transform: rotate(3deg);
-    }
-  }
-
-  &--purple {
-    z-index: -2;
-    background: linear-gradient(-60deg, var(--purple), var(--red));
-    animation: gradient 12s linear infinite;
-    background-size: 400% 400%;
-    transform: rotate(-2deg);
-
-    @media (min-width: 800px) {
-      transform: rotate(-3deg);
-    }
+    background: linear-gradient(100deg, var(--lightgrey), var(--purple));
   }
 }
 
@@ -459,6 +429,46 @@ sup {
   .header-text {
     position: relative;
     z-index: 1;
+
+    p {
+      color: var(--black-50);
+
+      body.dark & {
+        color: var(--grey);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        color: var(--grey);
+      }
+
+      body.light & {
+        color: var(--black-50);
+      }
+
+      @media (prefers-color-scheme: light) {
+        color: var(--black-50);
+      }
+    }
+
+    strong {
+      color: var(--black);
+
+      body.dark & {
+        color: var(--lightgrey);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        color: var(--lightgrey);
+      }
+
+      body.light & {
+        color: var(--black);
+      }
+
+      @media (prefers-color-scheme: light) {
+        color: var(--black);
+      }
+    }
   }
 
   .headline {
@@ -492,30 +502,9 @@ sup {
 
   p {
     font-size: var(--fs-lead);
-    color: var(--black-50);
-
-    body.dark & {
-      color: var(--grey);
-    }
-
-    @media (prefers-color-scheme: dark) {
-      color: var(--grey);
-    }
 
     @media (min-width: 1000px) {
       font-size: var(--fs-hero);
-    }
-
-    strong {
-      color: var(--black);
-
-      body.dark & {
-        color: var(--lightgrey);
-      }
-
-      @media (prefers-color-scheme: dark) {
-        color: var(--lightgrey);
-      }
     }
 
     a {
@@ -528,8 +517,10 @@ sup {
   }
 
   nav {
+    position: relative;
     font-size: var(--fz);
     line-height: 2;
+    z-index: 1;
 
     p {
       font-size: var(--fz);
@@ -537,22 +528,15 @@ sup {
 
     li {
       display: block;
+      color: inherit;
 
       @media (min-width: 500px) {
         display: inline-block;
-        margin-right: .5rem;
+        margin-right: 0.5rem;
       }
 
       @media (min-width: 1000px) {
         margin-right: 1rem;
-      }
-
-      body.dark & {
-        color: var(--lightgrey);
-      }
-
-      @media (prefers-color-scheme: dark) {
-        color: var(--lightgrey);
       }
     }
 
@@ -564,21 +548,10 @@ sup {
 
 .hashtags {
   margin: 2rem 0;
-  color: var(--black);
   text-align: center;
 
   @media (min-width: 1000px) {
     text-align: left;
-  }
-
-  body.dark & {
-    color: black;
-    opacity: .5;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    color: black;
-    opacity: .5;
   }
 
   li {
@@ -624,6 +597,7 @@ dl {
   display: block;
   margin: 2rem 0 0;
   text-align: center;
+  font-size: .875rem;
 
   @media (min-width: 1000px) {
     text-align: left;
@@ -632,21 +606,29 @@ dl {
   li {
     display: inline-block;
     margin-right: 0.5rem;
+    margin-bottom: .25rem;
 
     @media (min-width: 800px) {
       margin-right: 1rem;
     }
 
     a {
+      position: relative;
       display: block;
       vertical-align: middle;
-      font-weight: bold;
+      background: hsla(0, 0%, 100%, .2);
+      border-radius: 8px;
+      padding: 0.25rem .5rem 0.25rem 2rem;
+      letter-spacing: .5px;
     }
 
     img {
+      position: absolute;
+      top: 50%;
+      left: .5rem;
+      transform: translateY(-50%);
       width: 21px;
       height: 21px;
-      vertical-align: middle;
     }
   }
 }
@@ -655,5 +637,4 @@ dl {
   position: relative;
   text-align: center;
   margin-bottom: 0;
-  color: var(--white);
 }

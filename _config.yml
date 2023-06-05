@@ -1,0 +1,27 @@
+source:       .
+destination:  ./_site
+layouts:      ./_layouts
+keep_files:   ['.git','.svn']
+exclude:      ['.editorconfig','*.sublime-project','*.sublime-workspace','README.md','CNAME']
+timezone:     Europe/Berlin
+future:       true
+limit_posts:  0
+markdown:     redcarpet
+
+name:         "Volker Otto"
+description:  "Web Architect, Hamburg"
+keywords:     "volker otto,web architect,hamburg"
+url:          "https://volkerotto.net"
+
+paginate:     10
+permalink:    pretty
+
+readtime:     true
+wpm:          160
+
+me:
+  email:      hello@volkerotto.net
+  twitter:    hellovolker
+  facebook:   volker.otto
+  linkedin:   211323021
+  github:     l4ci
