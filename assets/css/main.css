@@ -344,10 +344,10 @@ body.dark .section__bg {
 }
 .section__bg--blue {
   z-index: -2;
-  background: linear-gradient(100deg, var(--blue), var(--yellow));
+  background: linear-gradient(100deg, var(--red), var(--yellow));
 }
 .section__bg--yellow {
-  background: linear-gradient(100deg, var(--lightgrey), var(--purple));
+  background: linear-gradient(100deg, var(--blue), var(--purple));
 }
 
 .section__text {
@@ -526,7 +526,6 @@ dl {
 }
 dl dt {
   display: block;
-  color: var(--black-50);
   font-style: italic;
 }
 @media (min-width: 600px) {
