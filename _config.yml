@@ -9,8 +9,8 @@ limit_posts:  0
 markdown:     redcarpet
 
 name:         "Volker Otto"
-description:  "Web Architect, Hamburg"
-keywords:     "volker otto,web architect,hamburg"
+title:        "👋 hello @ volkerotto.net"
+desc:         "My name is Volker Otto and as a web industry professional with many years of experience, I am currently serving as the CTO @ Digital Masters, where I lead the development of cutting-edge e-commerce and platform solutions for our clients."
 url:          "https://volkerotto.net"
 
 paginate:     10
@@ -18,10 +18,3 @@ permalink:    pretty
 
 readtime:     true
 wpm:          160
-
-me:
-  email:      hello@volkerotto.net
-  twitter:    hellovolker
-  facebook:   volker.otto
-  linkedin:   211323021
-  github:     l4ci
