@@ -23,7 +23,7 @@ var greetings = [
 ];
 
 (function changeTitle() {
-    document.title = '👋 '+greetings[Math.random() * greetings.length | 0]+ ' @ volkerotto.net';
+    document.title = document.title.replace('hello', '👋 '+greetings[Math.random() * greetings.length | 0];
     setTimeout(changeTitle, 2345);
 })();
 
