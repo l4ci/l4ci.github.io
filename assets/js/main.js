@@ -24,11 +24,15 @@ var greetings = [
 
 (function changeTitle() {
     var greet = greetings[Math.random() * greetings.length | 0];
-    document.title = document.title.replace(/^.*?(?=@)/, "👋 " + greet);
+    document.title = document.title.replace(/^.*?(?=@)/, "👋 " + greet + ' ');
     
-    const helloHeading = document.getElementById("hello");
     if (helloHeading) {
-        helloHeading.textContent = greet;
+        helloHeading.style.transition = "opacity 0.4s ease";
+        helloHeading.style.opacity = 0;
+        setTimeout(() => {
+            helloHeading.textContent = greetings[Math.random() * greetings.length | 0];
+            helloHeading.style.opacity = 1;
+        }, 400);
     }
   
     setTimeout(changeTitle, 2345);
