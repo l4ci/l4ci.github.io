@@ -12,12 +12,37 @@
     <meta name="description" content="{{ page.desc | default: site.desc }}">
     <meta name="author" content="Volker Otto">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <meta property="og:title" content="{{ page.ogtitle | default: page.title }}">
+    <meta property="og:description" content="{{ page.desc | default: site.desc }}">
+    <meta property="og:url" content="{{ site.url }}{{ page.url | remove:'index.html'}}">
+    <meta property="og:type" content="website">
   
     {% if page.noindex or layout.noindex or site.noindex %}
       <meta name="robots" content="noindex, nofollow">
     {% else %}
       <meta name="robots" content="index, follow">
     {% endif %}
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Volker Otto",
+      "jobTitle": "CTO",
+      "worksFor": {
+        "@type": "Organization",
+        "name": "Digital Masters"
+      },
+      "url": "https://volkerotto.net",
+      "sameAs": [
+        "https://github.com/volkerotto",
+        "https://linkedin.com/in/volkerotto",
+        "https://mastodon.social/@l4ci"
+      ]
+    }
+    </script>
 
     <link rel="canonical" href="{{ site.url }}{{ page.url | remove:'index.html'}}">
     
