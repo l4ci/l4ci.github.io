@@ -31,11 +31,11 @@ var greetings = [
         helloHeading.style.transition = "opacity 0.4s ease";
         helloHeading.style.opacity = 0;
         setTimeout(() => {
-            helloHeading.textContent = greetings[Math.random() * greetings.length | 0];
+            helloHeading.textContent = greet;
             helloHeading.style.opacity = 1;
-        }, 400);
+        }, 456);
     }
   
-    setTimeout(changeTitle, 2345);
+    setTimeout(changeTitle, 3456);
 })();
 
