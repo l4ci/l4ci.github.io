@@ -25,7 +25,8 @@ var greetings = [
 (function changeTitle() {
     var greet = greetings[Math.random() * greetings.length | 0];
     document.title = document.title.replace(/^.*?(?=@)/, "👋 " + greet + ' ');
-    
+
+    var helloHeading = document.getElementById("hello");
     if (helloHeading) {
         helloHeading.style.transition = "opacity 0.4s ease";
         helloHeading.style.opacity = 0;
