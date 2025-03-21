@@ -23,7 +23,7 @@ var greetings = [
 ];
 
 (function changeTitle() {
-    document.title = document.title.replace('hello', '👋 '+greetings[Math.random() * greetings.length | 0];
+    document.title = document.title.replace('hello', '👋 ' + greetings[Math.random() * greetings.length | 0]);
     setTimeout(changeTitle, 2345);
 })();
 
