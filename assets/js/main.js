@@ -18,8 +18,8 @@ function toggleDarkMode() {
 // Fancy title greeting
 // bitwise rounding instead of Math.floor()?! uh, how fancy!
 var greetings = [
-    "Hallo", "Hello", "Bonjour", "Hola", "Ciao",
-    "Привет", "こんにちは", "안녕하세요", "你好"
+    "Hallo", "Hello", "Bonjour", "Hola", "Ciao", "Hej", "Namaste", "Zdravím", "Ahoj",
+    "こんにちは", "안녕하세요", "你好", "Moin", "Hi", "Hey", "Salü"
 ];
 
 (function changeTitle() {
