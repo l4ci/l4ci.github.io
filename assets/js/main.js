@@ -23,7 +23,14 @@ var greetings = [
 ];
 
 (function changeTitle() {
-    document.title = document.title.replace(/^.*?(?=@)/, "👋 " + greetings[Math.random() * greetings.length | 0]+ ' @ ');
+    var greet = greetings[Math.random() * greetings.length | 0];
+    document.title = document.title.replace(/^.*?(?=@)/, "👋 " + greet);
+    
+    const helloHeading = document.getElementById("hello");
+    if (helloHeading) {
+        helloHeading.textContent = greet;
+    }
+  
     setTimeout(changeTitle, 2345);
 })();
 
