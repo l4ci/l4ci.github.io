@@ -13,9 +13,11 @@
     <meta name="author" content="Volker Otto">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-
+    
     <meta property="og:title" content="{{ page.ogtitle | default: page.title }}">
-    <meta property="og:description" content="{{ page.desc | default: site.desc }}">
+    {% if page.desc %}
+    <meta property="og:description" content="{{ page.desc }}">
+    {% endif %}
     <meta property="og:url" content="{{ site.url }}{{ page.url | remove:'index.html'}}">
     <meta property="og:type" content="website">
   
