@@ -154,8 +154,17 @@ function meetingCalculator() {
         }
       });
       
-      // Keyboard shortcuts - WICHTIG: Nur keydown verwenden!
+      // Keyboard shortcuts mit globalem Debouncing
+      let isProcessingKey = false;
+      
       const keydownHandler = (e) => {
+        // WICHTIG: Blockiere wenn bereits ein Key verarbeitet wird
+        if (isProcessingKey) {
+          console.log('Key blocked - already processing');
+          e.preventDefault();
+          return;
+        }
+        
         // Ignore if typing in input fields
         const isInputField = ['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName);
         const hasModals = this.modalManager && this.modalManager.hasOpenModals();
@@ -172,102 +181,102 @@ function meetingCalculator() {
           return;
         }
         
-        // Check which key was pressed
+        // Ignore key repeat
+        if (e.repeat) {
+          e.preventDefault();
+          return;
+        }
+        
         const key = e.key.toLowerCase();
         const code = e.code;
-        const ctrl = e.ctrlKey || e.metaKey; // metaKey for Mac
+        const ctrl = e.ctrlKey || e.metaKey;
+        
+        // Helper function to execute action with debouncing
+        const executeAction = (action, logMessage) => {
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+          
+          isProcessingKey = true;
+          console.log(logMessage);
+          
+          // Execute action
+          action();
+          
+          // Reset flag after 300ms
+          setTimeout(() => {
+            isProcessingKey = false;
+          }, 300);
+        };
         
         // Enter: Toggle timer
         if (key === 'enter' && !ctrl && !e.shiftKey && !e.altKey) {
-          e.preventDefault();
-          e.stopPropagation();
-          console.log('Enter pressed - toggling timer');
-          this.toggleTimer();
+          executeAction(() => this.toggleTimer(), 'Enter → toggleTimer()');
           return;
         }
         
-        // Ctrl+Space: Toggle timer (alternative)
+        // Ctrl+Space: Toggle timer
         if (code === 'Space' && ctrl) {
-          e.preventDefault();
-          e.stopPropagation();
-          console.log('Ctrl+Space pressed - toggling timer');
-          this.toggleTimer();
+          executeAction(() => this.toggleTimer(), 'Ctrl+Space → toggleTimer()');
           return;
         }
         
-        // Space alone: Toggle timer (wenn kein Modal offen)
+        // Space: Toggle timer
         if (code === 'Space' && !ctrl && !e.shiftKey && !e.altKey) {
-          e.preventDefault();
-          e.stopPropagation();
-          console.log('Space pressed - toggling timer');
-          this.toggleTimer();
+          executeAction(() => this.toggleTimer(), 'Space → toggleTimer()');
           return;
         }
         
-        // Ctrl+R: Reset timer
+        // Ctrl+R: Reset
         if (key === 'r' && ctrl) {
-          e.preventDefault();
-          e.stopPropagation();
-          console.log('Ctrl+R pressed - resetting timer');
-          this.resetTimer();
+          executeAction(() => this.resetTimer(), 'Ctrl+R → resetTimer()');
           return;
         }
         
-        // Ctrl+I: Open info modal
+        // Ctrl+I: Info
         if (key === 'i' && ctrl) {
-          e.preventDefault();
-          e.stopPropagation();
-          console.log('Ctrl+I pressed - opening info');
-          this.openInfoModal();
+          executeAction(() => this.openInfoModal(), 'Ctrl+I → openInfoModal()');
           return;
         }
         
-        // Ctrl+S: Open share modal
+        // Ctrl+S: Share
         if (key === 's' && ctrl) {
-          e.preventDefault();
-          e.stopPropagation();
-          console.log('Ctrl+S pressed - opening share');
-          this.openShareModal();
+          executeAction(() => this.openShareModal(), 'Ctrl+S → openShareModal()');
           return;
         }
         
-        // Ctrl+? or Ctrl+/: Open shortcuts modal
+        // Ctrl+?: Shortcuts
         if ((key === '?' || key === '/' || key === '_') && ctrl) {
-          e.preventDefault();
-          e.stopPropagation();
-          console.log('Ctrl+? pressed - opening shortcuts');
-          this.openShortcutsModal();
+          executeAction(() => this.openShortcutsModal(), 'Ctrl+? → openShortcutsModal()');
           return;
         }
         
-        // +: Increase participants
+        // +: Increase
         if (key === '+' || key === '=' || code === 'Equal' || code === 'NumpadAdd') {
-          e.preventDefault();
-          e.stopPropagation();
-          console.log('+ pressed - increasing participants');
-          this.updatePeopleCount(1);
+          executeAction(() => this.updatePeopleCount(1), '+ → updatePeopleCount(1)');
           return;
         }
         
-        // -: Decrease participants
+        // -: Decrease
         if (key === '-' || key === '_' || code === 'Minus' || code === 'NumpadSubtract') {
-          e.preventDefault();
-          e.stopPropagation();
-          console.log('- pressed - decreasing participants');
-          this.updatePeopleCount(-1);
+          executeAction(() => this.updatePeopleCount(-1), '- → updatePeopleCount(-1)');
           return;
         }
       };
       
-      // Add keydown listener with capture phase
-      document.addEventListener('keydown', keydownHandler, { capture: true });
+      // Add keydown listener ONCE
+      document.addEventListener('keydown', keydownHandler, { 
+        capture: true,
+        once: false,
+        passive: false 
+      });
       
-      // Prevent default space scroll behavior
+      // Prevent space scroll
       window.addEventListener('keydown', (e) => {
         if (e.code === 'Space' && e.target === document.body) {
           e.preventDefault();
         }
-      }, { capture: true });
+      }, { capture: true, passive: false });
       
       // Auto-save interval
       setInterval(() => {
@@ -288,7 +297,7 @@ function meetingCalculator() {
         }
       });
       
-      // Save on page hide (mobile browsers)
+      // Save on page hide
       window.addEventListener('pagehide', () => this.saveState());
     },
 

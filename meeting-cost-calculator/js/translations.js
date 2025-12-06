@@ -22,6 +22,7 @@ const TRANSLATIONS = {
     currency: '🌍 Währung:',
     selectLanguage: 'Sprache auswählen',
     selectCurrency: 'Währung auswählen',
+    shareSession: 'Session teilen',
     
     // Time
     elapsedTime: 'Verstrichene Zeit:',
@@ -123,6 +124,7 @@ const TRANSLATIONS = {
     currency: '🌍 Currency:',
     selectLanguage: 'Select language',
     selectCurrency: 'Select currency',
+    shareSession: 'Share session',
     
     // Time
     elapsedTime: 'Elapsed Time:',
@@ -224,6 +226,7 @@ const TRANSLATIONS = {
     currency: '🌍 Moneda:',
     selectLanguage: 'Seleccionar idioma',
     selectCurrency: 'Seleccionar moneda',
+    shareSession: 'Compartir sesión',
     
     // Time
     elapsedTime: 'Tiempo Transcurrido:',
@@ -325,6 +328,7 @@ const TRANSLATIONS = {
     currency: '🌍 Devise:',
     selectLanguage: 'Sélectionner la langue',
     selectCurrency: 'Sélectionner la devise',
+    shareSession: 'Partager la session',
     
     // Time
     elapsedTime: 'Temps Écoulé:',
@@ -426,6 +430,7 @@ const TRANSLATIONS = {
     currency: '🌍 Valuta:',
     selectLanguage: 'Seleziona lingua',
     selectCurrency: 'Seleziona valuta',
+    shareSession: 'Condividi sessione',
     
     // Time
     elapsedTime: 'Tempo Trascorso:',
@@ -527,6 +532,7 @@ const TRANSLATIONS = {
     currency: '🌍 Waluta:',
     selectLanguage: 'Wybierz język',
     selectCurrency: 'Wybierz walutę',
+    shareSession: 'Udostępnij sesję',
     
     // Time
     elapsedTime: 'Upłynął Czas:',

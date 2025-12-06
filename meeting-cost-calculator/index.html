@@ -378,239 +378,247 @@
 
   <!-- Main App Container -->
   <main id="appContainer" class="glass-container p-6 md:p-8 rounded-2xl shadow-2xl max-w-lg w-full">
-    <!-- Header with Language, Theme Toggle and Info -->
-    <header class="flex justify-between items-center mb-6">
-      <!-- Language Selector -->
-      <div class="relative language-selector-wrapper">
-        <label for="languageSelect" class="sr-only" x-text="t('language')"></label>
-        <select 
-          id="languageSelect"
-          x-model="language" 
-          @change="setLanguage(language)"
-          class="language-selector"
-          :aria-label="t('selectLanguage')"
-          dir="ltr">
-          <option value="de">🇩🇪 Deutsch</option>
-          <option value="en">🇬🇧 English</option>
-          <option value="es">🇪🇸 Español</option>
-          <option value="fr">🇫🇷 Français</option>
-          <option value="it">🇮🇹 Italiano</option>
-          <option value="pl">🇵🇱 Polski</option>
-        </select>
-      </div>
-      
-      <!-- Action Buttons -->
-      <div class="flex gap-2">
-        <button @click="openShareModal()" 
-                class="info-icon focus:outline-none focus:ring-2 focus:ring-blue-500"
-                :aria-label="t('shareLink')"
-                type="button"
-                tabindex="0"
-                :title="t('shareLink')">
-          🔗
-        </button>
-        
-        <button @click="openInfoModal()" 
-                class="info-icon focus:outline-none focus:ring-2 focus:ring-blue-500"
-                :aria-label="t('showInfo')"
-                type="button"
-                tabindex="0"
-                :title="t('showInfo')">
-          i
-        </button>
-      </div>
-      
-      <!-- Theme Toggle -->
-      <button @click="toggleTheme()" 
-              class="text-sm px-3 py-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-              :aria-label="t('toggleTheme')"
-              type="button"
-              :title="t('toggleTheme')"
-              style="background-color: var(--bg-tertiary); color: var(--text-secondary);">
-        <span x-text="theme === 'dark' ? '☀️' : theme === 'light' ? '🌙' : '🌓'"></span>
-      </button>
-    </header>
-
-    <h1 class="text-2xl md:text-3xl font-bold text-center mb-8" x-text="t('title')"></h1>
-    
-    <!-- Cost and Time Display -->
-    <section class="text-center mb-8" aria-label="Meeting statistics">
-      <p class="text-5xl md:text-6xl font-bold mb-3" 
-         style="color: var(--blue-500);" 
-         aria-live="polite" 
-         aria-label="Total cost"
-         x-text="formattedTotalCost"></p>
-      <p class="text-xl md:text-2xl font-medium time-display" 
-         style="color: var(--text-secondary);" 
-         aria-live="polite"
-         aria-label="Elapsed time">
-        ⏱️ <span x-text="formattedElapsedTime"></span>
-      </p>
-    </section>
-
-    <!-- Control Buttons -->
-    <section class="flex items-center justify-between gap-4 mb-6" aria-label="Timer controls">
-      <button @click="toggleTimer()" 
-              class="px-6 py-3 rounded-lg flex-1 font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all"
-              :style="`background-color: ${isRunning ? (isDarkTheme ? '#fbbf24' : '#eab308') : (isDarkTheme ? '#60a5fa' : '#3b82f6')}`"
-              :aria-label="isRunning ? t('pause') : t('start')"
-              type="button">
-        <span x-text="isRunning ? t('pause') : t('start')"></span>
-      </button>
-      <button @click="resetTimer()" 
-              class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg flex-1 font-medium focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all"
-              :aria-label="t('reset')"
-              type="button">
-        <span x-text="t('reset')"></span>
-      </button>
-    </section>
-
-    <!-- People Counter - Prominently Placed -->
-    <section class="mb-6 p-4 rounded-lg border-2 gradient-bg shadow-lg" 
-             style="border-color: var(--blue-500);"
-             aria-label="Participant management">
-      <div class="flex items-center justify-between">
-        <label for="numberOfPeopleInput" 
-               class="block font-bold text-lg" 
-               x-text="t('participants')"></label>
-        <div class="flex items-center space-x-3">
-          <button @click="updatePeopleCount(-1)" 
-                  class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-xl w-10 h-10 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all"
-                  :aria-label="t('decreaseParticipants')"
-                  type="button">
-            −
-          </button>
-          <div class="person-badge px-6 py-2 rounded-lg border-2 shadow-sm" 
-               style="border-color: var(--blue-500);">
-            <input type="number" 
-                   id="numberOfPeopleInput" 
-                   x-model.number="currentPeopleCount"
-                   @input="onPeopleInputChange()"
-                   class="w-12 text-center text-2xl font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 rounded" 
-                   style="background: transparent; color: var(--blue-500);"
-                   min="1"
-                   max="999"
-                   :aria-label="t('numberOfParticipants')">
-          </div>
-          <button @click="updatePeopleCount(1)" 
-                  class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-bold text-xl w-10 h-10 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all"
-                  :aria-label="t('increaseParticipants')"
-                  type="button">
-            +
-          </button>
+      <!-- Header -->
+      <header>
+        <div class="header-left">
+          <h1 class="text-2xl md:text-3xl font-bold" style="color: var(--text-primary);">
+            💰 <span x-text="t('title')"></span>
+          </h1>
         </div>
-      </div>
-    </section>
-
-    <!-- Settings Section -->
-    <section class="mb-6" aria-label="Settings">
-      <button @click="settingsOpen = !settingsOpen" 
-              class="px-4 py-3 rounded-lg w-full text-left font-medium transition-colors hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              style="background-color: var(--bg-tertiary); color: var(--text-primary);"
-              :aria-expanded="settingsOpen"
-              aria-controls="configSection"
-              type="button">
-        <span x-text="settingsOpen ? t('settingsHide') : t('settingsShow')"></span>
-      </button>
-      <div x-show="settingsOpen" 
-           x-collapse
-           id="configSection" 
-           class="mt-4 space-y-4 p-4 rounded-lg config-section" 
-           role="region"
-           aria-label="Configuration options">
-        <div>
-          <label for="costPerPerson" 
-                 class="block font-medium mb-1" 
-                 style="color: var(--text-primary);" 
-                 x-text="t('costPerPerson')"></label>
-          <input type="number" 
-                 id="costPerPerson" 
-                 x-model.number="costPerPerson"
-                 @input="updateCost()"
-                 class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
-                 style="background-color: var(--bg-secondary); color: var(--text-primary); border-color: var(--border-color);"
-                 min="0" 
-                 max="9999"
-                 step="0.01">
-        </div>
-
-        <div>
-          <!-- Currency Selector -->
-          <div class="relative currency-selector-wrapper">
-            <label for="currencySelect" class="block text-sm font-medium mb-2" style="color: var(--text-primary);">
-              <span x-text="t('currency')"></span>
-            </label>
+        <div class="header-right">
+          <!-- Language Selector -->
+          <div class="relative language-selector-wrapper">
+            <label for="languageSelect" class="sr-only" x-text="t('language')"></label>
             <select 
-              id="currencySelect"
-              x-model="currency" 
-              @change="updateCost()"
-              class="currency-selector w-full"
-              :aria-label="t('selectCurrency')"
+              id="languageSelect"
+              x-model="language" 
+              @change="setLanguage(language)"
+              class="language-selector"
+              :aria-label="t('selectLanguage')"
               dir="ltr">
-              <option value="EUR">€ EUR</option>
-              <option value="USD">$ USD</option>
-              <option value="GBP">£ GBP</option>
-              <option value="CHF">CHF</option>
-              <option value="JPY">¥ JPY</option>
-              <option value="CNY">¥ CNY</option>
-              <option value="INR">₹ INR</option>
-              <option value="AUD">$ AUD</option>
-              <option value="CAD">$ CAD</option>
-              <option value="BRL">R$ BRL</option>
+              <option value="de">🇩🇪 Deutsch</option>
+              <option value="en">🇬🇧 English</option>
+              <option value="es">🇪🇸 Español</option>
+              <option value="fr">🇫🇷 Français</option>
+              <option value="it">🇮🇹 Italiano</option>
+              <option value="pl">🇵🇱 Polski</option>
             </select>
           </div>
-        </div>
-
-        <!-- Temporärer Debug-Button (nach den Controls) -->
-        <div class="text-center mt-4">
+          
+          <!-- Info Button -->
           <button 
-            @click="toggleTimer()"
-            class="text-xs px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded"
+            @click="openInfoModal()"
+            class="icon-button"
+            :title="t('info')"
+            :aria-label="t('info')"
             type="button">
-            🐛 Debug: Toggle Timer (Click)
+            ℹ️
+          </button>
+          
+          <!-- Theme Toggle Button -->
+          <button 
+            @click="toggleTheme()"
+            class="icon-button"
+            :title="t('theme')"
+            :aria-label="t('theme')"
+            type="button">
+            <span x-show="theme === 'auto'">🌓</span>
+            <span x-show="theme === 'light'">☀️</span>
+            <span x-show="theme === 'dark'">🌙</span>
           </button>
         </div>
-      </div>
-    </section>
+      </header>
 
-    <!-- Meeting History -->
-    <section aria-label="Meeting history">
-      <button @click="historyOpen = !historyOpen" 
+      <!-- Timer Display -->
+      <div class="timer-display">
+        <div class="timer-value" x-text="formattedElapsedTime"></div>
+      </div>
+
+      <!-- Cost Display -->
+      <div class="cost-display">
+        <div class="text-sm font-medium mb-1" style="color: var(--blue-600);" x-text="t('totalCostLabel')"></div>
+        <div class="cost-value" x-text="formattedTotalCost"></div>
+      </div>
+
+      <!-- Controls -->
+      <div class="controls">
+        <button 
+          @click="startTimer()" 
+          x-show="!isRunning"
+          class="control-button btn-start"
+          :aria-label="t('start')"
+          type="button">
+          ▶️ <span x-text="t('start')"></span>
+        </button>
+        <button 
+          @click="pauseTimer()" 
+          x-show="isRunning"
+          class="control-button btn-pause"
+          :aria-label="t('pause')"
+          type="button">
+          ⏸️ <span x-text="t('pause')"></span>
+        </button>
+        <button 
+          @click="resetTimer()"
+          class="control-button btn-reset"
+          :aria-label="t('reset')"
+          type="button">
+          🔄 <span x-text="t('reset')"></span>
+        </button>
+      </div>
+
+      <!-- People Counter -->
+      <div class="people-counter">
+        <button 
+          @click="updatePeopleCount(-1)"
+          :disabled="currentPeopleCount <= 1"
+          class="people-button"
+          :aria-label="t('removePerson')"
+          type="button">
+          −
+        </button>
+        <div class="flex flex-col items-center">
+          <input 
+            type="number" 
+            x-model.number="currentPeopleCount"
+            @input="onPeopleInputChange()"
+            min="1" 
+            max="1000"
+            class="people-input"
+            :aria-label="t('numberOfPeople')"
+            id="peopleInput">
+          <label for="peopleInput" class="text-xs mt-1" style="color: var(--text-secondary);" x-text="t('participants')"></label>
+        </div>
+        <button 
+          @click="updatePeopleCount(1)"
+          :disabled="currentPeopleCount >= 1000"
+          class="people-button"
+          :aria-label="t('addPerson')"
+          type="button">
+          +
+        </button>
+      </div>
+
+      <!-- Settings Section -->
+      <section class="settings-section" aria-label="Settings">
+        <button 
+          @click="settingsOpen = !settingsOpen" 
+          class="text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 rounded flex items-center gap-2"
+          style="color: var(--text-primary);"
+          :aria-expanded="settingsOpen"
+          aria-controls="settingsContent"
+          type="button">
+          <span x-text="settingsOpen ? '▼' : '▶'"></span>
+          <span x-text="t('settings')"></span>
+        </button>
+        
+        <div x-show="settingsOpen" 
+            x-collapse
+            id="settingsContent"
+            class="mt-4">
+          <!-- Cost per Person & Currency in einer Zeile -->
+          <div class="settings-inline-grid">
+            <!-- Cost per Person -->
+            <div>
+              <label for="costInput" class="block text-sm font-medium mb-2" style="color: var(--text-primary);">
+                <span x-text="t('costPerPerson')"></span>
+              </label>
+              <input 
+                type="number" 
+                id="costInput"
+                x-model.number="costPerPerson"
+                @input="updateCost()"
+                min="0" 
+                max="10000"
+                step="1"
+                class="w-full"
+                :aria-label="t('costPerPerson')">
+            </div>
+            
+            <!-- Currency -->
+            <div>
+              <label for="currencySelect" class="block text-sm font-medium mb-2" style="color: var(--text-primary);">
+                <span x-text="t('currency')"></span>
+              </label>
+              <select 
+                id="currencySelect"
+                x-model="currency" 
+                @change="updateCost()"
+                class="currency-selector w-full"
+                :aria-label="t('selectCurrency')"
+                dir="ltr">
+                <option value="EUR">€ EUR</option>
+                <option value="USD">$ USD</option>
+                <option value="GBP">£ GBP</option>
+                <option value="CHF">CHF</option>
+                <option value="JPY">¥ JPY</option>
+                <option value="CNY">¥ CNY</option>
+                <option value="INR">₹ INR</option>
+                <option value="AUD">$ AUD</option>
+                <option value="CAD">$ CAD</option>
+                <option value="BRL">R$ BRL</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- History & Share Section -->
+      <section class="history-share-section" aria-label="History and sharing">
+        <div class="history-share-grid">
+          <!-- Meeting History -->
+          <div>
+            <button 
+              @click="historyOpen = !historyOpen" 
               class="text-sm underline transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
               style="color: var(--text-secondary);"
               :aria-expanded="historyOpen"
               aria-controls="historySection"
               type="button">
-        <span x-text="historyOpen ? t('historyHide') : t('historyShow')"></span>
-      </button>
-      <div x-show="historyOpen" 
-           x-collapse
-           id="historySection" 
-           class="mt-2 p-3 rounded-lg text-sm history-section" 
-           role="region"
-           aria-label="Participant change history">
-        <p class="font-medium mb-2" 
-           style="color: var(--text-primary);" 
-           x-text="t('historyTitle')"></p>
-        <ul class="space-y-1" style="color: var(--text-secondary);">
-          <template x-for="(segment, index) in segments" :key="index">
-            <li x-text="formatHistoryEntry(segment, index)"></li>
-          </template>
-        </ul>
-      </div>
-    </section>
-    
-    <!-- Footer -->
-    <footer class="mt-6 pt-4 border-t text-center text-sm" style="border-color: var(--border-color); color: var(--text-secondary);">
-      <button @click="openShortcutsModal()" 
-              class="inline-flex items-center gap-1 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 rounded px-2 py-1 transition-colors"
-              style="color: var(--text-secondary);"
-              type="button"
-              :title="t('keyboardShortcuts')">
-        <span>⌨️</span>
-        <span x-text="t('keyboardShortcuts')"></span>
-      </button>
-    </footer>
+              <span x-text="historyOpen ? t('historyHide') : t('historyShow')"></span>
+            </button>
+            <div x-show="historyOpen" 
+                x-collapse
+                id="historySection" 
+                class="mt-2 p-3 rounded-lg text-sm history-section" 
+                role="region"
+                aria-label="Participant change history">
+              <p class="font-medium mb-2" 
+                style="color: var(--text-primary);" 
+                x-text="t('historyTitle')"></p>
+              <ul class="space-y-1" style="color: var(--text-secondary);">
+                <template x-for="(segment, index) in segments" :key="index">
+                  <li x-text="formatHistoryEntry(segment, index)"></li>
+                </template>
+              </ul>
+            </div>
+          </div>
+          
+          <!-- Share Button -->
+          <div class="text-right">
+            <button 
+              @click="openShareModal()"
+              class="share-button"
+              :aria-label="t('shareSession')"
+              type="button">
+              🔗 <span x-text="t('shareSession')"></span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="mt-6 pt-4 border-t text-center text-sm" style="border-color: var(--border-color); color: var(--text-secondary);">
+        <button @click="openShortcutsModal()" 
+                class="inline-flex items-center gap-1 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 rounded px-2 py-1 transition-colors"
+                style="color: var(--text-secondary);"
+                type="button"
+                :title="t('keyboardShortcuts')">
+          <span>⌨️</span>
+          <span x-text="t('keyboardShortcuts')"></span>
+        </button>
+      </footer>
+
   </main>
 
   <!-- Emoji Container -->

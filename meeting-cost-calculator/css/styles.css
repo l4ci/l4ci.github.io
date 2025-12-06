@@ -674,6 +674,239 @@ header {
   }
 }
 
+/* ==================== SETTINGS INLINE GRID ==================== */
+
+.settings-inline-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+@media (max-width: 640px) {
+  .settings-inline-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==================== HISTORY & SHARE SECTION ==================== */
+
+.history-share-section {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.history-share-grid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1rem;
+  align-items: start;
+}
+
+@media (max-width: 640px) {
+  .history-share-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Share Button */
+.share-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: var(--blue-500);
+  color: white;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+}
+
+.share-button:hover {
+  background-color: var(--blue-600);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.share-button:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 640px) {
+  .share-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ==================== SELECT / DROPDOWN STYLING (VERBESSERT) ==================== */
+
+/**
+ * Custom Select Styling mit iOS-Fix und besserem Padding
+ */
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  padding: 0.75rem 2.5rem 0.75rem 0.75rem; /* VERBESSERT: Mehr Padding */
+  font-size: 0.875rem;
+  line-height: 1.5; /* NEU: Bessere Zeilenhöhe */
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  
+  /* WICHTIG: Verhindere iOS-rechtsbündige Ausrichtung */
+  text-align: left;
+  text-align-last: left;
+  direction: ltr;
+  
+  /* Custom Arrow */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 12px;
+  
+  /* Verhindere Text-Overflow */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  
+  /* iOS-spezifische Fixes */
+  -webkit-text-align: left;
+  -webkit-rtl-ordering: logical;
+}
+
+/* Dark Mode Arrow */
+[data-theme="dark"] select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ccc' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+}
+
+select:hover {
+  border-color: var(--blue-500);
+  background-color: var(--bg-tertiary);
+}
+
+select:focus {
+  outline: none;
+  border-color: var(--blue-500);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Option Styling */
+select option {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  padding: 0.75rem; /* VERBESSERT: Mehr Padding */
+  text-align: left;
+  direction: ltr;
+  line-height: 1.5; /* NEU */
+}
+
+/* iOS-spezifische Fixes */
+@supports (-webkit-touch-callout: none) {
+  /* iOS Safari */
+  select {
+    text-align: left !important;
+    text-align-last: left !important;
+    padding-right: 2.5rem;
+    padding-top: 0.75rem; /* VERBESSERT */
+    padding-bottom: 0.75rem; /* VERBESSERT */
+  }
+  
+  select option {
+    text-align: left !important;
+    padding: 0.75rem !important; /* VERBESSERT */
+  }
+}
+
+/* Verhindere Zoom auf iOS bei Focus */
+@media screen and (max-width: 768px) {
+  select {
+    font-size: 16px; /* Verhindert Auto-Zoom auf iOS */
+  }
+  
+  input[type="number"],
+  input[type="text"],
+  input[type="email"] {
+    font-size: 16px; /* Verhindert Auto-Zoom auf iOS */
+  }
+}
+
+/* Spezifischer Fix für Language Selector */
+.language-selector {
+  min-width: 120px;
+  max-width: 150px;
+}
+
+/* Spezifischer Fix für Currency Selector */
+.currency-selector {
+  min-width: 100px;
+}
+
+/* ==================== HEADER IMPROVEMENTS ==================== */
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem; /* VERBESSERT: Mehr Abstand */
+  flex-shrink: 0;
+}
+
+/* Icon Button Improvements */
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.5rem;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  transition: all var(--transition-fast);
+  font-size: 1.25rem; /* NEU: Größere Icons */
+}
+
+.icon-button:hover {
+  background-color: var(--bg-tertiary);
+  border-color: var(--blue-500);
+  transform: scale(1.05);
+}
+
+.icon-button:active {
+  transform: scale(0.95);
+}
+
+@media (max-width: 640px) {
+  .header-right {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+
 /* ==================== HISTORY SECTION ==================== */
 
 .history-section {
