@@ -4,8 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Meeting-Kostenrechner - Machen Sie die versteckten Kosten von Besprechungen sichtbar">
-  <meta name="keywords" content="Meeting, Kosten, Rechner, Calculator, Produktivität">
+  <meta name="author" content="Volker Otto">
+  <meta name="robots" content="index, follow">
+  
+  <!-- Base URL for relative paths -->
   <base href="./">
+  
   <title>💰 Meeting-Kostenrechner</title>
   
   <!-- Hreflang Tags for SEO -->
@@ -22,6 +26,19 @@
   <meta property="og:description" content="Machen Sie die versteckten Kosten von Besprechungen sichtbar" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="" id="og-url" />
+  <meta property="og:image" content="" />
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="💰 Meeting-Kostenrechner" />
+  <meta name="twitter:description" content="Machen Sie die versteckten Kosten von Besprechungen sichtbar" />
+  
+  <!-- Favicon (optional - add your own) -->
+  <!-- <link rel="icon" type="image/png" href="./favicon.png"> -->
+  
+  <!-- Preconnect to CDNs for better performance -->
+  <link rel="preconnect" href="https://cdn.tailwindcss.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
   
   <!-- External Dependencies -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -30,13 +47,24 @@
   <!-- Local Styles -->
   <link rel="stylesheet" href="./css/styles.css">
 </head>
-<body class="min-h-screen flex items-center justify-center relative p-4" x-data="meetingCalculator()" x-init="init()">
+<body class="min-h-screen flex items-center justify-center relative p-4" 
+      x-data="meetingCalculator()" 
+      x-init="init()"
+      x-cloak>
 
   <!-- Notification Container (Fixed Position) -->
-  <div class="notification-container" role="alert" aria-live="polite" aria-atomic="true">
+  <div class="notification-container" 
+       role="alert" 
+       aria-live="polite" 
+       aria-atomic="true">
     <div x-show="notification.visible" 
-         x-transition
-         class="notification p-4 rounded-lg text-center font-medium"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 transform -translate-y-4"
+         x-transition:enter-end="opacity-100 transform translate-y-0"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100 transform translate-y-0"
+         x-transition:leave-end="opacity-0 transform -translate-y-4"
+         class="notification p-4 rounded-lg text-center font-medium shadow-lg"
          :class="notification.class"
          x-text="notification.message">
     </div>
@@ -45,7 +73,7 @@
   <!-- Share Modal -->
   <div x-show="shareOpen" 
        x-cloak
-       @click.self="shareOpen = false"
+       @click.self="closeShareModal()"
        @keydown.escape.window="shareOpen && closeShareModal()"
        class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop"
        role="dialog"
@@ -71,8 +99,9 @@
           🔗 <span x-text="t('shareTitle')"></span>
         </h2>
         <button @click="closeShareModal()" 
-                class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-2xl leading-none focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
+                class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-2xl leading-none focus:outline-none focus:ring-2 focus:ring-blue-500 rounded p-1 transition-colors"
                 aria-label="Close dialog"
+                type="button"
                 tabindex="0">
           ×
         </button>
@@ -82,7 +111,10 @@
         
         <!-- Share URL Input -->
         <div>
-          <label for="shareUrl" class="block text-sm font-medium mb-2" style="color: var(--text-primary);" x-text="t('shareUrl')"></label>
+          <label for="shareUrl" 
+                 class="block text-sm font-medium mb-2" 
+                 style="color: var(--text-primary);" 
+                 x-text="t('shareUrl')"></label>
           <div class="flex gap-2">
             <input type="text" 
                    id="shareUrl" 
@@ -90,10 +122,12 @@
                    readonly
                    class="flex-1 p-3 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
                    style="background-color: var(--bg-secondary); color: var(--text-primary); border-color: var(--border-color);"
-                   @click="$event.target.select()">
+                   @click="$event.target.select()"
+                   aria-label="Share URL">
             <button @click="copyShareUrl()" 
                     class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 whitespace-nowrap"
-                    :aria-label="t('copyLink')">
+                    :aria-label="t('copyLink')"
+                    type="button">
               <span x-text="copied ? '✓' : '📋'"></span>
             </button>
           </div>
@@ -105,23 +139,31 @@
           <div class="grid grid-cols-2 gap-2">
             <button @click="shareViaEmail()" 
                     class="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 px-4 py-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    style="color: var(--text-primary);">
+                    style="color: var(--text-primary);"
+                    type="button"
+                    aria-label="Share via Email">
               📧 Email
             </button>
             <button @click="shareViaWhatsApp()" 
                     class="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 px-4 py-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    style="color: var(--text-primary);">
+                    style="color: var(--text-primary);"
+                    type="button"
+                    aria-label="Share via WhatsApp">
               💬 WhatsApp
             </button>
             <button @click="shareViaSlack()" 
                     class="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 px-4 py-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    style="color: var(--text-primary);">
+                    style="color: var(--text-primary);"
+                    type="button"
+                    aria-label="Share via Slack">
               💼 Slack
             </button>
             <button @click="shareViaNative()" 
                     x-show="canUseNativeShare"
                     class="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 px-4 py-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    style="color: var(--text-primary);">
+                    style="color: var(--text-primary);"
+                    type="button"
+                    aria-label="Share via native share">
               📱 <span x-text="t('more')"></span>
             </button>
           </div>
@@ -139,6 +181,7 @@
       </div>
       <button @click="closeShareModal()" 
               class="mt-6 w-full bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+              type="button"
               tabindex="0">
         <span x-text="t('close')"></span>
       </button>
@@ -148,7 +191,7 @@
   <!-- Info Modal -->
   <div x-show="infoOpen" 
        x-cloak
-       @click.self="infoOpen = false"
+       @click.self="closeInfoModal()"
        @keydown.escape.window="infoOpen && closeInfoModal()"
        class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop"
        role="dialog"
@@ -174,8 +217,9 @@
           💡 <span x-text="t('infoTitle')"></span>
         </h2>
         <button @click="closeInfoModal()" 
-                class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-2xl leading-none focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
+                class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-2xl leading-none focus:outline-none focus:ring-2 focus:ring-blue-500 rounded p-1 transition-colors"
                 aria-label="Close dialog"
+                type="button"
                 tabindex="0">
           ×
         </button>
@@ -193,131 +237,166 @@
       </div>
       <button @click="closeInfoModal()" 
               class="mt-6 w-full bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              type="button"
               tabindex="0">
         <span x-text="t('infoClose')"></span>
       </button>
     </div>
   </div>
 
-  <div id="appContainer" class="glass-container p-6 md:p-8 rounded-2xl shadow-2xl max-w-lg w-full">
+  <!-- Main App Container -->
+  <main id="appContainer" class="glass-container p-6 md:p-8 rounded-2xl shadow-2xl max-w-lg w-full">
     <!-- Header with Language, Theme Toggle and Info -->
-    <div class="flex justify-between items-center mb-6">
+    <header class="flex justify-between items-center mb-6">
       <!-- Language Selector -->
       <div class="language-dropdown" x-data="{ open: false }" @click.away="open = false">
         <button @click="open = !open" 
                 class="text-sm px-3 py-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
                 :aria-label="t('toggleLanguage')"
                 :aria-expanded="open"
+                type="button"
                 style="background-color: var(--bg-tertiary); color: var(--text-secondary);">
           <span x-text="languageFlag + ' ' + language.toUpperCase()"></span>
         </button>
         <div x-show="open" 
              x-cloak
-             x-transition
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 scale-95"
+             x-transition:enter-end="opacity-100 scale-100"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100 scale-100"
+             x-transition:leave-end="opacity-0 scale-95"
              class="language-menu"
              role="menu"
              @keydown.escape="open = false">
           <button @click="setLanguage('de'); open = false" 
                   :class="{ 'active': language === 'de' }"
                   role="menuitem"
+                  type="button"
                   tabindex="0">
             🇩🇪 Deutsch
           </button>
           <button @click="setLanguage('en'); open = false" 
                   :class="{ 'active': language === 'en' }"
                   role="menuitem"
+                  type="button"
                   tabindex="0">
             🇬🇧 English
           </button>
           <button @click="setLanguage('es'); open = false" 
                   :class="{ 'active': language === 'es' }"
                   role="menuitem"
+                  type="button"
                   tabindex="0">
             🇪🇸 Español
           </button>
           <button @click="setLanguage('fr'); open = false" 
                   :class="{ 'active': language === 'fr' }"
                   role="menuitem"
+                  type="button"
                   tabindex="0">
             🇫🇷 Français
           </button>
           <button @click="setLanguage('it'); open = false" 
                   :class="{ 'active': language === 'it' }"
                   role="menuitem"
+                  type="button"
                   tabindex="0">
             🇮🇹 Italiano
           </button>
           <button @click="setLanguage('pl'); open = false" 
                   :class="{ 'active': language === 'pl' }"
                   role="menuitem"
+                  type="button"
                   tabindex="0">
             🇵🇱 Polski
           </button>
         </div>
       </div>
       
+      <!-- Action Buttons -->
       <div class="flex gap-2">
         <button @click="openShareModal()" 
                 class="info-icon focus:outline-none focus:ring-2 focus:ring-blue-500"
                 :aria-label="t('shareLink')"
+                type="button"
                 tabindex="0"
-                title="Share">
+                :title="t('shareLink')">
           🔗
         </button>
         
         <button @click="openInfoModal()" 
                 class="info-icon focus:outline-none focus:ring-2 focus:ring-blue-500"
                 :aria-label="t('showInfo')"
+                type="button"
                 tabindex="0"
-                title="Info">
+                :title="t('showInfo')">
           i
         </button>
       </div>
       
+      <!-- Theme Toggle -->
       <button @click="toggleTheme()" 
               class="text-sm px-3 py-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
               :aria-label="t('toggleTheme')"
+              type="button"
+              :title="t('toggleTheme')"
               style="background-color: var(--bg-tertiary); color: var(--text-secondary);">
         <span x-text="theme === 'dark' ? '☀️' : theme === 'light' ? '🌙' : '🌓'"></span>
       </button>
-    </div>
+    </header>
 
     <h1 class="text-2xl md:text-3xl font-bold text-center mb-8" x-text="t('title')"></h1>
     
     <!-- Cost and Time Display -->
-    <div class="text-center mb-8">
-      <p class="text-5xl md:text-6xl font-bold mb-3" style="color: var(--blue-500);" aria-live="polite" x-text="formattedTotalCost"></p>
-      <p class="text-xl md:text-2xl font-medium time-display" style="color: var(--text-secondary);" aria-live="polite">
+    <section class="text-center mb-8" aria-label="Meeting statistics">
+      <p class="text-5xl md:text-6xl font-bold mb-3" 
+         style="color: var(--blue-500);" 
+         aria-live="polite" 
+         aria-label="Total cost"
+         x-text="formattedTotalCost"></p>
+      <p class="text-xl md:text-2xl font-medium time-display" 
+         style="color: var(--text-secondary);" 
+         aria-live="polite"
+         aria-label="Elapsed time">
         ⏱️ <span x-text="formattedElapsedTime"></span>
       </p>
-    </div>
+    </section>
 
     <!-- Control Buttons -->
-    <div class="flex items-center justify-between gap-4 mb-6">
+    <section class="flex items-center justify-between gap-4 mb-6" aria-label="Timer controls">
       <button @click="toggleTimer()" 
-              class="px-6 py-3 rounded-lg flex-1 font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2"
+              class="px-6 py-3 rounded-lg flex-1 font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all"
               :style="`background-color: ${isRunning ? (isDarkTheme ? '#fbbf24' : '#eab308') : (isDarkTheme ? '#60a5fa' : '#3b82f6')}`"
-              :aria-label="isRunning ? t('pause') : t('start')">
+              :aria-label="isRunning ? t('pause') : t('start')"
+              type="button">
         <span x-text="isRunning ? t('pause') : t('start')"></span>
       </button>
       <button @click="resetTimer()" 
-              class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg flex-1 font-medium focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-              :aria-label="t('reset')">
+              class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg flex-1 font-medium focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all"
+              :aria-label="t('reset')"
+              type="button">
         <span x-text="t('reset')"></span>
       </button>
-    </div>
+    </section>
 
     <!-- People Counter - Prominently Placed -->
-    <div class="mb-6 p-4 rounded-lg border-2 gradient-bg shadow-lg" style="border-color: var(--blue-500);">
+    <section class="mb-6 p-4 rounded-lg border-2 gradient-bg shadow-lg" 
+             style="border-color: var(--blue-500);"
+             aria-label="Participant management">
       <div class="flex items-center justify-between">
-        <label for="numberOfPeopleInput" class="block font-bold text-lg" x-text="t('participants')"></label>
+        <label for="numberOfPeopleInput" 
+               class="block font-bold text-lg" 
+               x-text="t('participants')"></label>
         <div class="flex items-center space-x-3">
           <button @click="updatePeopleCount(-1)" 
-                  class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-xl w-10 h-10 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-                  :aria-label="t('decreaseParticipants')">
+                  class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-xl w-10 h-10 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all"
+                  :aria-label="t('decreaseParticipants')"
+                  type="button">
             −
           </button>
-          <div class="person-badge px-6 py-2 rounded-lg border-2 shadow-sm" style="border-color: var(--blue-500);">
+          <div class="person-badge px-6 py-2 rounded-lg border-2 shadow-sm" 
+               style="border-color: var(--blue-500);">
             <input type="number" 
                    id="numberOfPeopleInput" 
                    x-model.number="currentPeopleCount"
@@ -325,49 +404,60 @@
                    class="w-12 text-center text-2xl font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 rounded" 
                    style="background: transparent; color: var(--blue-500);"
                    min="1"
+                   max="999"
                    :aria-label="t('numberOfParticipants')">
           </div>
           <button @click="updatePeopleCount(1)" 
-                  class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-bold text-xl w-10 h-10 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-                  :aria-label="t('increaseParticipants')">
+                  class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-bold text-xl w-10 h-10 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all"
+                  :aria-label="t('increaseParticipants')"
+                  type="button">
             +
           </button>
         </div>
       </div>
-    </div>
+    </section>
 
     <!-- Settings Section -->
-    <div class="mb-6">
+    <section class="mb-6" aria-label="Settings">
       <button @click="settingsOpen = !settingsOpen" 
               class="px-4 py-3 rounded-lg w-full text-left font-medium transition-colors hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-blue-500"
               style="background-color: var(--bg-tertiary); color: var(--text-primary);"
               :aria-expanded="settingsOpen"
-              aria-controls="configSection">
+              aria-controls="configSection"
+              type="button">
         <span x-text="settingsOpen ? t('settingsHide') : t('settingsShow')"></span>
       </button>
       <div x-show="settingsOpen" 
            x-collapse
            id="configSection" 
            class="mt-4 space-y-4 p-4 rounded-lg config-section" 
-           role="region">
+           role="region"
+           aria-label="Configuration options">
         <div>
-          <label for="costPerPerson" class="block font-medium mb-1" style="color: var(--text-primary);" x-text="t('costPerPerson')"></label>
+          <label for="costPerPerson" 
+                 class="block font-medium mb-1" 
+                 style="color: var(--text-primary);" 
+                 x-text="t('costPerPerson')"></label>
           <input type="number" 
                  id="costPerPerson" 
                  x-model.number="costPerPerson"
                  @input="updateCost()"
-                 class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                 class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
                  style="background-color: var(--bg-secondary); color: var(--text-primary); border-color: var(--border-color);"
                  min="0" 
+                 max="9999"
                  step="0.01">
         </div>
 
         <div>
-          <label for="currency" class="block font-medium mb-1" style="color: var(--text-primary);" x-text="t('currency')"></label>
+          <label for="currency" 
+                 class="block font-medium mb-1" 
+                 style="color: var(--text-primary);" 
+                 x-text="t('currency')"></label>
           <select id="currency" 
                   x-model="currency"
                   @change="updateCost()"
-                  class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
                   style="background-color: var(--bg-secondary); color: var(--text-primary); border-color: var(--border-color);">
             <option value="EUR">Euro (€)</option>
             <option value="USD">US-Dollar ($)</option>
@@ -382,31 +472,35 @@
           </select>
         </div>
       </div>
-    </div>
+    </section>
 
     <!-- Meeting History -->
-    <div>
+    <section aria-label="Meeting history">
       <button @click="historyOpen = !historyOpen" 
               class="text-sm underline transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
               style="color: var(--text-secondary);"
               :aria-expanded="historyOpen"
-              aria-controls="historySection">
+              aria-controls="historySection"
+              type="button">
         <span x-text="historyOpen ? t('historyHide') : t('historyShow')"></span>
       </button>
       <div x-show="historyOpen" 
            x-collapse
            id="historySection" 
            class="mt-2 p-3 rounded-lg text-sm history-section" 
-           role="region">
-        <p class="font-medium mb-2" style="color: var(--text-primary);" x-text="t('historyTitle')"></p>
+           role="region"
+           aria-label="Participant change history">
+        <p class="font-medium mb-2" 
+           style="color: var(--text-primary);" 
+           x-text="t('historyTitle')"></p>
         <ul class="space-y-1" style="color: var(--text-secondary);">
           <template x-for="(segment, index) in segments" :key="index">
             <li x-text="formatHistoryEntry(segment, index)"></li>
           </template>
         </ul>
       </div>
-    </div>
-  </div>
+    </section>
+  </main>
 
   <!-- Emoji Container -->
   <div id="emojiContainer" aria-hidden="true"></div>
