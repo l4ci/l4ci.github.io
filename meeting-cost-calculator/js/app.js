@@ -19,6 +19,7 @@ function meetingCalculator() {
     settingsOpen: false,
     historyOpen: false,
     infoOpen: false,
+    shareOpen: false,
     
     notification: {
       visible: false,
@@ -26,9 +27,17 @@ function meetingCalculator() {
       class: ''
     },
 
+    // Share state
+    shareUrl: '',
+    copied: false,
+    canUseNativeShare: false,
+
     // Track which notifications have been shown
     shownTimeNotifications: new Set(),
     shownCostNotifications: new Set(),
+
+    // Flag to check if loaded from URL
+    loadedFromURL: false,
 
     // ==================== COMPUTED PROPERTIES ====================
     get languageFlag() {
@@ -84,31 +93,27 @@ function meetingCalculator() {
 
     // ==================== METHODS ====================
     init() {
-      // Detect browser language
-      const detectedLanguage = detectBrowserLanguage();
-      const savedLanguage = localStorage.getItem('language');
+      // Check for native share API
+      this.canUseNativeShare = navigator.share !== undefined;
+
+      // First, check URL parameters (highest priority)
+      const urlParams = getURLParameters();
       
-      if (savedLanguage && TRANSLATIONS[savedLanguage]) {
-        this.language = savedLanguage;
+      if (Object.keys(urlParams).length > 0 && urlParams[URL_PARAMS.LANGUAGE]) {
+        this.loadFromURL(urlParams);
+        this.loadedFromURL = true;
       } else {
-        this.language = detectedLanguage;
+        // Load from localStorage or detect from browser
+        this.loadFromBrowserOrStorage();
       }
-      
-      // Detect currency based on language
-      const detectedCurrency = detectCurrencyFromLanguage();
-      const savedCurrency = localStorage.getItem('currency');
-      
-      if (!savedCurrency) {
-        this.currency = detectedCurrency;
-      }
-      
-      const savedTheme = localStorage.getItem('theme');
-      if (savedTheme) this.theme = savedTheme;
       
       this.applyTheme();
       
-      // Load session
-      this.loadFromLocalStorage();
+      // Update hreflang tags dynamically
+      this.updateHreflangTags();
+      
+      // Update Open Graph URL
+      this.updateOpenGraphURL();
       
       // Update title
       this.updateTitle();
@@ -123,7 +128,7 @@ function meetingCalculator() {
       // Keyboard shortcuts
       document.addEventListener('keydown', (e) => {
         // Don't trigger if modal is open
-        if (this.infoOpen) {
+        if (this.infoOpen || this.shareOpen) {
           return;
         }
         
@@ -138,6 +143,10 @@ function meetingCalculator() {
         if (e.key === 'i' && e.ctrlKey) {
           e.preventDefault();
           this.openInfoModal();
+        }
+        if (e.key === 's' && e.ctrlKey) {
+          e.preventDefault();
+          this.openShareModal();
         }
       });
       
@@ -159,6 +168,121 @@ function meetingCalculator() {
       document.documentElement.lang = this.language;
     },
 
+    loadFromBrowserOrStorage() {
+      // Detect browser language
+      const detectedLanguage = detectBrowserLanguage();
+      const savedLanguage = localStorage.getItem('language');
+      
+      if (savedLanguage && TRANSLATIONS[savedLanguage]) {
+        this.language = savedLanguage;
+      } else {
+        this.language = detectedLanguage;
+      }
+      
+      // Detect currency based on language
+      const detectedCurrency = detectCurrencyFromLanguage();
+      const savedCurrency = localStorage.getItem('currency');
+      
+      if (!savedCurrency) {
+        this.currency = detectedCurrency;
+      }
+      
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme) this.theme = savedTheme;
+      
+      // Load session from localStorage
+      this.loadFromLocalStorage();
+    },
+
+    loadFromURL(params) {
+      // Language (highest priority)
+      if (params[URL_PARAMS.LANGUAGE] && TRANSLATIONS[params[URL_PARAMS.LANGUAGE]]) {
+        this.language = params[URL_PARAMS.LANGUAGE];
+      }
+      
+      // Elapsed time
+      if (params[URL_PARAMS.ELAPSED_TIME]) {
+        this.elapsedTime = parseInt(params[URL_PARAMS.ELAPSED_TIME]) || 0;
+      }
+      
+      // Cost per person
+      if (params[URL_PARAMS.COST_PER_PERSON]) {
+        this.costPerPerson = parseFloat(params[URL_PARAMS.COST_PER_PERSON]) || 65;
+      }
+      
+      // Currency
+      if (params[URL_PARAMS.CURRENCY]) {
+        this.currency = params[URL_PARAMS.CURRENCY];
+      }
+      
+      // Running status
+      if (params[URL_PARAMS.RUNNING]) {
+        const wasRunning = params[URL_PARAMS.RUNNING] === '1';
+        // Don't auto-start, just set the timestamp
+        if (wasRunning) {
+          this.startTimestamp = Date.now() - (this.elapsedTime * 1000);
+        }
+      }
+      
+      // Segments
+      if (params[URL_PARAMS.SEGMENTS]) {
+        try {
+          const segmentsData = params[URL_PARAMS.SEGMENTS].split(',');
+          this.segments = segmentsData.map(seg => {
+            const [startTime, numberOfPeople] = seg.split(':');
+            return {
+              startTime: parseInt(startTime) || 0,
+              numberOfPeople: parseInt(numberOfPeople) || 2
+            };
+          });
+          this.currentSegmentIndex = this.segments.length - 1;
+        } catch (e) {
+          console.error('Error parsing segments:', e);
+        }
+      } else if (params[URL_PARAMS.PEOPLE]) {
+        // Simple people count
+        const people = parseInt(params[URL_PARAMS.PEOPLE]) || 2;
+        this.segments = [{ startTime: 0, numberOfPeople: people }];
+        this.currentSegmentIndex = 0;
+      }
+      
+      // Show notification that shared session was loaded
+      setTimeout(() => {
+        this.showNotification(this.t('sharedSessionLoaded'), 'info');
+      }, 500);
+    },
+
+    updateHreflangTags() {
+      const baseURL = window.location.origin + window.location.pathname;
+      const supportedLanguages = ['de', 'en', 'es', 'fr', 'it', 'pl'];
+      
+      // Remove existing hreflang tags
+      document.querySelectorAll('link[rel="alternate"]').forEach(link => link.remove());
+      
+      // Add new hreflang tags
+      supportedLanguages.forEach(lang => {
+        const link = document.createElement('link');
+        link.rel = 'alternate';
+        link.hreflang = lang;
+        link.href = `${baseURL}?${URL_PARAMS.LANGUAGE}=${lang}`;
+        document.head.appendChild(link);
+      });
+      
+      // Add x-default
+      const defaultLink = document.createElement('link');
+      defaultLink.rel = 'alternate';
+      defaultLink.hreflang = 'x-default';
+      defaultLink.href = baseURL;
+      document.head.appendChild(defaultLink);
+    },
+
+    updateOpenGraphURL() {
+      const ogUrl = document.getElementById('og-url');
+      if (ogUrl) {
+        ogUrl.content = window.location.href;
+      }
+    },
+
     t(key) {
       return TRANSLATIONS[this.language][key] || key;
     },
@@ -167,7 +291,13 @@ function meetingCalculator() {
       this.language = lang;
       localStorage.setItem('language', this.language);
       document.documentElement.lang = this.language;
+      this.updateHreflangTags();
       this.updateTitle();
+      
+      // Update URL parameter without reload
+      const url = new URL(window.location);
+      url.searchParams.set(URL_PARAMS.LANGUAGE, lang);
+      window.history.replaceState({}, '', url);
     },
 
     toggleTheme() {
@@ -185,13 +315,94 @@ function meetingCalculator() {
 
     openInfoModal() {
       this.infoOpen = true;
-      // Focus trap will be handled by Alpine's x-trap
       document.body.style.overflow = 'hidden';
     },
 
     closeInfoModal() {
       this.infoOpen = false;
       document.body.style.overflow = '';
+    },
+
+    openShareModal() {
+      this.shareUrl = buildShareURL({
+        language: this.language,
+        elapsedTime: this.elapsedTime,
+        segments: this.segments,
+        currentSegmentIndex: this.currentSegmentIndex,
+        costPerPerson: this.costPerPerson,
+        currency: this.currency,
+        isRunning: this.isRunning
+      });
+      this.shareOpen = true;
+      this.copied = false;
+      document.body.style.overflow = 'hidden';
+    },
+
+    closeShareModal() {
+      this.shareOpen = false;
+      document.body.style.overflow = '';
+    },
+
+    async copyShareUrl() {
+      try {
+        await navigator.clipboard.writeText(this.shareUrl);
+        this.copied = true;
+        this.showNotification(this.t('linkCopied'), 'info');
+        
+        setTimeout(() => {
+          this.copied = false;
+        }, 2000);
+      } catch (err) {
+        console.error('Failed to copy:', err);
+        // Fallback for older browsers
+        const textarea = document.createElement('textarea');
+        textarea.value = this.shareUrl;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        
+        this.copied = true;
+        this.showNotification(this.t('linkCopied'), 'info');
+        
+        setTimeout(() => {
+          this.copied = false;
+        }, 2000);
+      }
+    },
+
+    shareViaEmail() {
+      const subject = encodeURIComponent(this.t('shareEmailSubject'));
+      const body = encodeURIComponent(`${this.t('shareEmailBody')}\n\n${this.shareUrl}\n\n${this.t('elapsedTime')}: ${this.formattedElapsedTime}\n${this.t('totalCostLabel')} ${this.formattedTotalCost}`);
+      window.open(`mailto:?subject=${subject}&body=${body}`, '_blank');
+    },
+
+    shareViaWhatsApp() {
+      const text = encodeURIComponent(`${this.t('shareWhatsAppText')}\n${this.shareUrl}\n\n⏱️ ${this.formattedElapsedTime}\n💰 ${this.formattedTotalCost}`);
+      window.open(`https://wa.me/?text=${text}`, '_blank');
+    },
+
+    shareViaSlack() {
+      const text = encodeURIComponent(`${this.t('shareSlackText')}\n${this.shareUrl}\n\n⏱️ ${this.formattedElapsedTime}\n💰 ${this.formattedTotalCost}`);
+      window.open(`https://slack.com/intl/en-de/help/articles/201330256-Add-links-to-your-messages?text=${text}`, '_blank');
+    },
+
+    async shareViaNative() {
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: this.t('title'),
+            text: `${this.t('shareWhatsAppText')}\n⏱️ ${this.formattedElapsedTime}\n💰 ${this.formattedTotalCost}`,
+            url: this.shareUrl
+          });
+        } catch (err) {
+          if (err.name !== 'AbortError') {
+            console.error('Error sharing:', err);
+          }
+        }
+      }
     },
 
     toggleTimer() {
@@ -257,6 +468,11 @@ function meetingCalculator() {
       
       this.updateTitle();
       localStorage.removeItem(STORAGE_KEY);
+      
+      // Clear URL parameters
+      const url = new URL(window.location);
+      url.search = '';
+      window.history.replaceState({}, '', url);
     },
 
     updatePeopleCount(delta) {
@@ -440,6 +656,11 @@ function meetingCalculator() {
     },
 
     saveToLocalStorage() {
+      // Don't save if loaded from URL (to avoid overwriting shared sessions)
+      if (this.loadedFromURL && this.elapsedTime < 10) {
+        return;
+      }
+      
       const data = {
         elapsedTime: this.elapsedTime,
         isRunning: this.isRunning,

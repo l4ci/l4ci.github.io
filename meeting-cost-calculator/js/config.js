@@ -59,6 +59,17 @@ const EMOJIS = ['💵', '💰', '🪙', '💸', '💶', '💷', '💴'];
 const MAX_EMOJIS = 50;
 const STORAGE_KEY = 'meetingCostCalculator';
 
+// URL Parameter Names
+const URL_PARAMS = {
+  LANGUAGE: 'lang',
+  ELAPSED_TIME: 'time',
+  PEOPLE: 'people',
+  COST_PER_PERSON: 'cost',
+  CURRENCY: 'currency',
+  RUNNING: 'running',
+  SEGMENTS: 'segments'
+};
+
 // Fun Notifications Configuration
 const FUN_NOTIFICATIONS = {
   time: [
@@ -113,4 +124,48 @@ function detectBrowserLanguage() {
   
   // Default to English
   return 'en';
+}
+
+// Helper function to parse URL parameters
+function getURLParameters() {
+  const params = new URLSearchParams(window.location.search);
+  const result = {};
+  
+  for (const [key, value] of params.entries()) {
+    result[key] = value;
+  }
+  
+  return result;
+}
+
+// Helper function to build share URL
+function buildShareURL(state) {
+  const baseURL = window.location.origin + window.location.pathname;
+  const params = new URLSearchParams();
+  
+  // Add language
+  params.set(URL_PARAMS.LANGUAGE, state.language);
+  
+  // Add elapsed time
+  params.set(URL_PARAMS.ELAPSED_TIME, state.elapsedTime);
+  
+  // Add current people count
+  params.set(URL_PARAMS.PEOPLE, state.segments[state.currentSegmentIndex].numberOfPeople);
+  
+  // Add cost per person
+  params.set(URL_PARAMS.COST_PER_PERSON, state.costPerPerson);
+  
+  // Add currency
+  params.set(URL_PARAMS.CURRENCY, state.currency);
+  
+  // Add running status
+  params.set(URL_PARAMS.RUNNING, state.isRunning ? '1' : '0');
+  
+  // Add segments (compressed)
+  if (state.segments.length > 1) {
+    const segmentsData = state.segments.map(s => `${s.startTime}:${s.numberOfPeople}`).join(',');
+    params.set(URL_PARAMS.SEGMENTS, segmentsData);
+  }
+  
+  return `${baseURL}?${params.toString()}`;
 }
