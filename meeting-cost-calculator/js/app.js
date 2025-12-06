@@ -200,9 +200,26 @@ function meetingCalculator() {
         this.language = params[URL_PARAMS.LANGUAGE];
       }
       
-      // Elapsed time
-      if (params[URL_PARAMS.ELAPSED_TIME]) {
-        this.elapsedTime = parseInt(params[URL_PARAMS.ELAPSED_TIME]) || 0;
+      // Start timestamp statt elapsed time
+      if (params[URL_PARAMS.START_TIMESTAMP]) {
+        const sharedStartTimestamp = parseInt(params[URL_PARAMS.START_TIMESTAMP]);
+        const sharedTimezoneOffset = parseInt(params[URL_PARAMS.TIMEZONE]) || 0;
+        const currentTimezoneOffset = new Date().getTimezoneOffset();
+        
+        // Berechne Zeitzonenunterschied in Millisekunden
+        const timezoneDiff = (currentTimezoneOffset - sharedTimezoneOffset) * 60 * 1000;
+        
+        // Korrigiere den Timestamp mit Zeitzonendifferenz
+        this.startTimestamp = sharedStartTimestamp + timezoneDiff;
+        
+        // Berechne aktuelle verstrichene Zeit
+        this.elapsedTime = Math.floor((Date.now() - this.startTimestamp) / 1000);
+        
+        // Stelle sicher, dass die Zeit nicht negativ ist
+        if (this.elapsedTime < 0) {
+          this.elapsedTime = 0;
+          this.startTimestamp = Date.now();
+        }
       }
       
       // Cost per person
@@ -215,12 +232,16 @@ function meetingCalculator() {
         this.currency = params[URL_PARAMS.CURRENCY];
       }
       
-      // Running status
+      // Running status - Timer automatisch starten wenn running=1
       if (params[URL_PARAMS.RUNNING]) {
         const wasRunning = params[URL_PARAMS.RUNNING] === '1';
-        // Don't auto-start, just set the timestamp
-        if (wasRunning) {
-          this.startTimestamp = Date.now() - (this.elapsedTime * 1000);
+        if (wasRunning && this.startTimestamp) {
+          // Starte den Timer automatisch nach kurzer Verzögerung
+          setTimeout(() => {
+            if (!this.isRunning) {
+              this.startTimer();
+            }
+          }, 100);
         }
       }
       
@@ -327,6 +348,7 @@ function meetingCalculator() {
       this.shareUrl = buildShareURL({
         language: this.language,
         elapsedTime: this.elapsedTime,
+        startTimestamp: this.startTimestamp,
         segments: this.segments,
         currentSegmentIndex: this.currentSegmentIndex,
         costPerPerson: this.costPerPerson,
@@ -419,6 +441,9 @@ function meetingCalculator() {
       if (!this.startTimestamp) {
         this.startTimestamp = Date.now() - (this.elapsedTime * 1000);
       }
+      
+      // Stelle sicher, dass der Timer sofort aktualisiert wird
+      this.elapsedTime = Math.floor((Date.now() - this.startTimestamp) / 1000);
       
       this.timer = setInterval(() => {
         const now = Date.now();

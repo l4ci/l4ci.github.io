@@ -62,12 +62,13 @@ const STORAGE_KEY = 'meetingCostCalculator';
 // URL Parameter Names
 const URL_PARAMS = {
   LANGUAGE: 'lang',
-  ELAPSED_TIME: 'time',
+  START_TIMESTAMP: 'start',
   PEOPLE: 'people',
   COST_PER_PERSON: 'cost',
   CURRENCY: 'currency',
   RUNNING: 'running',
-  SEGMENTS: 'segments'
+  SEGMENTS: 'segments',
+  TIMEZONE: 'tz'
 };
 
 // Fun Notifications Configuration
@@ -111,12 +112,10 @@ function detectCurrencyFromLanguage() {
   return 'EUR';
 }
 
-// Helper function to detect language from browser
 function detectBrowserLanguage() {
   const browserLang = navigator.language || navigator.userLanguage;
   const langCode = browserLang.split('-')[0];
   
-  // Check if we support this language
   const supportedLanguages = ['de', 'en', 'es', 'fr', 'it', 'pl'];
   if (supportedLanguages.includes(langCode)) {
     return langCode;
@@ -143,25 +142,21 @@ function buildShareURL(state) {
   const baseURL = window.location.origin + window.location.pathname;
   const params = new URLSearchParams();
   
-  // Add language
   params.set(URL_PARAMS.LANGUAGE, state.language);
   
-  // Add elapsed time
-  params.set(URL_PARAMS.ELAPSED_TIME, state.elapsedTime);
+  if (state.startTimestamp) {
+    params.set(URL_PARAMS.START_TIMESTAMP, state.startTimestamp);
+  } else if (state.elapsedTime > 0) {
+    params.set(URL_PARAMS.START_TIMESTAMP, Date.now() - (state.elapsedTime * 1000));
+  }
   
-  // Add current people count
+  const timezoneOffset = new Date().getTimezoneOffset();
+  params.set(URL_PARAMS.TIMEZONE, timezoneOffset);
   params.set(URL_PARAMS.PEOPLE, state.segments[state.currentSegmentIndex].numberOfPeople);
-  
-  // Add cost per person
   params.set(URL_PARAMS.COST_PER_PERSON, state.costPerPerson);
-  
-  // Add currency
   params.set(URL_PARAMS.CURRENCY, state.currency);
-  
-  // Add running status
   params.set(URL_PARAMS.RUNNING, state.isRunning ? '1' : '0');
   
-  // Add segments (compressed)
   if (state.segments.length > 1) {
     const segmentsData = state.segments.map(s => `${s.startTime}:${s.numberOfPeople}`).join(',');
     params.set(URL_PARAMS.SEGMENTS, segmentsData);
