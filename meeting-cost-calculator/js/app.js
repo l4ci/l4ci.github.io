@@ -154,17 +154,120 @@ function meetingCalculator() {
         }
       });
       
-      // Keyboard shortcuts - WICHTIG: Capture-Phase verwenden!
-      document.addEventListener('keydown', (e) => this.handleKeyboardShortcuts(e), true);
+      // Keyboard shortcuts - WICHTIG: Nur keydown verwenden!
+      const keydownHandler = (e) => {
+        // Ignore if typing in input fields
+        const isInputField = ['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName);
+        const hasModals = this.modalManager && this.modalManager.hasOpenModals();
+        
+        // Allow Escape even in modals
+        if (e.key === 'Escape' && hasModals) {
+          e.preventDefault();
+          this.closeAllModals();
+          return;
+        }
+        
+        // Block all other shortcuts if modal is open or typing
+        if (hasModals || isInputField) {
+          return;
+        }
+        
+        // Check which key was pressed
+        const key = e.key.toLowerCase();
+        const code = e.code;
+        const ctrl = e.ctrlKey || e.metaKey; // metaKey for Mac
+        
+        // Enter: Toggle timer
+        if (key === 'enter' && !ctrl && !e.shiftKey && !e.altKey) {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log('Enter pressed - toggling timer');
+          this.toggleTimer();
+          return;
+        }
+        
+        // Ctrl+Space: Toggle timer (alternative)
+        if (code === 'Space' && ctrl) {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log('Ctrl+Space pressed - toggling timer');
+          this.toggleTimer();
+          return;
+        }
+        
+        // Space alone: Toggle timer (wenn kein Modal offen)
+        if (code === 'Space' && !ctrl && !e.shiftKey && !e.altKey) {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log('Space pressed - toggling timer');
+          this.toggleTimer();
+          return;
+        }
+        
+        // Ctrl+R: Reset timer
+        if (key === 'r' && ctrl) {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log('Ctrl+R pressed - resetting timer');
+          this.resetTimer();
+          return;
+        }
+        
+        // Ctrl+I: Open info modal
+        if (key === 'i' && ctrl) {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log('Ctrl+I pressed - opening info');
+          this.openInfoModal();
+          return;
+        }
+        
+        // Ctrl+S: Open share modal
+        if (key === 's' && ctrl) {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log('Ctrl+S pressed - opening share');
+          this.openShareModal();
+          return;
+        }
+        
+        // Ctrl+? or Ctrl+/: Open shortcuts modal
+        if ((key === '?' || key === '/' || key === '_') && ctrl) {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log('Ctrl+? pressed - opening shortcuts');
+          this.openShortcutsModal();
+          return;
+        }
+        
+        // +: Increase participants
+        if (key === '+' || key === '=' || code === 'Equal' || code === 'NumpadAdd') {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log('+ pressed - increasing participants');
+          this.updatePeopleCount(1);
+          return;
+        }
+        
+        // -: Decrease participants
+        if (key === '-' || key === '_' || code === 'Minus' || code === 'NumpadSubtract') {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log('- pressed - decreasing participants');
+          this.updatePeopleCount(-1);
+          return;
+        }
+      };
       
-      // ZUSÄTZLICH: Verhindere Space-Scroll auf window-level
+      // Add keydown listener with capture phase
+      document.addEventListener('keydown', keydownHandler, { capture: true });
+      
+      // Prevent default space scroll behavior
       window.addEventListener('keydown', (e) => {
-        if ((e.code === 'Space' || e.key === ' ') && 
-            e.target === document.body &&
-            !this.modalManager.hasOpenModals()) {
+        if (e.code === 'Space' && e.target === document.body) {
           e.preventDefault();
         }
-      }, true);
+      }, { capture: true });
       
       // Auto-save interval
       setInterval(() => {
@@ -189,81 +292,7 @@ function meetingCalculator() {
       window.addEventListener('pagehide', () => this.saveState());
     },
 
-    handleKeyboardShortcuts(e) {
-      const isInputField = ['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName);
-      const hasModals = this.modalManager.hasOpenModals();
-      
-      if (isInputField || hasModals) {
-        if (e.key === 'Escape' && hasModals) {
-          this.closeAllModals();
-        }
-        return;
-      }
-      
-      // Ctrl+Space: Toggle timer (SICHERER)
-      if ((e.code === 'Space' || e.key === ' ') && e.ctrlKey) {
-        e.preventDefault();
-        e.stopPropagation();
-        this.toggleTimer();
-        return;
-      }
-      
-      // Enter: Alternative für Timer toggle
-      if (e.key === 'Enter' && !e.ctrlKey && !e.shiftKey && !e.altKey) {
-        e.preventDefault();
-        this.toggleTimer();
-        return;
-      }
-      
-      // Modals offen? Nur Escape erlauben
-      if (hasModals) {
-        if (e.key === 'Escape') {
-          this.closeAllModals();
-        }
-        return;
-      }
-      
-      // Ctrl+R: Reset timer
-      if (e.key === 'r' && e.ctrlKey) {
-        e.preventDefault();
-        this.resetTimer();
-      }
-      
-      // Ctrl+I: Open info modal
-      if (e.key === 'i' && e.ctrlKey) {
-        e.preventDefault();
-        this.openInfoModal();
-      }
-      
-      // Ctrl+S: Open share modal
-      if (e.key === 's' && e.ctrlKey) {
-        e.preventDefault();
-        this.openShareModal();
-      }
-      
-      // Ctrl+?: Open shortcuts modal
-      if ((e.key === '?' || e.key === '/' || e.key === '_') && e.ctrlKey) {
-        e.preventDefault();
-        this.openShortcutsModal();
-      }
-      
-      // +: Increase participants
-      if (e.key === '+' || e.key === '=') {
-        e.preventDefault();
-        this.updatePeopleCount(1);
-      }
-      
-      // -: Decrease participants
-      if (e.key === '-' || e.key === '_') {
-        e.preventDefault();
-        this.updatePeopleCount(-1);
-      }
-      
-      // Escape: Close any open modal
-      if (e.key === 'Escape') {
-        this.closeAllModals();
-      }
-    },
+    
 
     /* ==================== STATE MANAGEMENT ==================== */
     

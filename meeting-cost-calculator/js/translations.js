@@ -20,6 +20,8 @@ const TRANSLATIONS = {
     settingsHide: '⚙️ Einstellungen ausblenden',
     costPerPerson: '💶 Kosten pro Person/h:',
     currency: '🌍 Währung:',
+    selectLanguage: 'Sprache auswählen',
+    selectCurrency: 'Währung auswählen',
     
     // Time
     elapsedTime: 'Verstrichene Zeit:',
@@ -119,6 +121,8 @@ const TRANSLATIONS = {
     settingsHide: '⚙️ Hide Settings',
     costPerPerson: '💶 Cost per Person/h:',
     currency: '🌍 Currency:',
+    selectLanguage: 'Select language',
+    selectCurrency: 'Select currency',
     
     // Time
     elapsedTime: 'Elapsed Time:',
@@ -218,6 +222,8 @@ const TRANSLATIONS = {
     settingsHide: '⚙️ Ocultar Configuración',
     costPerPerson: '💶 Costo por Persona/h:',
     currency: '🌍 Moneda:',
+    selectLanguage: 'Seleccionar idioma',
+    selectCurrency: 'Seleccionar moneda',
     
     // Time
     elapsedTime: 'Tiempo Transcurrido:',
@@ -317,6 +323,8 @@ const TRANSLATIONS = {
     settingsHide: '⚙️ Masquer les Paramètres',
     costPerPerson: '💶 Coût par Personne/h:',
     currency: '🌍 Devise:',
+    selectLanguage: 'Sélectionner la langue',
+    selectCurrency: 'Sélectionner la devise',
     
     // Time
     elapsedTime: 'Temps Écoulé:',
@@ -416,6 +424,8 @@ const TRANSLATIONS = {
     settingsHide: '⚙️ Nascondi Impostazioni',
     costPerPerson: '💶 Costo per Persona/h:',
     currency: '🌍 Valuta:',
+    selectLanguage: 'Seleziona lingua',
+    selectCurrency: 'Seleziona valuta',
     
     // Time
     elapsedTime: 'Tempo Trascorso:',
@@ -515,6 +525,8 @@ const TRANSLATIONS = {
     settingsHide: '⚙️ Ukryj Ustawienia',
     costPerPerson: '💶 Koszt na Osobę/h:',
     currency: '🌍 Waluta:',
+    selectLanguage: 'Wybierz język',
+    selectCurrency: 'Wybierz walutę',
     
     // Time
     elapsedTime: 'Upłynął Czas:',

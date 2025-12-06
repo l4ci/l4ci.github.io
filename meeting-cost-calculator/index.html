@@ -381,69 +381,22 @@
     <!-- Header with Language, Theme Toggle and Info -->
     <header class="flex justify-between items-center mb-6">
       <!-- Language Selector -->
-      <div class="language-dropdown" x-data="{ open: false }" @click.away="open = false">
-        <button @click="open = !open" 
-                class="text-sm px-3 py-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-                :aria-label="t('toggleLanguage')"
-                :aria-expanded="open"
-                type="button"
-                style="background-color: var(--bg-tertiary); color: var(--text-secondary);">
-          <span x-text="languageFlag + ' ' + language.toUpperCase()"></span>
-        </button>
-        <div x-show="open" 
-             x-cloak
-             x-transition:enter="transition ease-out duration-200"
-             x-transition:enter-start="opacity-0 scale-95"
-             x-transition:enter-end="opacity-100 scale-100"
-             x-transition:leave="transition ease-in duration-150"
-             x-transition:leave-start="opacity-100 scale-100"
-             x-transition:leave-end="opacity-0 scale-95"
-             class="language-menu"
-             role="menu"
-             @keydown.escape="open = false">
-          <button @click="setLanguage('de'); open = false" 
-                  :class="{ 'active': language === 'de' }"
-                  role="menuitem"
-                  type="button"
-                  tabindex="0">
-            🇩🇪 Deutsch
-          </button>
-          <button @click="setLanguage('en'); open = false" 
-                  :class="{ 'active': language === 'en' }"
-                  role="menuitem"
-                  type="button"
-                  tabindex="0">
-            🇬🇧 English
-          </button>
-          <button @click="setLanguage('es'); open = false" 
-                  :class="{ 'active': language === 'es' }"
-                  role="menuitem"
-                  type="button"
-                  tabindex="0">
-            🇪🇸 Español
-          </button>
-          <button @click="setLanguage('fr'); open = false" 
-                  :class="{ 'active': language === 'fr' }"
-                  role="menuitem"
-                  type="button"
-                  tabindex="0">
-            🇫🇷 Français
-          </button>
-          <button @click="setLanguage('it'); open = false" 
-                  :class="{ 'active': language === 'it' }"
-                  role="menuitem"
-                  type="button"
-                  tabindex="0">
-            🇮🇹 Italiano
-          </button>
-          <button @click="setLanguage('pl'); open = false" 
-                  :class="{ 'active': language === 'pl' }"
-                  role="menuitem"
-                  type="button"
-                  tabindex="0">
-            🇵🇱 Polski
-          </button>
-        </div>
+      <div class="relative language-selector-wrapper">
+        <label for="languageSelect" class="sr-only" x-text="t('language')"></label>
+        <select 
+          id="languageSelect"
+          x-model="language" 
+          @change="setLanguage(language)"
+          class="language-selector"
+          :aria-label="t('selectLanguage')"
+          dir="ltr">
+          <option value="de">🇩🇪 Deutsch</option>
+          <option value="en">🇬🇧 English</option>
+          <option value="es">🇪🇸 Español</option>
+          <option value="fr">🇫🇷 Français</option>
+          <option value="it">🇮🇹 Italiano</option>
+          <option value="pl">🇵🇱 Polski</option>
+        </select>
       </div>
       
       <!-- Action Buttons -->
@@ -582,26 +535,40 @@
         </div>
 
         <div>
-          <label for="currency" 
-                 class="block font-medium mb-1" 
-                 style="color: var(--text-primary);" 
-                 x-text="t('currency')"></label>
-          <select id="currency" 
-                  x-model="currency"
-                  @change="updateCost()"
-                  class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
-                  style="background-color: var(--bg-secondary); color: var(--text-primary); border-color: var(--border-color);">
-            <option value="EUR">Euro (€)</option>
-            <option value="USD">US-Dollar ($)</option>
-            <option value="GBP">Britisches Pfund (£)</option>
-            <option value="CHF">Schweizer Franken (CHF)</option>
-            <option value="JPY">Japanischer Yen (¥)</option>
-            <option value="CNY">Chinesischer Yuan (¥)</option>
-            <option value="INR">Indische Rupie (₹)</option>
-            <option value="AUD">Australischer Dollar (A$)</option>
-            <option value="CAD">Kanadischer Dollar (C$)</option>
-            <option value="BRL">Brasilianischer Real (R$)</option>
-          </select>
+          <!-- Currency Selector -->
+          <div class="relative currency-selector-wrapper">
+            <label for="currencySelect" class="block text-sm font-medium mb-2" style="color: var(--text-primary);">
+              <span x-text="t('currency')"></span>
+            </label>
+            <select 
+              id="currencySelect"
+              x-model="currency" 
+              @change="updateCost()"
+              class="currency-selector w-full"
+              :aria-label="t('selectCurrency')"
+              dir="ltr">
+              <option value="EUR">€ EUR</option>
+              <option value="USD">$ USD</option>
+              <option value="GBP">£ GBP</option>
+              <option value="CHF">CHF</option>
+              <option value="JPY">¥ JPY</option>
+              <option value="CNY">¥ CNY</option>
+              <option value="INR">₹ INR</option>
+              <option value="AUD">$ AUD</option>
+              <option value="CAD">$ CAD</option>
+              <option value="BRL">R$ BRL</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Temporärer Debug-Button (nach den Controls) -->
+        <div class="text-center mt-4">
+          <button 
+            @click="toggleTimer()"
+            class="text-xs px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded"
+            type="button">
+            🐛 Debug: Toggle Timer (Click)
+          </button>
         </div>
       </div>
     </section>
