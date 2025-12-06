@@ -286,11 +286,20 @@
         
         <!-- Shortcuts List -->
         <div class="space-y-3">
-          <!-- Space -->
+          <!-- Ctrl+Space oder Enter -->
           <div class="flex items-center justify-between p-3 rounded-lg" style="background-color: var(--bg-tertiary);">
             <span class="font-medium" style="color: var(--text-primary);" x-text="t('startPauseTimer')"></span>
-            <kbd class="keyboard-key">Space</kbd>
+            <div class="flex gap-2 items-center">
+              <div class="flex gap-1">
+                <kbd class="keyboard-key">Ctrl</kbd>
+                <span style="color: var(--text-secondary);">+</span>
+                <kbd class="keyboard-key">Space</kbd>
+              </div>
+              <span class="text-xs opacity-60" x-text="t('or')"></span>
+              <kbd class="keyboard-key">Enter</kbd>
+            </div>
           </div>
+
           
           <!-- Ctrl+R -->
           <div class="flex items-center justify-between p-3 rounded-lg" style="background-color: var(--bg-tertiary);">

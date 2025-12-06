@@ -154,17 +154,17 @@ function meetingCalculator() {
         }
       });
       
-      // Keyboard shortcuts
-      document.addEventListener('keydown', (e) => this.handleKeyboardShortcuts(e));
+      // Keyboard shortcuts - WICHTIG: Capture-Phase verwenden!
+      document.addEventListener('keydown', (e) => this.handleKeyboardShortcuts(e), true);
       
-      // Prevent Space-Scroll
+      // ZUSÄTZLICH: Verhindere Space-Scroll auf window-level
       window.addEventListener('keydown', (e) => {
         if ((e.code === 'Space' || e.key === ' ') && 
-            e.target === document.body && 
+            e.target === document.body &&
             !this.modalManager.hasOpenModals()) {
           e.preventDefault();
         }
-      });
+      }, true);
       
       // Auto-save interval
       setInterval(() => {
@@ -190,18 +190,37 @@ function meetingCalculator() {
     },
 
     handleKeyboardShortcuts(e) {
-      // Don't trigger if modal is open or user is typing
-      if (this.modalManager.hasOpenModals() || 
-          ['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName)) {
+      const isInputField = ['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName);
+      const hasModals = this.modalManager.hasOpenModals();
+      
+      if (isInputField || hasModals) {
+        if (e.key === 'Escape' && hasModals) {
+          this.closeAllModals();
+        }
         return;
       }
       
-      // Space: Toggle timer
-      if (e.code === 'Space' || e.key === ' ') {
+      // Ctrl+Space: Toggle timer (SICHERER)
+      if ((e.code === 'Space' || e.key === ' ') && e.ctrlKey) {
         e.preventDefault();
         e.stopPropagation();
         this.toggleTimer();
-        return false;
+        return;
+      }
+      
+      // Enter: Alternative für Timer toggle
+      if (e.key === 'Enter' && !e.ctrlKey && !e.shiftKey && !e.altKey) {
+        e.preventDefault();
+        this.toggleTimer();
+        return;
+      }
+      
+      // Modals offen? Nur Escape erlauben
+      if (hasModals) {
+        if (e.key === 'Escape') {
+          this.closeAllModals();
+        }
+        return;
       }
       
       // Ctrl+R: Reset timer

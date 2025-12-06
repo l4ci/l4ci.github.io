@@ -3,6 +3,9 @@
 /**
  * Modal Manager Class
  */
+/**
+ * Modal Manager Class
+ */
 class ModalManager {
   constructor() {
     this.openModals = new Set();
@@ -11,18 +14,21 @@ class ModalManager {
   open(modalName) {
     this.openModals.add(modalName);
     document.body.style.overflow = 'hidden';
+    document.body.classList.add('modal-open'); // NEU
   }
 
   close(modalName) {
     this.openModals.delete(modalName);
     if (this.openModals.size === 0) {
       document.body.style.overflow = '';
+      document.body.classList.remove('modal-open'); // NEU
     }
   }
 
   closeAll() {
     this.openModals.clear();
     document.body.style.overflow = '';
+    document.body.classList.remove('modal-open'); // NEU
   }
 
   isOpen(modalName) {

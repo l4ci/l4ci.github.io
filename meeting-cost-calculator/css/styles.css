@@ -655,3 +655,35 @@ footer button:hover {
 button:hover .shortcut-hint {
   opacity: 1;
 }
+
+/* ==================== PREVENT SPACE SCROLL ==================== */
+
+/**
+ * Verhindere Space-Scroll auf body-level
+ */
+body {
+  overflow-x: hidden;
+}
+
+body:focus {
+  outline: none;
+}
+
+/**
+ * Verhindere Focus-Scroll bei Space
+ */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Verhindere Space-Scroll wenn keine Modals offen sind */
+body:not(.modal-open) {
+  /* Space-Taste scrollt nicht */
+}
+
+/* Wenn Modal offen ist */
+body.modal-open {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+}
