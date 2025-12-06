@@ -1,0 +1,313 @@
+:root {
+  --bg-primary: #f3f4f6;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f9fafb;
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --border-color: #e5e7eb;
+  --shadow: rgba(0, 0, 0, 0.1);
+  --blue-500: #3b82f6;
+  --blue-600: #2563eb;
+  --yellow-500: #eab308;
+  --yellow-600: #ca8a04;
+  --gradient-from: #eff6ff;
+  --gradient-to: #e0e7ff;
+}
+
+[data-theme="dark"] {
+  --bg-primary: #111827;
+  --bg-secondary: #1f2937;
+  --bg-tertiary: #374151;
+  --text-primary: #f9fafb;
+  --text-secondary: #d1d5db;
+  --border-color: #4b5563;
+  --shadow: rgba(0, 0, 0, 0.3);
+  --blue-500: #3b82f6;
+  --blue-600: #60a5fa;
+  --yellow-500: #eab308;
+  --yellow-600: #fbbf24;
+  --gradient-from: #1e3a8a;
+  --gradient-to: #312e81;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.emoji {
+  position: absolute;
+  font-size: 2rem;
+  pointer-events: none;
+  animation: fall linear forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(-100px) translateZ(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh) translateZ(0);
+    opacity: 0;
+  }
+}
+
+#emojiContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Glass Morphism Effect */
+.glass-container {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+}
+
+[data-theme="dark"] .glass-container {
+  background: rgba(31, 41, 55, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+}
+
+#appContainer {
+  position: relative;
+  z-index: 1;
+  transition: all 0.3s ease;
+}
+
+button {
+  transition: all 0.2s ease;
+}
+
+button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px var(--shadow);
+}
+
+button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+button:focus-visible {
+  outline: 2px solid var(--blue-500);
+  outline-offset: 2px;
+}
+
+input:focus-visible, select:focus-visible {
+  outline: 2px solid var(--blue-500);
+  outline-offset: 2px;
+}
+
+.notification-container {
+  position: fixed;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  width: 90%;
+  max-width: 500px;
+  pointer-events: none;
+}
+
+.notification {
+  animation: slideDown 0.3s ease-out;
+  pointer-events: auto;
+  box-shadow: 0 10px 15px -3px var(--shadow);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.person-badge {
+  transition: all 0.3s ease;
+  background-color: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+
+.person-badge:hover {
+  transform: scale(1.05);
+}
+
+.config-section, .history-section {
+  background-color: rgba(249, 250, 251, 0.6);
+  backdrop-filter: blur(10px);
+  border-color: var(--border-color);
+}
+
+[data-theme="dark"] .config-section,
+[data-theme="dark"] .history-section {
+  background-color: rgba(55, 65, 81, 0.6);
+}
+
+.gradient-bg {
+  background: linear-gradient(135deg, var(--gradient-from), var(--gradient-to));
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Info Popup */
+.info-popup {
+  animation: fadeInScale 0.3s ease-out;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.info-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: var(--blue-500);
+  color: white;
+}
+
+.info-icon:hover {
+  transform: scale(1.1);
+  background-color: var(--blue-600);
+}
+
+/* Language Selector Dropdown */
+.language-dropdown {
+  position: relative;
+}
+
+.language-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 0.5rem;
+  min-width: 150px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px -3px var(--shadow);
+  z-index: 50;
+  overflow: hidden;
+}
+
+.language-menu button {
+  width: 100%;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  transition: background-color 0.2s;
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.language-menu button:hover {
+  background-color: var(--bg-tertiary);
+  transform: none;
+  box-shadow: none;
+}
+
+.language-menu button.active {
+  background-color: var(--blue-500);
+  color: white;
+}
+
+.language-menu button:focus-visible {
+  outline: 2px solid var(--blue-500);
+  outline-offset: -2px;
+}
+
+/* Time display styling */
+.time-display {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.05em;
+}
+
+@media (prefers-contrast: high) {
+  button {
+    border: 2px solid currentColor;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+[data-theme="dark"] ::-webkit-scrollbar {
+  width: 10px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: var(--bg-tertiary);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 5px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+[x-cloak] {
+  display: none !important;
+}
+
+/* Modal backdrop */
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+/* Focus trap for accessibility */
+.modal-backdrop:focus {
+  outline: none;
+}
