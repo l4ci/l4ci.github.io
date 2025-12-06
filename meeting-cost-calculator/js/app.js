@@ -195,6 +195,8 @@ function meetingCalculator() {
     },
 
     loadFromURL(params) {
+      let sessionDataLoaded = false;
+
       // Language (highest priority)
       if (params[URL_PARAMS.LANGUAGE] && TRANSLATIONS[params[URL_PARAMS.LANGUAGE]]) {
         this.language = params[URL_PARAMS.LANGUAGE];
@@ -202,6 +204,7 @@ function meetingCalculator() {
       
       // Start timestamp statt elapsed time
       if (params[URL_PARAMS.START_TIMESTAMP]) {
+        sessionDataLoaded = true;
         const sharedStartTimestamp = parseInt(params[URL_PARAMS.START_TIMESTAMP]);
         const sharedTimezoneOffset = parseInt(params[URL_PARAMS.TIMEZONE]) || 0;
         const currentTimezoneOffset = new Date().getTimezoneOffset();
@@ -224,6 +227,7 @@ function meetingCalculator() {
       
       // Cost per person
       if (params[URL_PARAMS.COST_PER_PERSON]) {
+        sessionDataLoaded = true;
         this.costPerPerson = parseFloat(params[URL_PARAMS.COST_PER_PERSON]) || 65;
       }
       
@@ -234,6 +238,7 @@ function meetingCalculator() {
       
       // Running status - Timer automatisch starten wenn running=1
       if (params[URL_PARAMS.RUNNING]) {
+        sessionDataLoaded = true;
         const wasRunning = params[URL_PARAMS.RUNNING] === '1';
         if (wasRunning && this.startTimestamp) {
           // Starte den Timer automatisch nach kurzer Verzögerung
@@ -247,6 +252,7 @@ function meetingCalculator() {
       
       // Segments
       if (params[URL_PARAMS.SEGMENTS]) {
+        sessionDataLoaded = true;
         try {
           const segmentsData = params[URL_PARAMS.SEGMENTS].split(',');
           this.segments = segmentsData.map(seg => {
@@ -262,15 +268,18 @@ function meetingCalculator() {
         }
       } else if (params[URL_PARAMS.PEOPLE]) {
         // Simple people count
+        sessionDataLoaded = true;
         const people = parseInt(params[URL_PARAMS.PEOPLE]) || 2;
         this.segments = [{ startTime: 0, numberOfPeople: people }];
         this.currentSegmentIndex = 0;
       }
       
       // Show notification that shared session was loaded
-      setTimeout(() => {
-        this.showNotification(this.t('sharedSessionLoaded'), 'info');
-      }, 500);
+      if (sessionDataLoaded) {
+        setTimeout(() => {
+          this.showNotification(this.t('sharedSessionLoaded'), 'info');
+        }, 500);
+      }
     },
 
     updateHreflangTags() {
