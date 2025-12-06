@@ -569,3 +569,89 @@ html {
     scroll-behavior: auto;
   }
 }
+
+/* ==================== KEYBOARD KEY STYLING ==================== */
+.keyboard-key {
+  display: inline-block;
+  padding: 4px 8px;
+  min-width: 32px;
+  text-align: center;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.875rem;
+  font-weight: 600;
+  background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  box-shadow: 0 2px 0 var(--border-color), 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: var(--text-primary);
+  transition: all var(--transition-fast);
+}
+
+.keyboard-key:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 0 var(--border-color), 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .keyboard-key {
+  background: linear-gradient(180deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
+  box-shadow: 0 2px 0 rgba(255, 255, 255, 0.1), 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* ==================== FOOTER STYLING ==================== */
+footer {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+}
+
+footer button:hover {
+  color: var(--blue-500);
+}
+
+/* ==================== SHORTCUTS MODAL SPECIFIC ==================== */
+.shortcuts-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  background-color: var(--bg-tertiary);
+  transition: background-color var(--transition-fast);
+}
+
+.shortcuts-list-item:hover {
+  background-color: var(--bg-secondary);
+}
+
+/* ==================== ANIMATED KEYBOARD HINTS ==================== */
+@keyframes pulse-key {
+  0%, 100% {
+    box-shadow: 0 2px 0 var(--border-color), 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  50% {
+    box-shadow: 0 2px 0 var(--blue-500), 0 2px 8px rgba(59, 130, 246, 0.3);
+  }
+}
+
+.keyboard-key:hover {
+  animation: pulse-key 1s ease-in-out;
+}
+
+/* Keyboard shortcut hint badge */
+.shortcut-hint {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: var(--blue-500);
+  color: white;
+  font-size: 0.625rem;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-weight: 600;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+
+button:hover .shortcut-hint {
+  opacity: 1;
+}

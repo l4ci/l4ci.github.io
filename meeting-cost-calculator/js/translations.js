@@ -83,6 +83,19 @@ const TRANSLATIONS = {
     shareEmailBody: 'Schau dir die Kosten unseres aktuellen Meetings an:',
     shareWhatsAppText: '💰 Meeting-Kostenrechner - Aktuelle Kosten:',
     shareSlackText: '💰 *Meeting-Kostenrechner*\nAktuelle Meeting-Kosten:',
+
+    // Keyboard Shortcuts
+    keyboardShortcuts: 'Tastaturkürzel',
+    keyboardShortcutsDescription: 'Nutze diese Tastenkombinationen für schnelleren Zugriff:',
+    startPauseTimer: 'Timer starten/pausieren',
+    resetTimer: 'Timer zurücksetzen',
+    openInfo: 'Informationen öffnen',
+    openShare: 'Teilen-Dialog öffnen',
+    showShortcuts: 'Tastaturkürzel anzeigen',
+    closeModal: 'Dialog schließen',
+    adjustParticipants: 'Teilnehmer anpassen',
+    proTip: 'Profi-Tipp',
+    keyboardShortcutsTip: 'Drücke Ctrl+? jederzeit um diese Übersicht anzuzeigen.',
     
     // Errors
     errorLoadingSession: 'Fehler beim Laden der Session',
@@ -168,6 +181,19 @@ const TRANSLATIONS = {
     shareEmailBody: 'Check out the costs of our current meeting:',
     shareWhatsAppText: '💰 Meeting Cost Calculator - Current costs:',
     shareSlackText: '💰 *Meeting Cost Calculator*\nCurrent meeting costs:',
+
+    // Keyboard Shortcuts
+    keyboardShortcuts: 'Keyboard Shortcuts',
+    keyboardShortcutsDescription: 'Use these keyboard shortcuts for faster access:',
+    startPauseTimer: 'Start/Pause timer',
+    resetTimer: 'Reset timer',
+    openInfo: 'Open information',
+    openShare: 'Open share dialog',
+    showShortcuts: 'Show keyboard shortcuts',
+    closeModal: 'Close dialog',
+    adjustParticipants: 'Adjust participants',
+    proTip: 'Pro Tip',
+    keyboardShortcutsTip: 'Press Ctrl+? anytime to show this overview.',
     
     // Errors
     errorLoadingSession: 'Error loading session',
@@ -253,6 +279,19 @@ const TRANSLATIONS = {
     shareEmailBody: 'Mira los costos de nuestra reunión actual:',
     shareWhatsAppText: '💰 Calculadora de Costos de Reuniones - Costos actuales:',
     shareSlackText: '💰 *Calculadora de Costos de Reuniones*\nCostos actuales de la reunión:',
+
+    // Keyboard Shortcuts
+    keyboardShortcuts: 'Atajos de Teclado',
+    keyboardShortcutsDescription: 'Usa estos atajos de teclado para acceso más rápido:',
+    startPauseTimer: 'Iniciar/Pausar temporizador',
+    resetTimer: 'Reiniciar temporizador',
+    openInfo: 'Abrir información',
+    openShare: 'Abrir diálogo de compartir',
+    showShortcuts: 'Mostrar atajos de teclado',
+    closeModal: 'Cerrar diálogo',
+    adjustParticipants: 'Ajustar participantes',
+    proTip: 'Consejo Pro',
+    keyboardShortcutsTip: 'Presiona Ctrl+? en cualquier momento para mostrar esta vista.',
     
     // Errors
     errorLoadingSession: 'Error al cargar la sesión',
@@ -338,6 +377,19 @@ const TRANSLATIONS = {
     shareEmailBody: 'Découvrez les coûts de notre réunion actuelle:',
     shareWhatsAppText: '💰 Calculateur de Coûts de Réunion - Coûts actuels:',
     shareSlackText: '💰 *Calculateur de Coûts de Réunion*\nCoûts actuels de la réunion:',
+
+    // Keyboard Shortcuts
+    keyboardShortcuts: 'Raccourcis Clavier',
+    keyboardShortcutsDescription: 'Utilisez ces raccourcis clavier pour un accès plus rapide:',
+    startPauseTimer: 'Démarrer/Mettre en pause',
+    resetTimer: 'Réinitialiser le minuteur',
+    openInfo: 'Ouvrir les informations',
+    openShare: 'Ouvrir le dialogue de partage',
+    showShortcuts: 'Afficher les raccourcis clavier',
+    closeModal: 'Fermer le dialogue',
+    adjustParticipants: 'Ajuster les participants',
+    proTip: 'Astuce Pro',
+    keyboardShortcutsTip: 'Appuyez sur Ctrl+? à tout moment pour afficher cet aperçu.',
     
     // Errors
     errorLoadingSession: 'Erreur lors du chargement de la session',
@@ -423,6 +475,19 @@ const TRANSLATIONS = {
     shareEmailBody: 'Guarda i costi della nostra riunione attuale:',
     shareWhatsAppText: '💰 Calcolatore Costi Riunioni - Costi attuali:',
     shareSlackText: '💰 *Calcolatore Costi Riunioni*\nCosti attuali della riunione:',
+
+    // Keyboard Shortcuts
+    keyboardShortcuts: 'Scorciatoie da Tastiera',
+    keyboardShortcutsDescription: 'Usa queste scorciatoie da tastiera per un accesso più veloce:',
+    startPauseTimer: 'Avvia/Metti in pausa timer',
+    resetTimer: 'Reimposta timer',
+    openInfo: 'Apri informazioni',
+    openShare: 'Apri dialogo di condivisione',
+    showShortcuts: 'Mostra scorciatoie da tastiera',
+    closeModal: 'Chiudi dialogo',
+    adjustParticipants: 'Regola partecipanti',
+    proTip: 'Suggerimento Pro',
+    keyboardShortcutsTip: 'Premi Ctrl+? in qualsiasi momento per mostrare questa panoramica.',
     
     // Errors
     errorLoadingSession: 'Errore nel caricamento della sessione',
@@ -508,6 +573,19 @@ const TRANSLATIONS = {
     shareEmailBody: 'Zobacz koszty naszego bieżącego spotkania:',
     shareWhatsAppText: '💰 Kalkulator Kosztów Spotkań - Aktualne koszty:',
     shareSlackText: '💰 *Kalkulator Kosztów Spotkań*\nAktualne koszty spotkania:',
+
+    // Keyboard Shortcuts
+    keyboardShortcuts: 'Skróty Klawiszowe',
+    keyboardShortcutsDescription: 'Użyj tych skrótów klawiszowych dla szybszego dostępu:',
+    startPauseTimer: 'Start/Pauza timer',
+    resetTimer: 'Resetuj timer',
+    openInfo: 'Otwórz informacje',
+    openShare: 'Otwórz dialog udostępniania',
+    showShortcuts: 'Pokaż skróty klawiszowe',
+    closeModal: 'Zamknij dialog',
+    adjustParticipants: 'Dostosuj uczestników',
+    proTip: 'Wskazówka Pro',
+    keyboardShortcutsTip: 'Naciśnij Ctrl+? w dowolnym momencie, aby pokazać ten przegląd.',
     
     // Errors
     errorLoadingSession: 'Błąd ładowania sesji',
