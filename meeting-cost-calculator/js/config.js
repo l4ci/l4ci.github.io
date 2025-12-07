@@ -1,571 +1,335 @@
-/* ==================== CONFIGURATION ==================== */
+/**
+ * ==================== CONFIGURATION ====================
+ * Global configuration constants for the Meeting Cost Calculator
+ * 
+ * @file config.js
+ * @version 2.0.0
+ */
+
+/**
+ * Application Configuration
+ */
+const APP_CONFIG = {
+  // App Information
+  name: 'Meeting Cost Calculator',
+  version: '2.0.0',
+  author: 'Meeting Cost Calculator Team',
+  
+  // Feature Flags
+  features: {
+    enableEmojis: true,
+    enableNotifications: true,
+    enablePWA: true,
+    enableSharing: true,
+    enableKeyboardShortcuts: true,
+    enableHistory: true,
+    enableAutoSave: true,
+    enableDarkMode: true,
+  },
+  
+  // Performance Settings
+  performance: {
+    autoSaveInterval: 2000, // ms
+    timerUpdateInterval: 100, // ms
+    emojiAnimationDuration: 3000, // ms
+    notificationDuration: 3000, // ms
+    debounceDelay: 300, // ms
+  },
+  
+  // Limits & Constraints
+  limits: {
+    minPeople: 1,
+    maxPeople: 1000,
+    minCost: 0,
+    maxCost: 10000,
+    maxHistoryEntries: 100,
+    maxEmojisOnScreen: 20,
+  },
+  
+  // Default Values
+  defaults: {
+    people: 2,
+    costPerPerson: 50,
+    currency: 'EUR',
+    language: 'de',
+    theme: 'auto',
+  },
+  
+  // Storage Keys
+  storage: {
+    session: 'meetingCalculatorSession',
+    settings: 'meetingCalculatorSettings',
+    history: 'meetingCalculatorHistory',
+    theme: 'meetingCalculatorTheme',
+    language: 'meetingCalculatorLanguage',
+  },
+  
+  // URL Parameters
+  urlParams: {
+    people: 'p',
+    cost: 'c',
+    currency: 'cur',
+    language: 'lang',
+    elapsed: 'e',
+  },
+};
 
 /**
  * Currency Configuration
- * Defines formatting rules for different currencies
  */
 const CURRENCY_CONFIG = {
-  'EUR': { 
-    symbol: '€', 
-    decimals: 2, 
-    position: 'suffix', 
-    separator: ',', 
-    thousandsSep: '.',
-    name: 'Euro'
-  },
-  'USD': { 
-    symbol: '$', 
-    decimals: 2, 
-    position: 'prefix', 
-    separator: '.', 
-    thousandsSep: ',',
-    name: 'US Dollar'
-  },
-  'GBP': { 
-    symbol: '£', 
-    decimals: 2, 
-    position: 'prefix', 
-    separator: '.', 
-    thousandsSep: ',',
-    name: 'British Pound'
-  },
-  'CHF': { 
-    symbol: 'CHF', 
-    decimals: 2, 
-    position: 'suffix', 
-    separator: '.', 
-    thousandsSep: "'",
-    name: 'Swiss Franc'
-  },
-  'JPY': { 
-    symbol: '¥', 
-    decimals: 0, 
-    position: 'prefix', 
-    separator: '', 
-    thousandsSep: ',',
-    name: 'Japanese Yen'
-  },
-  'CNY': { 
-    symbol: '¥', 
-    decimals: 2, 
-    position: 'prefix', 
-    separator: '.', 
-    thousandsSep: ',',
-    name: 'Chinese Yuan'
-  },
-  'INR': { 
-    symbol: '₹', 
-    decimals: 2, 
-    position: 'prefix', 
-    separator: '.', 
-    thousandsSep: ',',
-    name: 'Indian Rupee'
-  },
-  'AUD': { 
-    symbol: 'A$', 
-    decimals: 2, 
-    position: 'prefix', 
-    separator: '.', 
-    thousandsSep: ',',
-    name: 'Australian Dollar'
-  },
-  'CAD': { 
-    symbol: 'C$', 
-    decimals: 2, 
-    position: 'prefix', 
-    separator: '.', 
-    thousandsSep: ',',
-    name: 'Canadian Dollar'
-  },
-  'BRL': { 
-    symbol: 'R$', 
-    decimals: 2, 
-    position: 'prefix', 
-    separator: ',', 
-    thousandsSep: '.',
-    name: 'Brazilian Real'
-  }
+  EUR: { symbol: '€', name: 'Euro', decimals: 2, position: 'after' },
+  USD: { symbol: '$', name: 'US Dollar', decimals: 2, position: 'before' },
+  GBP: { symbol: '£', name: 'British Pound', decimals: 2, position: 'before' },
+  CHF: { symbol: 'CHF', name: 'Swiss Franc', decimals: 2, position: 'after' },
+  JPY: { symbol: '¥', name: 'Japanese Yen', decimals: 0, position: 'before' },
+  CNY: { symbol: '¥', name: 'Chinese Yuan', decimals: 2, position: 'before' },
+  INR: { symbol: '₹', name: 'Indian Rupee', decimals: 2, position: 'before' },
+  AUD: { symbol: '$', name: 'Australian Dollar', decimals: 2, position: 'before' },
+  CAD: { symbol: '$', name: 'Canadian Dollar', decimals: 2, position: 'before' },
+  BRL: { symbol: 'R$', name: 'Brazilian Real', decimals: 2, position: 'before' },
 };
 
 /**
- * Language to Currency Mapping
- * Auto-detect currency based on browser language
+ * Language Configuration
  */
-const LANGUAGE_CURRENCY_MAP = {
-  'de': 'EUR',
-  'de-DE': 'EUR',
-  'de-AT': 'EUR',
-  'de-CH': 'CHF',
-  'en': 'USD',
-  'en-US': 'USD',
-  'en-GB': 'GBP',
-  'en-AU': 'AUD',
-  'en-CA': 'CAD',
-  'en-IN': 'INR',
-  'es': 'EUR',
-  'es-ES': 'EUR',
-  'es-MX': 'USD',
-  'es-AR': 'USD',
-  'fr': 'EUR',
-  'fr-FR': 'EUR',
-  'fr-CH': 'CHF',
-  'fr-CA': 'CAD',
-  'it': 'EUR',
-  'it-IT': 'EUR',
-  'it-CH': 'CHF',
-  'pl': 'EUR',
-  'pl-PL': 'EUR',
-  'pt': 'EUR',
-  'pt-BR': 'BRL',
-  'pt-PT': 'EUR',
-  'ja': 'JPY',
-  'ja-JP': 'JPY',
-  'zh': 'CNY',
-  'zh-CN': 'CNY',
-  'zh-TW': 'CNY'
+const LANGUAGE_CONFIG = {
+  de: { name: 'Deutsch', flag: '🇩🇪', rtl: false },
+  en: { name: 'English', flag: '🇬🇧', rtl: false },
+  es: { name: 'Español', flag: '🇪🇸', rtl: false },
+  fr: { name: 'Français', flag: '🇫🇷', rtl: false },
+  it: { name: 'Italiano', flag: '🇮🇹', rtl: false },
+  pl: { name: 'Polski', flag: '🇵🇱', rtl: false },
 };
 
 /**
- * Language Flags
- * Emoji flags for language selector
+ * Theme Configuration
  */
-const LANGUAGE_FLAGS = {
-  'de': '🇩🇪',
-  'en': '🇬🇧',
-  'es': '🇪🇸',
-  'fr': '🇫🇷',
-  'it': '🇮🇹',
-  'pl': '🇵🇱'
+const THEME_CONFIG = {
+  auto: { name: 'Auto', icon: '🌓' },
+  light: { name: 'Light', icon: '☀️' },
+  dark: { name: 'Dark', icon: '🌙' },
 };
 
 /**
- * Supported Languages
- * List of all available languages
+ * Emoji Configuration for Celebrations
  */
-const SUPPORTED_LANGUAGES = ['de', 'en', 'es', 'fr', 'it', 'pl'];
-
-/**
- * Emoji Configuration
- * Emojis used for falling animation
- */
-const EMOJIS = ['💵', '💰', '🪙', '💸', '💶', '💷', '💴', '💳', '🤑'];
-const MAX_EMOJIS = 50;
-const EMOJI_SPAWN_RATE = 1000; // milliseconds
-
-/**
- * LocalStorage Configuration
- */
-const STORAGE_KEY = 'meetingCostCalculator';
-const STORAGE_VERSION = '1.0';
-
-/**
- * URL Parameter Names
- * Used for sharing functionality
- */
-const URL_PARAMS = {
-  LANGUAGE: 'lang',
-  START_TIMESTAMP: 'start',
-  PEOPLE: 'people',
-  COST_PER_PERSON: 'cost',
-  CURRENCY: 'currency',
-  RUNNING: 'running',
-  SEGMENTS: 'segments',
-  TIMEZONE: 'tz'
-};
-
-/**
- * Fun Notifications Configuration
- * Time-based and cost-based notifications
- */
-const FUN_NOTIFICATIONS = {
-  time: [
-    { 
-      seconds: 300, 
-      message: { 
-        de: '⏰ 5 Minuten! Zeit für eine Entscheidung?', 
-        en: '⏰ 5 minutes! Time for a decision?', 
-        es: '⏰ ¡5 minutos! ¿Hora de decidir?', 
-        fr: '⏰ 5 minutes! Temps de décider?', 
-        it: '⏰ 5 minuti! Tempo di decidere?', 
-        pl: '⏰ 5 minut! Czas na decyzję?' 
-      } 
-    },
-    { 
-      seconds: 900, 
-      message: { 
-        de: '😅 15 Minuten... Das hätte eine E-Mail sein können!', 
-        en: '😅 15 minutes... This could have been an email!', 
-        es: '😅 15 minutos... ¡Esto podría haber sido un email!', 
-        fr: '😅 15 minutes... Cela aurait pu être un email!', 
-        it: '😅 15 minuti... Poteva essere un\'email!', 
-        pl: '😅 15 minut... To mogło być emailem!' 
-      } 
-    },
-    { 
-      seconds: 1800, 
-      message: { 
-        de: '🤯 30 Minuten! Habt ihr schon Ergebnisse?', 
-        en: '🤯 30 minutes! Any results yet?', 
-        es: '🤯 ¡30 minutos! ¿Algún resultado?', 
-        fr: '🤯 30 minutes! Des résultats?', 
-        it: '🤯 30 minuti! Qualche risultato?', 
-        pl: '🤯 30 minut! Jakieś wyniki?' 
-      } 
-    },
-    { 
-      seconds: 2700, 
-      message: { 
-        de: '😴 45 Minuten... Kaffee-Pause nötig?', 
-        en: '😴 45 minutes... Coffee break needed?', 
-        es: '😴 45 minutos... ¿Pausa para café?', 
-        fr: '😴 45 minutes... Pause café nécessaire?', 
-        it: '😴 45 minuti... Pausa caffè?', 
-        pl: '😴 45 minut... Przerwa na kawę?' 
-      } 
-    },
-    { 
-      seconds: 3600, 
-      message: { 
-        de: '🎉 1 Stunde! Das ist Ausdauer! 💪', 
-        en: '🎉 1 hour! That\'s dedication! 💪', 
-        es: '🎉 ¡1 hora! ¡Eso es dedicación! 💪', 
-        fr: '🎉 1 heure! C\'est de la détermination! 💪', 
-        it: '🎉 1 ora! Questa è dedizione! 💪', 
-        pl: '🎉 1 godzina! To jest zaangażowanie! 💪' 
-      } 
-    },
-    { 
-      seconds: 5400, 
-      message: { 
-        de: '🚨 90 Minuten! Olympisches Meeting! 🏅', 
-        en: '🚨 90 minutes! Olympic meeting! 🏅', 
-        es: '🚨 ¡90 minutos! ¡Reunión olímpica! 🏅', 
-        fr: '🚨 90 minutes! Réunion olympique! 🏅', 
-        it: '🚨 90 minuti! Riunione olimpica! 🏅', 
-        pl: '🚨 90 minut! Olimpijskie spotkanie! 🏅' 
-      } 
-    },
-    { 
-      seconds: 7200, 
-      message: { 
-        de: '🎬 2 Stunden! Das ist länger als die meisten Filme! 🍿', 
-        en: '🎬 2 hours! Longer than most movies! 🍿', 
-        es: '🎬 ¡2 horas! ¡Más largo que la mayoría de películas! 🍿', 
-        fr: '🎬 2 heures! Plus long que la plupart des films! 🍿', 
-        it: '🎬 2 ore! Più lungo della maggior parte dei film! 🍿', 
-        pl: '🎬 2 godziny! Dłużej niż większość filmów! 🍿' 
-      } 
-    }
-  ],
-  cost: [
-    { 
-      amount: 50, 
-      message: { 
-        de: '💸 50€! Ein schönes Abendessen wäre das gewesen!', 
-        en: '💸 $50! That would have been a nice dinner!', 
-        es: '💸 ¡50€! ¡Eso habría sido una buena cena!', 
-        fr: '💸 50€! Cela aurait été un bon dîner!', 
-        it: '💸 50€! Sarebbe stata una bella cena!', 
-        pl: '💸 50€! To byłby niezły obiad!' 
-      } 
-    },
-    { 
-      amount: 100, 
-      message: { 
-        de: '🎮 100€! Eine neue Konsole wäre cooler gewesen!', 
-        en: '🎮 $100! A new game console would have been cooler!', 
-        es: '🎮 ¡100€! ¡Una nueva consola habría sido mejor!', 
-        fr: '🎮 100€! Une nouvelle console aurait été plus cool!', 
-        it: '🎮 100€! Una nuova console sarebbe stata più figa!', 
-        pl: '🎮 100€! Nowa konsola byłaby fajniejsza!' 
-      } 
-    },
-    { 
-      amount: 250, 
-      message: { 
-        de: '✈️ 250€! Fast ein Flug nach Barcelona!', 
-        en: '✈️ $250! Almost a flight to Barcelona!', 
-        es: '✈️ ¡250€! ¡Casi un vuelo a Barcelona!', 
-        fr: '✈️ 250€! Presque un vol pour Barcelone!', 
-        it: '✈️ 250€! Quasi un volo per Barcellona!', 
-        pl: '✈️ 250€! Prawie lot do Barcelony!' 
-      } 
-    },
-    { 
-      amount: 500, 
-      message: { 
-        de: '🏖️ 500€! Ein Wochenendtrip wäre schöner!', 
-        en: '🏖️ $500! A weekend trip would be nicer!', 
-        es: '🏖️ ¡500€! ¡Un viaje de fin de semana sería mejor!', 
-        fr: '🏖️ 500€! Un weekend serait plus agréable!', 
-        it: '🏖️ 500€! Un weekend sarebbe più bello!', 
-        pl: '🏖️ 500€! Wypad na weekend byłby fajniejszy!' 
-      } 
-    },
-    { 
-      amount: 1000, 
-      message: { 
-        de: '🤑 1000€! Jetzt wird\'s ernst! Das ist echtes Geld!', 
-        en: '🤑 $1000! Now it\'s getting serious! That\'s real money!', 
-        es: '🤑 ¡1000€! ¡Ahora se pone serio! ¡Eso es dinero real!', 
-        fr: '🤑 1000€! Maintenant ça devient sérieux! C\'est de l\'argent réel!', 
-        it: '🤑 1000€! Ora diventa serio! Sono soldi veri!', 
-        pl: '🤑 1000€! Teraz robi się poważnie! To prawdziwe pieniądze!' 
-      } 
-    },
-    { 
-      amount: 2000, 
-      message: { 
-        de: '💎 2000€! Ein gebrauchtes Auto! 🚗', 
-        en: '💎 $2000! A used car! 🚗', 
-        es: '💎 ¡2000€! ¡Un coche usado! 🚗', 
-        fr: '💎 2000€! Une voiture d\'occasion! 🚗', 
-        it: '💎 2000€! Un\'auto usata! 🚗', 
-        pl: '💎 2000€! Używany samochód! 🚗' 
-      } 
-    },
-    { 
-      amount: 5000, 
-      message: { 
-        de: '🏆 5000€! LEGENDÄR! Das Meeting geht in die Geschichte ein! 📚', 
-        en: '🏆 $5000! LEGENDARY! This meeting goes down in history! 📚', 
-        es: '🏆 ¡5000€! ¡LEGENDARIO! ¡Esta reunión pasa a la historia! 📚', 
-        fr: '🏆 5000€! LÉGENDAIRE! Cette réunion entre dans l\'histoire! 📚', 
-        it: '🏆 5000€! LEGGENDARIO! Questa riunione entra nella storia! 📚', 
-        pl: '🏆 5000€! LEGENDARNIE! To spotkanie przejdzie do historii! 📚' 
-      } 
-    }
-  ]
-};
-
-/**
- * Validation Constants
- */
-const VALIDATION = {
-  MIN_PEOPLE: 1,
-  MAX_PEOPLE: 999,
-  MIN_COST: 0,
-  MAX_COST: 9999,
-  MAX_ELAPSED_TIME: 86400, // 24 hours in seconds
-  MIN_TIMESTAMP: 946684800000, // 2000-01-01
-  MAX_TIMESTAMP: 4102444800000 // 2100-01-01
-};
-
-/**
- * Debounce Delays (milliseconds)
- */
-const DEBOUNCE_DELAYS = {
-  SAVE: 500,
-  UPDATE_COST: 300,
-  RESIZE: 250
-};
-
-/* ==================== HELPER FUNCTIONS ==================== */
-
-/**
- * Detect currency from browser language
- * @returns {string} Currency code (e.g., 'EUR', 'USD')
- */
-function detectCurrencyFromLanguage() {
-  try {
-    const browserLang = navigator.language || navigator.userLanguage || 'en';
-    
-    // Try exact match first
-    if (LANGUAGE_CURRENCY_MAP[browserLang]) {
-      return LANGUAGE_CURRENCY_MAP[browserLang];
-    }
-    
-    // Try language code without region
-    const langCode = browserLang.split('-')[0];
-    if (LANGUAGE_CURRENCY_MAP[langCode]) {
-      return LANGUAGE_CURRENCY_MAP[langCode];
-    }
-    
-    // Default to EUR
-    return 'EUR';
-  } catch (error) {
-    console.error('Error detecting currency:', error);
-    return 'EUR';
-  }
-}
-
-/**
- * Detect language from browser
- * @returns {string} Language code (e.g., 'de', 'en')
- */
-function detectBrowserLanguage() {
-  try {
-    const browserLang = navigator.language || navigator.userLanguage || 'en';
-    const langCode = browserLang.split('-')[0].toLowerCase();
-    
-    // Check if we support this language
-    if (SUPPORTED_LANGUAGES.includes(langCode)) {
-      return langCode;
-    }
-    
-    // Default to English
-    return 'en';
-  } catch (error) {
-    console.error('Error detecting language:', error);
-    return 'en';
-  }
-}
-
-/**
- * Parse and sanitize URL parameters
- * @returns {Object} Sanitized URL parameters
- */
-function getURLParameters() {
-  try {
-    const params = new URLSearchParams(window.location.search);
-    const result = {};
-    
-    for (const [key, value] of params.entries()) {
-      // Sanitize parameter values to prevent XSS
-      result[key] = sanitizeString(value);
-    }
-    
-    return result;
-  } catch (error) {
-    console.error('Error parsing URL parameters:', error);
-    return {};
-  }
-}
-
-/**
- * Sanitize string to prevent XSS
- * @param {string} str - String to sanitize
- * @returns {string} Sanitized string
- */
-function sanitizeString(str) {
-  if (typeof str !== 'string') return '';
+const EMOJI_CONFIG = {
+  // Milestone Emojis (time-based)
+  milestones: {
+    60: ['⏰', '⏱️', '🕐'],           // 1 minute
+    300: ['🎯', '⭐', '✨'],          // 5 minutes
+    600: ['🎉', '🎊', '🥳'],         // 10 minutes
+    1800: ['😱', '💸', '💰'],        // 30 minutes
+    3600: ['🔥', '💥', '⚠️'],        // 1 hour
+  },
   
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
-}
+  // Cost Milestone Emojis
+  costMilestones: {
+    100: ['💵', '💶', '💷'],
+    500: ['💰', '🤑', '💸'],
+    1000: ['🏦', '💎', '👑'],
+  },
+  
+  // Random celebration emojis
+  celebration: ['🎉', '🎊', '✨', '⭐', '🌟', '💫', '🎈', '🎆', '🎇'],
+  
+  // Warning emojis for long meetings
+  warning: ['⚠️', '🚨', '⏰', '😰', '😱', '💀'],
+  
+  // Animation settings
+  animation: {
+    duration: 3000, // ms
+    maxOnScreen: 20,
+    spawnInterval: 200, // ms between spawns
+  },
+};
 
 /**
- * Validate timestamp
- * @param {number} timestamp - Timestamp to validate
- * @returns {boolean} True if valid
+ * Keyboard Shortcuts Configuration
  */
-function isValidTimestamp(timestamp) {
-  return (
-    typeof timestamp === 'number' &&
-    !isNaN(timestamp) &&
-    timestamp >= VALIDATION.MIN_TIMESTAMP &&
-    timestamp <= VALIDATION.MAX_TIMESTAMP
-  );
-}
+const KEYBOARD_CONFIG = {
+  shortcuts: {
+    toggleTimer: ['Enter', 'Space', 'Ctrl+Space'],
+    reset: ['Ctrl+R'],
+    openInfo: ['Ctrl+I'],
+    openShare: ['Ctrl+S'],
+    openShortcuts: ['Ctrl+?', 'Ctrl+/'],
+    closeModal: ['Escape'],
+    increasePeople: ['+', '='],
+    decreasePeople: ['-', '_'],
+  },
+  
+  // Debounce settings
+  debounce: 300, // ms
+  
+  // Prevent default for these keys
+  preventDefaults: ['Space', 'Enter'],
+};
 
 /**
- * Validate number within range
- * @param {number} value - Value to validate
- * @param {number} min - Minimum value
- * @param {number} max - Maximum value
- * @returns {number} Clamped value
+ * Notification Configuration
  */
-function clampNumber(value, min, max) {
-  const num = parseFloat(value);
-  if (isNaN(num)) return min;
-  return Math.max(min, Math.min(max, num));
-}
+const NOTIFICATION_CONFIG = {
+  duration: 3000, // ms
+  position: 'top-right',
+  types: {
+    success: { icon: '✅', color: 'green' },
+    error: { icon: '❌', color: 'red' },
+    warning: { icon: '⚠️', color: 'orange' },
+    info: { icon: 'ℹ️', color: 'blue' },
+  },
+};
 
 /**
- * Build share URL with current state
- * @param {Object} state - Current application state
- * @returns {string} Share URL
+ * Validation Rules
  */
-function buildShareURL(state) {
+const VALIDATION_RULES = {
+  people: {
+    min: APP_CONFIG.limits.minPeople,
+    max: APP_CONFIG.limits.maxPeople,
+    default: APP_CONFIG.defaults.people,
+    errorMessage: 'Number of people must be between {min} and {max}',
+  },
+  
+  cost: {
+    min: APP_CONFIG.limits.minCost,
+    max: APP_CONFIG.limits.maxCost,
+    default: APP_CONFIG.defaults.costPerPerson,
+    errorMessage: 'Cost must be between {min} and {max}',
+  },
+  
+  currency: {
+    allowed: Object.keys(CURRENCY_CONFIG),
+    default: APP_CONFIG.defaults.currency,
+    errorMessage: 'Invalid currency code',
+  },
+  
+  language: {
+    allowed: Object.keys(LANGUAGE_CONFIG),
+    default: APP_CONFIG.defaults.language,
+    errorMessage: 'Invalid language code',
+  },
+};
+
+/**
+ * Share Configuration
+ */
+const SHARE_CONFIG = {
+  // Share text templates
+  templates: {
+    default: 'Check out this meeting cost: {cost} for {time} with {people} people',
+    whatsapp: '💰 Meeting Cost: {cost}\n⏱️ Duration: {time}\n👥 People: {people}\n\nCalculate yours: {url}',
+    email: {
+      subject: 'Meeting Cost Calculator Results',
+      body: 'Our meeting cost {cost} with {people} participants over {time}.\n\nTry it yourself: {url}',
+    },
+    slack: '💰 *Meeting Cost Calculator*\n\n*Cost:* {cost}\n*Duration:* {time}\n*Participants:* {people}\n\n<{url}|Calculate your meeting cost>',
+  },
+  
+  // Share platforms
+  platforms: {
+    whatsapp: 'https://wa.me/?text=',
+    slack: 'https://slack.com/intl/en-de/',
+    email: 'mailto:?subject=',
+  },
+};
+
+/**
+ * Analytics Configuration (for future use)
+ */
+const ANALYTICS_CONFIG = {
+  enabled: false,
+  trackEvents: {
+    timerStart: true,
+    timerPause: true,
+    timerReset: true,
+    share: true,
+    themeChange: true,
+    languageChange: true,
+  },
+};
+
+/**
+ * Debug Configuration
+ */
+const DEBUG_CONFIG = {
+  enabled: false, // Set to true for development
+  logLevel: 'info', // 'debug', 'info', 'warn', 'error'
+  showPerformance: false,
+  showStateChanges: false,
+};
+
+/**
+ * Helper function to get configuration value
+ * @param {string} path - Dot notation path (e.g., 'APP_CONFIG.defaults.people')
+ * @param {*} defaultValue - Default value if path not found
+ * @returns {*} Configuration value
+ */
+function getConfig(path, defaultValue = null) {
   try {
-    const baseURL = window.location.origin + window.location.pathname;
-    const params = new URLSearchParams();
+    const keys = path.split('.');
+    let value = window;
     
-    // Add language
-    if (state.language && SUPPORTED_LANGUAGES.includes(state.language)) {
-      params.set(URL_PARAMS.LANGUAGE, state.language);
+    for (const key of keys) {
+      value = value[key];
+      if (value === undefined) return defaultValue;
     }
     
-    // Add start timestamp instead of elapsed time
-    if (state.startTimestamp && isValidTimestamp(state.startTimestamp)) {
-      params.set(URL_PARAMS.START_TIMESTAMP, state.startTimestamp);
-    } else if (state.elapsedTime > 0) {
-      // If no startTimestamp but we have elapsed time, calculate it
-      const calculatedTimestamp = Date.now() - (state.elapsedTime * 1000);
-      if (isValidTimestamp(calculatedTimestamp)) {
-        params.set(URL_PARAMS.START_TIMESTAMP, calculatedTimestamp);
-      }
-    }
-    
-    // Add timezone offset
-    const timezoneOffset = new Date().getTimezoneOffset();
-    params.set(URL_PARAMS.TIMEZONE, timezoneOffset);
-    
-    // Add current people count
-    const people = clampNumber(
-      state.segments[state.currentSegmentIndex].numberOfPeople,
-      VALIDATION.MIN_PEOPLE,
-      VALIDATION.MAX_PEOPLE
-    );
-    params.set(URL_PARAMS.PEOPLE, people);
-    
-    // Add cost per person
-    const cost = clampNumber(state.costPerPerson, VALIDATION.MIN_COST, VALIDATION.MAX_COST);
-    params.set(URL_PARAMS.COST_PER_PERSON, cost);
-    
-    // Add currency
-    if (CURRENCY_CONFIG[state.currency]) {
-      params.set(URL_PARAMS.CURRENCY, state.currency);
-    }
-    
-    // Add running status
-    params.set(URL_PARAMS.RUNNING, state.isRunning ? '1' : '0');
-    
-    // Add segments (compressed) - Relative timestamps
-    if (state.segments && state.segments.length > 1) {
-      const segmentsData = state.segments
-        .map(s => `${s.startTime}:${s.numberOfPeople}`)
-        .join(',');
-      params.set(URL_PARAMS.SEGMENTS, segmentsData);
-    }
-    
-    return `${baseURL}?${params.toString()}`;
+    return value;
   } catch (error) {
-    console.error('Error building share URL:', error);
-    return window.location.href;
+    console.warn(`[Config] Could not get config for path: ${path}`, error);
+    return defaultValue;
   }
 }
 
 /**
- * Debounce function
- * @param {Function} func - Function to debounce
- * @param {number} wait - Wait time in milliseconds
- * @returns {Function} Debounced function
+ * Helper function to validate value against rules
+ * @param {string} type - Validation type (people, cost, currency, language)
+ * @param {*} value - Value to validate
+ * @returns {boolean} Is valid
  */
-function debounce(func, wait) {
-  let timeout;
-  return function executedFunction(...args) {
-    const later = () => {
-      clearTimeout(timeout);
-      func(...args);
-    };
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-  };
+function validateConfig(type, value) {
+  const rules = VALIDATION_RULES[type];
+  if (!rules) return true;
+  
+  if (rules.min !== undefined && value < rules.min) return false;
+  if (rules.max !== undefined && value > rules.max) return false;
+  if (rules.allowed && !rules.allowed.includes(value)) return false;
+  
+  return true;
 }
 
 /**
- * Check if localStorage is available
- * @returns {boolean} True if available
+ * Helper function to get default value
+ * @param {string} type - Config type
+ * @returns {*} Default value
  */
-function isLocalStorageAvailable() {
-  try {
-    const test = '__localStorage_test__';
-    localStorage.setItem(test, test);
-    localStorage.removeItem(test);
-    return true;
-  } catch (e) {
-    return false;
-  }
+function getDefaultConfig(type) {
+  return VALIDATION_RULES[type]?.default || APP_CONFIG.defaults[type] || null;
 }
+
+/**
+ * Log configuration on load (only in debug mode)
+ */
+if (DEBUG_CONFIG.enabled) {
+  console.group('[Config] Application Configuration Loaded');
+  console.log('Version:', APP_CONFIG.version);
+  console.log('Features:', APP_CONFIG.features);
+  console.log('Defaults:', APP_CONFIG.defaults);
+  console.log('Debug Mode:', DEBUG_CONFIG.enabled);
+  console.groupEnd();
+}
+
+// Freeze configurations to prevent modifications
+Object.freeze(APP_CONFIG);
+Object.freeze(CURRENCY_CONFIG);
+Object.freeze(LANGUAGE_CONFIG);
+Object.freeze(THEME_CONFIG);
+Object.freeze(EMOJI_CONFIG);
+Object.freeze(KEYBOARD_CONFIG);
+Object.freeze(NOTIFICATION_CONFIG);
+Object.freeze(VALIDATION_RULES);
+Object.freeze(SHARE_CONFIG);
+Object.freeze(ANALYTICS_CONFIG);
+Object.freeze(DEBUG_CONFIG);

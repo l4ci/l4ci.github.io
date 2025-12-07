@@ -1,664 +1,569 @@
-/* ==================== TRANSLATIONS ==================== */
-
 /**
- * Multi-language translations for the Meeting Cost Calculator
- * Supports: German (de), English (en), Spanish (es), French (fr), Italian (it), Polish (pl)
+ * ==================== TRANSLATIONS ====================
+ * Multi-language support for the Meeting Cost Calculator
+ * 
+ * @file translations.js
+ * @version 2.0.0
  */
 
+/**
+ * Translation strings for all supported languages
+ */
 const TRANSLATIONS = {
   de: {
-    // Main UI
+    // App Title
     title: '💰 Meeting-Kostenrechner',
-    totalCostLabel: 'Gesamtkosten:',
-    start: '▶️ Start',
-    pause: '⏸️ Pause',
-    reset: '🔄 Reset',
-    participants: '👥 Teilnehmer:',
     
-    // Settings
-    settingsShow: '⚙️ Einstellungen anzeigen',
-    settingsHide: '⚙️ Einstellungen ausblenden',
-    costPerPerson: '💶 Kosten pro Person/h:',
-    currency: '🌍 Währung:',
+    // Actions
+    start: 'Start',
+    pause: 'Pause',
+    reset: 'Reset',
+    close: 'Schließen',
+    copy: 'Kopieren',
+    share: 'Teilen',
+    
+    // Labels
+    participants: 'Teilnehmer',
+    numberOfPeople: 'Anzahl der Teilnehmer',
+    costPerPerson: 'Kosten pro Person (€/Std)',
+    currency: 'Währung',
+    totalCostLabel: 'Gesamtkosten:',
+    settings: 'Einstellungen',
+    language: 'Sprache',
+    theme: 'Design',
+    info: 'Info',
+    
+    // Actions with context
+    addPerson: 'Person hinzufügen',
+    removePerson: 'Person entfernen',
     selectLanguage: 'Sprache auswählen',
     selectCurrency: 'Währung auswählen',
-    shareSession: 'Session teilen',
-    
-    // Time
-    elapsedTime: 'Verstrichene Zeit:',
-    second: 'Sekunde',
-    seconds: 'Sekunden',
-    minute: 'Minute',
-    minutes: 'Minuten',
-    hour: 'Stunde',
-    hours: 'Stunden',
     
     // History
     historyShow: '📊 Meeting-Historie anzeigen',
     historyHide: '📊 Meeting-Historie ausblenden',
-    historyTitle: 'Personenänderungen:',
-    start_history: 'Start:',
-    person: 'Person',
-    persons: 'Personen',
-    personJoined: 'Person ist dem Meeting beigetreten',
-    personsJoined: 'Personen sind dem Meeting beigetreten',
-    personLeft: 'Person hat das Meeting verlassen',
-    personsLeft: 'Personen haben das Meeting verlassen',
+    historyTitle: 'Teilnehmer-Änderungen:',
+    historyEntry: '{people} Personen ab {time}',
     
-    // Notifications
-    sessionRestored: '⚠️ Session wiederhergestellt - Timer wurde pausiert',
-    sharedSessionLoaded: '🔗 Geteilte Session geladen!',
-    linkCopied: '✓ Link kopiert!',
-    errorOccurred: '❌ Ein Fehler ist aufgetreten',
-    
-    // Accessibility
-    toggleLanguage: 'Sprache wechseln',
-    toggleTheme: 'Theme wechseln',
-    decreaseParticipants: 'Teilnehmer verringern',
-    increaseParticipants: 'Teilnehmer erhöhen',
-    numberOfParticipants: 'Anzahl der Teilnehmer',
-    showInfo: 'Informationen anzeigen',
-    closeDialog: 'Dialog schließen',
+    // Share
+    shareSession: 'Session teilen',
+    shareTitle: 'Session teilen',
+    shareDescription: 'Teile deine Meeting-Kosten mit anderen:',
+    shareUrl: 'Share-URL',
+    copyLink: 'Link kopieren',
+    linkCopied: 'Link in Zwischenablage kopiert!',
+    email: 'E-Mail',
     
     // Info Modal
-    infoTitle: 'Wozu dieser Rechner?',
-    infoText1: 'Meetings sind teuer! Dieser Rechner macht die versteckten Kosten von Besprechungen sichtbar und hilft dabei, bewusster mit der Zeit aller Teilnehmer umzugehen.',
-    infoText2: 'Geben Sie die durchschnittlichen Kosten pro Person und Stunde ein (z.B. Stundenlohn + Lohnnebenkosten) und sehen Sie in Echtzeit, wie viel das Meeting kostet.',
-    infoExampleTitle: '💡 Beispiel:',
-    infoExample: '5 Personen à 65€/h in einem 30-minütigen Meeting = 162,50€ Kosten',
-    infoTip: '💡 Tipp: Nutzen Sie die Personenzähler während des Meetings, wenn Teilnehmer hinzukommen oder gehen.',
-    infoClose: 'Verstanden',
+    infoText1: 'Dieser Rechner hilft dir, die Kosten deines Meetings in Echtzeit zu visualisieren.',
+    infoText2: 'Gib die Anzahl der Teilnehmer und die durchschnittlichen Kosten pro Person und Stunde ein.',
+    infoText3: 'Der Timer zeigt dir, wie viel das Meeting bereits gekostet hat.',
+    proTip: 'Profi-Tipp',
+    infoTip: 'Nutze Tastaturkürzel für schnellere Bedienung! Drücke Ctrl+? um alle Shortcuts zu sehen.',
     
-    // Share Modal
-    shareLink: 'Link teilen',
-    shareTitle: 'Meeting teilen',
-    shareDescription: 'Teilen Sie dieses Meeting mit anderen. Der Link enthält alle aktuellen Einstellungen und den Timer-Status.',
-    shareUrl: 'Share-Link:',
-    copyLink: 'Kopieren',
-    shareVia: 'Teilen über:',
-    more: 'Mehr',
-    or: 'oder',
-    close: 'Schließen',
-    shareInfoTitle: 'Was wird geteilt?',
-    shareInfo1: 'Aktuelle Zeit und Timer-Status',
-    shareInfo2: 'Teilnehmeranzahl und Einstellungen',
-    shareInfo3: 'Sprache und Währung',
-    shareEmailSubject: 'Meeting-Kostenrechner - Aktuelles Meeting',
-    shareEmailBody: 'Schau dir die Kosten unseres aktuellen Meetings an:',
-    shareWhatsAppText: '💰 Meeting-Kostenrechner - Aktuelle Kosten:',
-    shareSlackText: '💰 *Meeting-Kostenrechner*\nAktuelle Meeting-Kosten:',
-
     // Keyboard Shortcuts
     keyboardShortcuts: 'Tastaturkürzel',
-    keyboardShortcutsDescription: 'Nutze diese Tastenkombinationen für schnelleren Zugriff:',
+    keyboardShortcutsDescription: 'Nutze diese Tastenkombinationen für schnellere Bedienung:',
+    keyboardShortcutsTip: 'Alle Shortcuts funktionieren auch während das Meeting läuft!',
     startPauseTimer: 'Timer starten/pausieren',
     resetTimer: 'Timer zurücksetzen',
-    openInfo: 'Informationen öffnen',
+    openInfo: 'Info öffnen',
     openShare: 'Teilen-Dialog öffnen',
-    showShortcuts: 'Tastaturkürzel anzeigen',
+    showShortcuts: 'Shortcuts anzeigen',
     closeModal: 'Dialog schließen',
     adjustParticipants: 'Teilnehmer anpassen',
-    proTip: 'Profi-Tipp',
-    keyboardShortcutsTip: 'Drücke Ctrl+? jederzeit um diese Übersicht anzuzeigen.',
+    or: 'oder',
     
-    // Errors
-    errorLoadingSession: 'Fehler beim Laden der Session',
-    errorSavingSession: 'Fehler beim Speichern der Session',
-    errorInvalidData: 'Ungültige Daten',
-    errorNetworkIssue: 'Netzwerkproblem'
+    // Notifications
+    timerStarted: 'Timer gestartet!',
+    timerPaused: 'Timer pausiert',
+    timerReset: 'Timer zurückgesetzt',
+    sessionShared: 'Session-Link kopiert!',
+    errorOccurred: 'Ein Fehler ist aufgetreten',
+    
+    // Time formatting
+    seconds: 'Sekunden',
+    minutes: 'Minuten',
+    hours: 'Stunden',
+    
+    // Validation
+    invalidPeopleCount: 'Ungültige Teilnehmerzahl',
+    invalidCost: 'Ungültiger Kostenwert',
+    
+    // PWA
+    installApp: 'App installieren',
+    offlineMode: 'Offline-Modus aktiv',
   },
   
   en: {
-    // Main UI
+    // App Title
     title: '💰 Meeting Cost Calculator',
-    totalCostLabel: 'Total Cost:',
-    start: '▶️ Start',
-    pause: '⏸️ Pause',
-    reset: '🔄 Reset',
-    participants: '👥 Participants:',
     
-    // Settings
-    settingsShow: '⚙️ Show Settings',
-    settingsHide: '⚙️ Hide Settings',
-    costPerPerson: '💶 Cost per Person/h:',
-    currency: '🌍 Currency:',
+    // Actions
+    start: 'Start',
+    pause: 'Pause',
+    reset: 'Reset',
+    close: 'Close',
+    copy: 'Copy',
+    share: 'Share',
+    
+    // Labels
+    participants: 'Participants',
+    numberOfPeople: 'Number of participants',
+    costPerPerson: 'Cost per person (€/hr)',
+    currency: 'Currency',
+    totalCostLabel: 'Total cost:',
+    settings: 'Settings',
+    language: 'Language',
+    theme: 'Theme',
+    info: 'Info',
+    
+    // Actions with context
+    addPerson: 'Add person',
+    removePerson: 'Remove person',
     selectLanguage: 'Select language',
     selectCurrency: 'Select currency',
-    shareSession: 'Share session',
-    
-    // Time
-    elapsedTime: 'Elapsed Time:',
-    second: 'second',
-    seconds: 'seconds',
-    minute: 'minute',
-    minutes: 'minutes',
-    hour: 'hour',
-    hours: 'hours',
     
     // History
-    historyShow: '📊 Show Meeting History',
-    historyHide: '📊 Hide Meeting History',
-    historyTitle: 'Participant Changes:',
-    start_history: 'Start:',
-    person: 'person',
-    persons: 'persons',
-    personJoined: 'person joined the meeting',
-    personsJoined: 'persons joined the meeting',
-    personLeft: 'person left the meeting',
-    personsLeft: 'persons left the meeting',
+    historyShow: '📊 Show meeting history',
+    historyHide: '📊 Hide meeting history',
+    historyTitle: 'Participant changes:',
+    historyEntry: '{people} people from {time}',
     
-    // Notifications
-    sessionRestored: '⚠️ Session restored - Timer was paused',
-    sharedSessionLoaded: '🔗 Shared session loaded!',
-    linkCopied: '✓ Link copied!',
-    errorOccurred: '❌ An error occurred',
-    
-    // Accessibility
-    toggleLanguage: 'Toggle language',
-    toggleTheme: 'Toggle theme',
-    decreaseParticipants: 'Decrease participants',
-    increaseParticipants: 'Increase participants',
-    numberOfParticipants: 'Number of participants',
-    showInfo: 'Show information',
-    closeDialog: 'Close dialog',
+    // Share
+    shareSession: 'Share session',
+    shareTitle: 'Share session',
+    shareDescription: 'Share your meeting costs with others:',
+    shareUrl: 'Share URL',
+    copyLink: 'Copy link',
+    linkCopied: 'Link copied to clipboard!',
+    email: 'Email',
     
     // Info Modal
-    infoTitle: 'What is this calculator for?',
-    infoText1: 'Meetings are expensive! This calculator makes the hidden costs of meetings visible and helps to be more conscious about everyone\'s time.',
-    infoText2: 'Enter the average cost per person per hour (e.g., hourly wage + overhead costs) and see in real-time how much the meeting costs.',
-    infoExampleTitle: '💡 Example:',
-    infoExample: '5 people at $65/h in a 30-minute meeting = $162.50 cost',
-    infoTip: '💡 Tip: Use the participant counter during the meeting when people join or leave.',
-    infoClose: 'Got it',
+    infoText1: 'This calculator helps you visualize the cost of your meeting in real-time.',
+    infoText2: 'Enter the number of participants and the average cost per person per hour.',
+    infoText3: 'The timer shows you how much the meeting has already cost.',
+    proTip: 'Pro Tip',
+    infoTip: 'Use keyboard shortcuts for faster operation! Press Ctrl+? to see all shortcuts.',
     
-    // Share Modal
-    shareLink: 'Share link',
-    shareTitle: 'Share Meeting',
-    shareDescription: 'Share this meeting with others. The link contains all current settings and timer status.',
-    shareUrl: 'Share Link:',
-    copyLink: 'Copy',
-    shareVia: 'Share via:',
-    more: 'More',
-    close: 'Close',
-    or: 'or',
-    shareInfoTitle: 'What is shared?',
-    shareInfo1: 'Current time and timer status',
-    shareInfo2: 'Number of participants and settings',
-    shareInfo3: 'Language and currency',
-    shareEmailSubject: 'Meeting Cost Calculator - Current Meeting',
-    shareEmailBody: 'Check out the costs of our current meeting:',
-    shareWhatsAppText: '💰 Meeting Cost Calculator - Current costs:',
-    shareSlackText: '💰 *Meeting Cost Calculator*\nCurrent meeting costs:',
-
     // Keyboard Shortcuts
-    keyboardShortcuts: 'Keyboard Shortcuts',
-    keyboardShortcutsDescription: 'Use these keyboard shortcuts for faster access:',
-    startPauseTimer: 'Start/Pause timer',
+    keyboardShortcuts: 'Keyboard shortcuts',
+    keyboardShortcutsDescription: 'Use these key combinations for faster operation:',
+    keyboardShortcutsTip: 'All shortcuts work even while the meeting is running!',
+    startPauseTimer: 'Start/pause timer',
     resetTimer: 'Reset timer',
-    openInfo: 'Open information',
+    openInfo: 'Open info',
     openShare: 'Open share dialog',
-    showShortcuts: 'Show keyboard shortcuts',
+    showShortcuts: 'Show shortcuts',
     closeModal: 'Close dialog',
     adjustParticipants: 'Adjust participants',
-    proTip: 'Pro Tip',
-    keyboardShortcutsTip: 'Press Ctrl+? anytime to show this overview.',
+    or: 'or',
     
-    // Errors
-    errorLoadingSession: 'Error loading session',
-    errorSavingSession: 'Error saving session',
-    errorInvalidData: 'Invalid data',
-    errorNetworkIssue: 'Network issue'
+    // Notifications
+    timerStarted: 'Timer started!',
+    timerPaused: 'Timer paused',
+    timerReset: 'Timer reset',
+    sessionShared: 'Session link copied!',
+    errorOccurred: 'An error occurred',
+    
+    // Time formatting
+    seconds: 'seconds',
+    minutes: 'minutes',
+    hours: 'hours',
+    
+    // Validation
+    invalidPeopleCount: 'Invalid number of people',
+    invalidCost: 'Invalid cost value',
+    
+    // PWA
+    installApp: 'Install app',
+    offlineMode: 'Offline mode active',
   },
   
   es: {
-    // Main UI
-    title: '💰 Calculadora de Costos de Reuniones',
-    totalCostLabel: 'Costo Total:',
-    start: '▶️ Iniciar',
-    pause: '⏸️ Pausar',
-    reset: '🔄 Reiniciar',
-    participants: '👥 Participantes:',
+    // App Title
+    title: '💰 Calculadora de Costos de Reunión',
     
-    // Settings
-    settingsShow: '⚙️ Mostrar Configuración',
-    settingsHide: '⚙️ Ocultar Configuración',
-    costPerPerson: '💶 Costo por Persona/h:',
-    currency: '🌍 Moneda:',
+    // Actions
+    start: 'Iniciar',
+    pause: 'Pausar',
+    reset: 'Reiniciar',
+    close: 'Cerrar',
+    copy: 'Copiar',
+    share: 'Compartir',
+    
+    // Labels
+    participants: 'Participantes',
+    numberOfPeople: 'Número de participantes',
+    costPerPerson: 'Costo por persona (€/h)',
+    currency: 'Moneda',
+    totalCostLabel: 'Costo total:',
+    settings: 'Configuración',
+    language: 'Idioma',
+    theme: 'Tema',
+    info: 'Info',
+    
+    // Actions with context
+    addPerson: 'Añadir persona',
+    removePerson: 'Eliminar persona',
     selectLanguage: 'Seleccionar idioma',
     selectCurrency: 'Seleccionar moneda',
-    shareSession: 'Compartir sesión',
-    
-    // Time
-    elapsedTime: 'Tiempo Transcurrido:',
-    second: 'segundo',
-    seconds: 'segundos',
-    minute: 'minuto',
-    minutes: 'minutos',
-    hour: 'hora',
-    hours: 'horas',
     
     // History
-    historyShow: '📊 Mostrar Historial de Reunión',
-    historyHide: '📊 Ocultar Historial de Reunión',
-    historyTitle: 'Cambios de Participantes:',
-    start_history: 'Inicio:',
-    person: 'persona',
-    persons: 'personas',
-    personJoined: 'persona se unió a la reunión',
-    personsJoined: 'personas se unieron a la reunión',
-    personLeft: 'persona abandonó la reunión',
-    personsLeft: 'personas abandonaron la reunión',
+    historyShow: '📊 Mostrar historial de reunión',
+    historyHide: '📊 Ocultar historial de reunión',
+    historyTitle: 'Cambios de participantes:',
+    historyEntry: '{people} personas desde {time}',
     
-    // Notifications
-    sessionRestored: '⚠️ Sesión restaurada - El temporizador fue pausado',
-    sharedSessionLoaded: '🔗 ¡Sesión compartida cargada!',
-    linkCopied: '✓ ¡Enlace copiado!',
-    errorOccurred: '❌ Ocurrió un error',
-    
-    // Accessibility
-    toggleLanguage: 'Cambiar idioma',
-    toggleTheme: 'Cambiar tema',
-    decreaseParticipants: 'Disminuir participantes',
-    increaseParticipants: 'Aumentar participantes',
-    numberOfParticipants: 'Número de participantes',
-    showInfo: 'Mostrar información',
-    closeDialog: 'Cerrar diálogo',
+    // Share
+    shareSession: 'Compartir sesión',
+    shareTitle: 'Compartir sesión',
+    shareDescription: 'Comparte los costos de tu reunión con otros:',
+    shareUrl: 'URL para compartir',
+    copyLink: 'Copiar enlace',
+    linkCopied: '¡Enlace copiado al portapapeles!',
+    email: 'Correo',
     
     // Info Modal
-    infoTitle: '¿Para qué sirve esta calculadora?',
-    infoText1: '¡Las reuniones son caras! Esta calculadora hace visibles los costos ocultos de las reuniones y ayuda a ser más consciente del tiempo de todos los participantes.',
-    infoText2: 'Ingrese el costo promedio por persona por hora (por ejemplo, salario por hora + costos adicionales) y vea en tiempo real cuánto cuesta la reunión.',
-    infoExampleTitle: '💡 Ejemplo:',
-    infoExample: '5 personas a 65€/h en una reunión de 30 minutos = 162,50€ de costo',
-    infoTip: '💡 Consejo: Use el contador de participantes durante la reunión cuando las personas se unan o se vayan.',
-    infoClose: 'Entendido',
+    infoText1: 'Esta calculadora te ayuda a visualizar el costo de tu reunión en tiempo real.',
+    infoText2: 'Ingresa el número de participantes y el costo promedio por persona por hora.',
+    infoText3: 'El temporizador te muestra cuánto ha costado ya la reunión.',
+    proTip: 'Consejo profesional',
+    infoTip: '¡Usa atajos de teclado para una operación más rápida! Presiona Ctrl+? para ver todos los atajos.',
     
-    // Share Modal
-    shareLink: 'Compartir enlace',
-    shareTitle: 'Compartir Reunión',
-    shareDescription: 'Comparte esta reunión con otros. El enlace contiene todas las configuraciones actuales y el estado del temporizador.',
-    shareUrl: 'Enlace para compartir:',
-    copyLink: 'Copiar',
-    shareVia: 'Compartir vía:',
-    more: 'Más',
-    close: 'Cerrar',
-    or: 'o',
-    shareInfoTitle: '¿Qué se comparte?',
-    shareInfo1: 'Tiempo actual y estado del temporizador',
-    shareInfo2: 'Número de participantes y configuraciones',
-    shareInfo3: 'Idioma y moneda',
-    shareEmailSubject: 'Calculadora de Costos de Reuniones - Reunión Actual',
-    shareEmailBody: 'Mira los costos de nuestra reunión actual:',
-    shareWhatsAppText: '💰 Calculadora de Costos de Reuniones - Costos actuales:',
-    shareSlackText: '💰 *Calculadora de Costos de Reuniones*\nCostos actuales de la reunión:',
-
     // Keyboard Shortcuts
-    keyboardShortcuts: 'Atajos de Teclado',
-    keyboardShortcutsDescription: 'Usa estos atajos de teclado para acceso más rápido:',
-    startPauseTimer: 'Iniciar/Pausar temporizador',
+    keyboardShortcuts: 'Atajos de teclado',
+    keyboardShortcutsDescription: 'Usa estas combinaciones de teclas para una operación más rápida:',
+    keyboardShortcutsTip: '¡Todos los atajos funcionan incluso mientras la reunión está en curso!',
+    startPauseTimer: 'Iniciar/pausar temporizador',
     resetTimer: 'Reiniciar temporizador',
     openInfo: 'Abrir información',
     openShare: 'Abrir diálogo de compartir',
-    showShortcuts: 'Mostrar atajos de teclado',
+    showShortcuts: 'Mostrar atajos',
     closeModal: 'Cerrar diálogo',
     adjustParticipants: 'Ajustar participantes',
-    proTip: 'Consejo Pro',
-    keyboardShortcutsTip: 'Presiona Ctrl+? en cualquier momento para mostrar esta vista.',
+    or: 'o',
     
-    // Errors
-    errorLoadingSession: 'Error al cargar la sesión',
-    errorSavingSession: 'Error al guardar la sesión',
-    errorInvalidData: 'Datos inválidos',
-    errorNetworkIssue: 'Problema de red'
+    // Notifications
+    timerStarted: '¡Temporizador iniciado!',
+    timerPaused: 'Temporizador pausado',
+    timerReset: 'Temporizador reiniciado',
+    sessionShared: '¡Enlace de sesión copiado!',
+    errorOccurred: 'Ocurrió un error',
+    
+    // Time formatting
+    seconds: 'segundos',
+    minutes: 'minutos',
+    hours: 'horas',
+    
+    // Validation
+    invalidPeopleCount: 'Número de personas inválido',
+    invalidCost: 'Valor de costo inválido',
+    
+    // PWA
+    installApp: 'Instalar aplicación',
+    offlineMode: 'Modo sin conexión activo',
   },
   
   fr: {
-    // Main UI
-    title: '💰 Calculateur de Coûts de Réunion',
-    totalCostLabel: 'Coût Total:',
-    start: '▶️ Démarrer',
-    pause: '⏸️ Pause',
-    reset: '🔄 Réinitialiser',
-    participants: '👥 Participants:',
+    // App Title
+    title: '💰 Calculateur de Coût de Réunion',
     
-    // Settings
-    settingsShow: '⚙️ Afficher les Paramètres',
-    settingsHide: '⚙️ Masquer les Paramètres',
-    costPerPerson: '💶 Coût par Personne/h:',
-    currency: '🌍 Devise:',
+    // Actions
+    start: 'Démarrer',
+    pause: 'Pause',
+    reset: 'Réinitialiser',
+    close: 'Fermer',
+    copy: 'Copier',
+    share: 'Partager',
+    
+    // Labels
+    participants: 'Participants',
+    numberOfPeople: 'Nombre de participants',
+    costPerPerson: 'Coût par personne (€/h)',
+    currency: 'Devise',
+    totalCostLabel: 'Coût total:',
+    settings: 'Paramètres',
+    language: 'Langue',
+    theme: 'Thème',
+    info: 'Info',
+    
+    // Actions with context
+    addPerson: 'Ajouter une personne',
+    removePerson: 'Retirer une personne',
     selectLanguage: 'Sélectionner la langue',
     selectCurrency: 'Sélectionner la devise',
-    shareSession: 'Partager la session',
-    
-    // Time
-    elapsedTime: 'Temps Écoulé:',
-    second: 'seconde',
-    seconds: 'secondes',
-    minute: 'minute',
-    minutes: 'minutes',
-    hour: 'heure',
-    hours: 'heures',
     
     // History
-    historyShow: '📊 Afficher l\'Historique de la Réunion',
-    historyHide: '📊 Masquer l\'Historique de la Réunion',
-    historyTitle: 'Changements de Participants:',
-    start_history: 'Début:',
-    person: 'personne',
-    persons: 'personnes',
-    personJoined: 'personne a rejoint la réunion',
-    personsJoined: 'personnes ont rejoint la réunion',
-    personLeft: 'personne a quitté la réunion',
-    personsLeft: 'personnes ont quitté la réunion',
+    historyShow: '📊 Afficher l\'historique de la réunion',
+    historyHide: '📊 Masquer l\'historique de la réunion',
+    historyTitle: 'Changements de participants:',
+    historyEntry: '{people} personnes depuis {time}',
     
-    // Notifications
-    sessionRestored: '⚠️ Session restaurée - Le minuteur a été mis en pause',
-    sharedSessionLoaded: '🔗 Session partagée chargée!',
-    linkCopied: '✓ Lien copié!',
-    errorOccurred: '❌ Une erreur s\'est produite',
-    
-    // Accessibility
-    toggleLanguage: 'Changer de langue',
-    toggleTheme: 'Changer de thème',
-    decreaseParticipants: 'Diminuer les participants',
-    increaseParticipants: 'Augmenter les participants',
-    numberOfParticipants: 'Nombre de participants',
-    showInfo: 'Afficher les informations',
-    closeDialog: 'Fermer le dialogue',
+    // Share
+    shareSession: 'Partager la session',
+    shareTitle: 'Partager la session',
+    shareDescription: 'Partagez les coûts de votre réunion avec d\'autres:',
+    shareUrl: 'URL de partage',
+    copyLink: 'Copier le lien',
+    linkCopied: 'Lien copié dans le presse-papiers!',
+    email: 'E-mail',
     
     // Info Modal
-    infoTitle: 'À quoi sert ce calculateur?',
-    infoText1: 'Les réunions coûtent cher! Ce calculateur rend visibles les coûts cachés des réunions et aide à être plus conscient du temps de tous les participants.',
-    infoText2: 'Entrez le coût moyen par personne par heure (par exemple, salaire horaire + charges sociales) et voyez en temps réel combien coûte la réunion.',
-    infoExampleTitle: '💡 Exemple:',
-    infoExample: '5 personnes à 65€/h dans une réunion de 30 minutes = 162,50€ de coût',
-    infoTip: '💡 Conseil: Utilisez le compteur de participants pendant la réunion lorsque des personnes arrivent ou partent.',
-    infoClose: 'Compris',
+    infoText1: 'Ce calculateur vous aide à visualiser le coût de votre réunion en temps réel.',
+    infoText2: 'Entrez le nombre de participants et le coût moyen par personne par heure.',
+    infoText3: 'Le minuteur vous montre combien la réunion a déjà coûté.',
+    proTip: 'Astuce pro',
+    infoTip: 'Utilisez les raccourcis clavier pour une utilisation plus rapide! Appuyez sur Ctrl+? pour voir tous les raccourcis.',
     
-    // Share Modal
-    shareLink: 'Partager le lien',
-    shareTitle: 'Partager la Réunion',
-    shareDescription: 'Partagez cette réunion avec d\'autres. Le lien contient tous les paramètres actuels et l\'état du minuteur.',
-    shareUrl: 'Lien de partage:',
-    copyLink: 'Copier',
-    shareVia: 'Partager via:',
-    more: 'Plus',
-    close: 'Fermer',
-    or: 'ou',
-    shareInfoTitle: 'Qu\'est-ce qui est partagé?',
-    shareInfo1: 'Temps actuel et état du minuteur',
-    shareInfo2: 'Nombre de participants et paramètres',
-    shareInfo3: 'Langue et devise',
-    shareEmailSubject: 'Calculateur de Coûts de Réunion - Réunion Actuelle',
-    shareEmailBody: 'Découvrez les coûts de notre réunion actuelle:',
-    shareWhatsAppText: '💰 Calculateur de Coûts de Réunion - Coûts actuels:',
-    shareSlackText: '💰 *Calculateur de Coûts de Réunion*\nCoûts actuels de la réunion:',
-
     // Keyboard Shortcuts
-    keyboardShortcuts: 'Raccourcis Clavier',
-    keyboardShortcutsDescription: 'Utilisez ces raccourcis clavier pour un accès plus rapide:',
-    startPauseTimer: 'Démarrer/Mettre en pause',
+    keyboardShortcuts: 'Raccourcis clavier',
+    keyboardShortcutsDescription: 'Utilisez ces combinaisons de touches pour une utilisation plus rapide:',
+    keyboardShortcutsTip: 'Tous les raccourcis fonctionnent même pendant que la réunion est en cours!',
+    startPauseTimer: 'Démarrer/mettre en pause le minuteur',
     resetTimer: 'Réinitialiser le minuteur',
     openInfo: 'Ouvrir les informations',
     openShare: 'Ouvrir le dialogue de partage',
-    showShortcuts: 'Afficher les raccourcis clavier',
+    showShortcuts: 'Afficher les raccourcis',
     closeModal: 'Fermer le dialogue',
     adjustParticipants: 'Ajuster les participants',
-    proTip: 'Astuce Pro',
-    keyboardShortcutsTip: 'Appuyez sur Ctrl+? à tout moment pour afficher cet aperçu.',
+    or: 'ou',
     
-    // Errors
-    errorLoadingSession: 'Erreur lors du chargement de la session',
-    errorSavingSession: 'Erreur lors de l\'enregistrement de la session',
-    errorInvalidData: 'Données invalides',
-    errorNetworkIssue: 'Problème de réseau'
+    // Notifications
+    timerStarted: 'Minuteur démarré!',
+    timerPaused: 'Minuteur en pause',
+    timerReset: 'Minuteur réinitialisé',
+    sessionShared: 'Lien de session copié!',
+    errorOccurred: 'Une erreur s\'est produite',
+    
+    // Time formatting
+    seconds: 'secondes',
+    minutes: 'minutes',
+    hours: 'heures',
+    
+    // Validation
+    invalidPeopleCount: 'Nombre de personnes invalide',
+    invalidCost: 'Valeur de coût invalide',
+    
+    // PWA
+    installApp: 'Installer l\'application',
+    offlineMode: 'Mode hors ligne actif',
   },
   
   it: {
-    // Main UI
-    title: '💰 Calcolatore Costi Riunioni',
-    totalCostLabel: 'Costo Totale:',
-    start: '▶️ Avvia',
-    pause: '⏸️ Pausa',
-    reset: '🔄 Reimposta',
-    participants: '👥 Partecipanti:',
+    // App Title
+    title: '💰 Calcolatore Costi Riunione',
     
-    // Settings
-    settingsShow: '⚙️ Mostra Impostazioni',
-    settingsHide: '⚙️ Nascondi Impostazioni',
-    costPerPerson: '💶 Costo per Persona/h:',
-    currency: '🌍 Valuta:',
+    // Actions
+    start: 'Avvia',
+    pause: 'Pausa',
+    reset: 'Ripristina',
+    close: 'Chiudi',
+    copy: 'Copia',
+    share: 'Condividi',
+    
+    // Labels
+    participants: 'Partecipanti',
+    numberOfPeople: 'Numero di partecipanti',
+    costPerPerson: 'Costo per persona (€/h)',
+    currency: 'Valuta',
+    totalCostLabel: 'Costo totale:',
+    settings: 'Impostazioni',
+    language: 'Lingua',
+    theme: 'Tema',
+    info: 'Info',
+    
+    // Actions with context
+    addPerson: 'Aggiungi persona',
+    removePerson: 'Rimuovi persona',
     selectLanguage: 'Seleziona lingua',
     selectCurrency: 'Seleziona valuta',
-    shareSession: 'Condividi sessione',
-    
-    // Time
-    elapsedTime: 'Tempo Trascorso:',
-    second: 'secondo',
-    seconds: 'secondi',
-    minute: 'minuto',
-    minutes: 'minuti',
-    hour: 'ora',
-    hours: 'ore',
     
     // History
-    historyShow: '📊 Mostra Cronologia Riunione',
-    historyHide: '📊 Nascondi Cronologia Riunione',
-    historyTitle: 'Modifiche Partecipanti:',
-    start_history: 'Inizio:',
-    person: 'persona',
-    persons: 'persone',
-    personJoined: 'persona si è unita alla riunione',
-    personsJoined: 'persone si sono unite alla riunione',
-    personLeft: 'persona ha lasciato la riunione',
-    personsLeft: 'persone hanno lasciato la riunione',
+    historyShow: '📊 Mostra cronologia riunione',
+    historyHide: '📊 Nascondi cronologia riunione',
+    historyTitle: 'Modifiche partecipanti:',
+    historyEntry: '{people} persone da {time}',
     
-    // Notifications
-    sessionRestored: '⚠️ Sessione ripristinata - Il timer è stato messo in pausa',
-    sharedSessionLoaded: '🔗 Sessione condivisa caricata!',
-    linkCopied: '✓ Link copiato!',
-    errorOccurred: '❌ Si è verificato un errore',
-    
-    // Accessibility
-    toggleLanguage: 'Cambia lingua',
-    toggleTheme: 'Cambia tema',
-    decreaseParticipants: 'Diminuisci partecipanti',
-    increaseParticipants: 'Aumenta partecipanti',
-    numberOfParticipants: 'Numero di partecipanti',
-    showInfo: 'Mostra informazioni',
-    closeDialog: 'Chiudi dialogo',
+    // Share
+    shareSession: 'Condividi sessione',
+    shareTitle: 'Condividi sessione',
+    shareDescription: 'Condividi i costi della tua riunione con altri:',
+    shareUrl: 'URL di condivisione',
+    copyLink: 'Copia link',
+    linkCopied: 'Link copiato negli appunti!',
+    email: 'Email',
     
     // Info Modal
-    infoTitle: 'A cosa serve questo calcolatore?',
-    infoText1: 'Le riunioni sono costose! Questo calcolatore rende visibili i costi nascosti delle riunioni e aiuta ad essere più consapevoli del tempo di tutti i partecipanti.',
-    infoText2: 'Inserisci il costo medio per persona all\'ora (ad esempio, salario orario + costi accessori) e vedi in tempo reale quanto costa la riunione.',
-    infoExampleTitle: '💡 Esempio:',
-    infoExample: '5 persone a 65€/h in una riunione di 30 minuti = 162,50€ di costo',
-    infoTip: '💡 Suggerimento: Usa il contatore dei partecipanti durante la riunione quando le persone si uniscono o se ne vanno.',
-    infoClose: 'Capito',
+    infoText1: 'Questo calcolatore ti aiuta a visualizzare il costo della tua riunione in tempo reale.',
+    infoText2: 'Inserisci il numero di partecipanti e il costo medio per persona all\'ora.',
+    infoText3: 'Il timer ti mostra quanto è già costata la riunione.',
+    proTip: 'Suggerimento professionale',
+    infoTip: 'Usa le scorciatoie da tastiera per un\'operazione più veloce! Premi Ctrl+? per vedere tutte le scorciatoie.',
     
-    // Share Modal
-    shareLink: 'Condividi link',
-    shareTitle: 'Condividi Riunione',
-    shareDescription: 'Condividi questa riunione con altri. Il link contiene tutte le impostazioni attuali e lo stato del timer.',
-    shareUrl: 'Link di condivisione:',
-    copyLink: 'Copia',
-    shareVia: 'Condividi tramite:',
-    more: 'Altro',
-    close: 'Chiudi',
-    or: 'o',
-    shareInfoTitle: 'Cosa viene condiviso?',
-    shareInfo1: 'Tempo attuale e stato del timer',
-    shareInfo2: 'Numero di partecipanti e impostazioni',
-    shareInfo3: 'Lingua e valuta',
-    shareEmailSubject: 'Calcolatore Costi Riunioni - Riunione Attuale',
-    shareEmailBody: 'Guarda i costi della nostra riunione attuale:',
-    shareWhatsAppText: '💰 Calcolatore Costi Riunioni - Costi attuali:',
-    shareSlackText: '💰 *Calcolatore Costi Riunioni*\nCosti attuali della riunione:',
-
     // Keyboard Shortcuts
-    keyboardShortcuts: 'Scorciatoie da Tastiera',
-    keyboardShortcutsDescription: 'Usa queste scorciatoie da tastiera per un accesso più veloce:',
-    startPauseTimer: 'Avvia/Metti in pausa timer',
-    resetTimer: 'Reimposta timer',
+    keyboardShortcuts: 'Scorciatoie da tastiera',
+    keyboardShortcutsDescription: 'Usa queste combinazioni di tasti per un\'operazione più veloce:',
+    keyboardShortcutsTip: 'Tutte le scorciatoie funzionano anche mentre la riunione è in corso!',
+    startPauseTimer: 'Avvia/metti in pausa il timer',
+    resetTimer: 'Ripristina timer',
     openInfo: 'Apri informazioni',
     openShare: 'Apri dialogo di condivisione',
-    showShortcuts: 'Mostra scorciatoie da tastiera',
+    showShortcuts: 'Mostra scorciatoie',
     closeModal: 'Chiudi dialogo',
     adjustParticipants: 'Regola partecipanti',
-    proTip: 'Suggerimento Pro',
-    keyboardShortcutsTip: 'Premi Ctrl+? in qualsiasi momento per mostrare questa panoramica.',
+    or: 'o',
     
-    // Errors
-    errorLoadingSession: 'Errore nel caricamento della sessione',
-    errorSavingSession: 'Errore nel salvataggio della sessione',
-    errorInvalidData: 'Dati non validi',
-    errorNetworkIssue: 'Problema di rete'
+    // Notifications
+    timerStarted: 'Timer avviato!',
+    timerPaused: 'Timer in pausa',
+    timerReset: 'Timer ripristinato',
+    sessionShared: 'Link di sessione copiato!',
+    errorOccurred: 'Si è verificato un errore',
+    
+    // Time formatting
+    seconds: 'secondi',
+    minutes: 'minuti',
+    hours: 'ore',
+    
+    // Validation
+    invalidPeopleCount: 'Numero di persone non valido',
+    invalidCost: 'Valore di costo non valido',
+    
+    // PWA
+    installApp: 'Installa app',
+    offlineMode: 'Modalità offline attiva',
   },
   
   pl: {
-    // Main UI
-    title: '💰 Kalkulator Kosztów Spotkań',
-    totalCostLabel: 'Całkowity Koszt:',
-    start: '▶️ Start',
-    pause: '⏸️ Pauza',
-    reset: '🔄 Reset',
-    participants: '👥 Uczestnicy:',
+    // App Title
+    title: '💰 Kalkulator Kosztów Spotkania',
     
-    // Settings
-    settingsShow: '⚙️ Pokaż Ustawienia',
-    settingsHide: '⚙️ Ukryj Ustawienia',
-    costPerPerson: '💶 Koszt na Osobę/h:',
-    currency: '🌍 Waluta:',
+    // Actions
+    start: 'Start',
+    pause: 'Pauza',
+    reset: 'Reset',
+    close: 'Zamknij',
+    copy: 'Kopiuj',
+    share: 'Udostępnij',
+    
+    // Labels
+    participants: 'Uczestnicy',
+    numberOfPeople: 'Liczba uczestników',
+    costPerPerson: 'Koszt na osobę (€/godz)',
+    currency: 'Waluta',
+    totalCostLabel: 'Całkowity koszt:',
+    settings: 'Ustawienia',
+    language: 'Język',
+    theme: 'Motyw',
+    info: 'Info',
+    
+    // Actions with context
+    addPerson: 'Dodaj osobę',
+    removePerson: 'Usuń osobę',
     selectLanguage: 'Wybierz język',
     selectCurrency: 'Wybierz walutę',
-    shareSession: 'Udostępnij sesję',
-    
-    // Time
-    elapsedTime: 'Upłynął Czas:',
-    second: 'sekunda',
-    seconds: 'sekund',
-    minute: 'minuta',
-    minutes: 'minut',
-    hour: 'godzina',
-    hours: 'godzin',
     
     // History
-    historyShow: '📊 Pokaż Historię Spotkania',
-    historyHide: '📊 Ukryj Historię Spotkania',
-    historyTitle: 'Zmiany Uczestników:',
-    start_history: 'Start:',
-    person: 'osoba',
-    persons: 'osoby',
-    personJoined: 'osoba dołączyła do spotkania',
-    personsJoined: 'osoby dołączyły do spotkania',
-    personLeft: 'osoba opuściła spotkanie',
-    personsLeft: 'osoby opuściły spotkanie',
+    historyShow: '📊 Pokaż historię spotkania',
+    historyHide: '📊 Ukryj historię spotkania',
+    historyTitle: 'Zmiany uczestników:',
+    historyEntry: '{people} osób od {time}',
     
-    // Notifications
-    sessionRestored: '⚠️ Sesja przywrócona - Timer został wstrzymany',
-    sharedSessionLoaded: '🔗 Załadowano udostępnioną sesję!',
-    linkCopied: '✓ Link skopiowany!',
-    errorOccurred: '❌ Wystąpił błąd',
-    
-    // Accessibility
-    toggleLanguage: 'Zmień język',
-    toggleTheme: 'Zmień motyw',
-    decreaseParticipants: 'Zmniejsz uczestników',
-    increaseParticipants: 'Zwiększ uczestników',
-    numberOfParticipants: 'Liczba uczestników',
-    showInfo: 'Pokaż informacje',
-    closeDialog: 'Zamknij dialog',
+    // Share
+    shareSession: 'Udostępnij sesję',
+    shareTitle: 'Udostępnij sesję',
+    shareDescription: 'Udostępnij koszty swojego spotkania innym:',
+    shareUrl: 'URL do udostępnienia',
+    copyLink: 'Kopiuj link',
+    linkCopied: 'Link skopiowany do schowka!',
+    email: 'E-mail',
     
     // Info Modal
-    infoTitle: 'Do czego służy ten kalkulator?',
-    infoText1: 'Spotkania są drogie! Ten kalkulator uwidacznia ukryte koszty spotkań i pomaga być bardziej świadomym czasu wszystkich uczestników.',
-    infoText2: 'Wprowadź średni koszt na osobę na godzinę (np. stawka godzinowa + koszty dodatkowe) i zobacz w czasie rzeczywistym, ile kosztuje spotkanie.',
-    infoExampleTitle: '💡 Przykład:',
-    infoExample: '5 osób po 65€/h w 30-minutowym spotkaniu = 162,50€ kosztu',
-    infoTip: '💡 Wskazówka: Użyj licznika uczestników podczas spotkania, gdy osoby dołączają lub wychodzą.',
-    infoClose: 'Rozumiem',
+    infoText1: 'Ten kalkulator pomaga wizualizować koszt spotkania w czasie rzeczywistym.',
+    infoText2: 'Wprowadź liczbę uczestników i średni koszt na osobę na godzinę.',
+    infoText3: 'Timer pokazuje, ile spotkanie już kosztowało.',
+    proTip: 'Profesjonalna wskazówka',
+    infoTip: 'Użyj skrótów klawiszowych dla szybszej obsługi! Naciśnij Ctrl+?, aby zobaczyć wszystkie skróty.',
     
-    // Share Modal
-    shareLink: 'Udostępnij link',
-    shareTitle: 'Udostępnij Spotkanie',
-    shareDescription: 'Udostępnij to spotkanie innym. Link zawiera wszystkie bieżące ustawienia i stan timera.',
-    shareUrl: 'Link do udostępnienia:',
-    copyLink: 'Kopiuj',
-    shareVia: 'Udostępnij przez:',
-    more: 'Więcej',
-    close: 'Zamknij',
-    or: 'lub',
-    shareInfoTitle: 'Co jest udostępniane?',
-    shareInfo1: 'Aktualny czas i stan timera',
-    shareInfo2: 'Liczba uczestników i ustawienia',
-    shareInfo3: 'Język i waluta',
-    shareEmailSubject: 'Kalkulator Kosztów Spotkań - Bieżące Spotkanie',
-    shareEmailBody: 'Zobacz koszty naszego bieżącego spotkania:',
-    shareWhatsAppText: '💰 Kalkulator Kosztów Spotkań - Aktualne koszty:',
-    shareSlackText: '💰 *Kalkulator Kosztów Spotkań*\nAktualne koszty spotkania:',
-
     // Keyboard Shortcuts
-    keyboardShortcuts: 'Skróty Klawiszowe',
-    keyboardShortcutsDescription: 'Użyj tych skrótów klawiszowych dla szybszego dostępu:',
-    startPauseTimer: 'Start/Pauza timer',
-    resetTimer: 'Resetuj timer',
+    keyboardShortcuts: 'Skróty klawiszowe',
+    keyboardShortcutsDescription: 'Użyj tych kombinacji klawiszy dla szybszej obsługi:',
+    keyboardShortcutsTip: 'Wszystkie skróty działają nawet podczas trwania spotkania!',
+    startPauseTimer: 'Uruchom/wstrzymaj timer',
+    resetTimer: 'Zresetuj timer',
     openInfo: 'Otwórz informacje',
-    openShare: 'Otwórz dialog udostępniania',
-    showShortcuts: 'Pokaż skróty klawiszowe',
-    closeModal: 'Zamknij dialog',
+    openShare: 'Otwórz okno udostępniania',
+    showShortcuts: 'Pokaż skróty',
+    closeModal: 'Zamknij okno',
     adjustParticipants: 'Dostosuj uczestników',
-    proTip: 'Wskazówka Pro',
-    keyboardShortcutsTip: 'Naciśnij Ctrl+? w dowolnym momencie, aby pokazać ten przegląd.',
+    or: 'lub',
     
-    // Errors
-    errorLoadingSession: 'Błąd ładowania sesji',
-    errorSavingSession: 'Błąd zapisywania sesji',
-    errorInvalidData: 'Nieprawidłowe dane',
-    errorNetworkIssue: 'Problem z siecią'
-  }
+    // Notifications
+    timerStarted: 'Timer uruchomiony!',
+    timerPaused: 'Timer wstrzymany',
+    timerReset: 'Timer zresetowany',
+    sessionShared: 'Link sesji skopiowany!',
+    errorOccurred: 'Wystąpił błąd',
+    
+    // Time formatting
+    seconds: 'sekund',
+    minutes: 'minut',
+    hours: 'godzin',
+    
+    // Validation
+    invalidPeopleCount: 'Nieprawidłowa liczba osób',
+    invalidCost: 'Nieprawidłowa wartość kosztu',
+    
+    // PWA
+    installApp: 'Zainstaluj aplikację',
+    offlineMode: 'Tryb offline aktywny',
+  },
 };
 
 /**
- * Get translation for a key in a specific language
+ * Get translation for current language
+ * @param {string} key - Translation key
+ * @param {string} lang - Language code (optional, uses current language if not provided)
+ * @param {Object} replacements - Key-value pairs for string replacement
+ * @returns {string} Translated string
+ */
+function getTranslation(key, lang = null, replacements = {}) {
+  const currentLang = lang || APP_CONFIG.defaults.language;
+  const translation = TRANSLATIONS[currentLang]?.[key] || TRANSLATIONS.en[key] || key;
+  
+  // Replace placeholders
+  let result = translation;
+  for (const [placeholder, value] of Object.entries(replacements)) {
+    result = result.replace(new RegExp(`{${placeholder}}`, 'g'), value);
+  }
+  
+  return result;
+}
+
+/**
+ * Check if translation exists
  * @param {string} key - Translation key
  * @param {string} lang - Language code
- * @returns {string} Translated string or key if not found
+ * @returns {boolean} Translation exists
  */
-function getTranslation(key, lang = 'en') {
-  try {
-    if (TRANSLATIONS[lang] && TRANSLATIONS[lang][key]) {
-      return TRANSLATIONS[lang][key];
-    }
-    
-    // Fallback to English
-    if (TRANSLATIONS['en'] && TRANSLATIONS['en'][key]) {
-      console.warn(`Translation missing for key "${key}" in language "${lang}", using English fallback`);
-      return TRANSLATIONS['en'][key];
-    }
-    
-    // Return key if translation not found
-    console.warn(`Translation missing for key "${key}"`);
-    return key;
-  } catch (error) {
-    console.error('Error getting translation:', error);
-    return key;
-  }
+function hasTranslation(key, lang) {
+  return TRANSLATIONS[lang]?.[key] !== undefined;
 }
 
 /**
- * Check if a language is supported
+ * Get all translations for a language
  * @param {string} lang - Language code
- * @returns {boolean} True if supported
+ * @returns {Object} All translations
  */
-function isLanguageSupported(lang) {
-  return TRANSLATIONS.hasOwnProperty(lang);
+function getAllTranslations(lang) {
+  return TRANSLATIONS[lang] || TRANSLATIONS.en;
 }
 
-/**
- * Get all available languages
- * @returns {Array<string>} Array of language codes
- */
-function getAvailableLanguages() {
-  return Object.keys(TRANSLATIONS);
+// Freeze translations to prevent modifications
+Object.freeze(TRANSLATIONS);
+
+// Log available languages (only in debug mode)
+if (DEBUG_CONFIG?.enabled) {
+  console.log('[Translations] Available languages:', Object.keys(TRANSLATIONS));
 }

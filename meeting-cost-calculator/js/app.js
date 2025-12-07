@@ -1,806 +1,832 @@
-/* ==================== MEETING COST CALCULATOR - MAIN APP ==================== */
+/**
+ * ==================== MEETING COST CALCULATOR ====================
+ * Main application logic using Alpine.js
+ * 
+ * @file app.js
+ * @version 2.0.0
+ */
 
 /**
- * Main Alpine.js component for the Meeting Cost Calculator
- * Manages state and coordinates between modules
+ * Main Alpine.js Component
  */
 function meetingCalculator() {
   return {
-    /* ==================== STATE ==================== */
+    // ==================== STATE ====================
     
-    // Timer State
+    // Timer state
     elapsedTime: 0,
     isRunning: false,
-    startTimestamp: null,
+    formattedElapsedTime: '0:00',
     
-    // Segments (track people changes over time)
-    segments: [{ startTime: 0, numberOfPeople: 2 }],
-    currentSegmentIndex: 0,
+    // Cost state
+    totalCost: 0,
+    formattedTotalCost: '0,00 €',
+    costPerPerson: APP_CONFIG.defaults.costPerPerson,
+    currency: APP_CONFIG.defaults.currency,
     
-    // Configuration
-    costPerPerson: 65,
-    currency: 'EUR',
-    language: 'de',
-    theme: 'auto',
+    // People state
+    currentPeopleCount: APP_CONFIG.defaults.people,
+    segments: [],
     
-    // UI State
+    // UI state
     settingsOpen: false,
     historyOpen: false,
     infoOpen: false,
     shareOpen: false,
     shortcutsOpen: false,
     
-    // Notification State
-    notification: {
-      visible: false,
-      message: '',
-      class: ''
-    },
+    // Settings
+    language: APP_CONFIG.defaults.language,
+    theme: APP_CONFIG.defaults.theme,
     
-    // Share State
+    // Share state
     shareUrl: '',
     copied: false,
     canUseNativeShare: false,
     
-    // Tracking
-    shownTimeNotifications: new Set(),
-    shownCostNotifications: new Set(),
-    loadedFromURL: false,
-    
     // Managers
     timerManager: null,
-    modalManager: null,
-    debouncedSave: null,
-    debouncedUpdateCost: null,
-
-    /* ==================== COMPUTED PROPERTIES ==================== */
+    costCalculator: null,
+    segmentManager: null,
     
-    get languageFlag() {
-      return LANGUAGE_FLAGS[this.language] || '🌐';
-    },
-
-    get currentPeopleCount() {
-      return this.segments[this.currentSegmentIndex].numberOfPeople;
-    },
-
-    set currentPeopleCount(value) {
-      const newValue = clampNumber(value, VALIDATION.MIN_PEOPLE, VALIDATION.MAX_PEOPLE);
-      const oldValue = this.segments[this.currentSegmentIndex].numberOfPeople;
-      
-      if (newValue !== oldValue) {
-        const delta = newValue - oldValue;
-        this.updatePeopleCount(delta);
-      }
-    },
-
-    get totalCost() {
-      return calculateTotalCost(this.segments, this.elapsedTime, this.costPerPerson);
-    },
-
-    get formattedTotalCost() {
-      return formatCurrency(this.totalCost, this.currency);
-    },
-
-    get formattedElapsedTime() {
-      return formatElapsedTimeVerbose(this.elapsedTime, {
-        hour: this.t('hour'),
-        hours: this.t('hours'),
-        minute: this.t('minute'),
-        minutes: this.t('minutes'),
-        second: this.t('second'),
-        seconds: this.t('seconds')
-      });
-    },
-
-    get isDarkTheme() {
-      if (this.theme === 'dark') return true;
-      if (this.theme === 'light') return false;
-      return window.matchMedia('(prefers-color-scheme: dark)').matches;
-    },
-
-    /* ==================== INITIALIZATION ==================== */
+    // Auto-save
+    autoSaveInterval: null,
     
+    // ==================== INITIALIZATION ====================
+    
+    /**
+     * Initialize application
+     */
     init() {
-      try {
-        // Initialize managers
-        this.timerManager = new TimerManager();
-        this.modalManager = new ModalManager();
-        
-        // Check for native share API support
-        this.canUseNativeShare = navigator.share !== undefined;
-
-        // Initialize debounced functions
-        this.debouncedSave = debounce(() => this.saveState(), DEBOUNCE_DELAYS.SAVE);
-        this.debouncedUpdateCost = debounce(() => this.updateCostInternal(), DEBOUNCE_DELAYS.UPDATE_COST);
-
-        // Check URL parameters (highest priority)
-        const urlParams = getURLParameters();
-        
-        if (Object.keys(urlParams).length > 0 && urlParams[URL_PARAMS.LANGUAGE]) {
-          this.loadStateFromURL(urlParams);
-          this.loadedFromURL = true;
-        } else {
-          // Load from localStorage or detect from browser
-          this.loadStateFromBrowserOrStorage();
-        }
-        
-        // Apply theme
-        this.applyTheme();
-        
-        // Update SEO elements
-        this.updateHreflangTags();
-        this.updateOpenGraphURL();
-        this.updateTitle();
-        
-        // Setup event listeners
-        this.setupEventListeners();
-        
-        // Update HTML lang attribute
-        document.documentElement.lang = this.language;
-        
-        console.log('Meeting Cost Calculator initialized successfully');
-      } catch (error) {
-        console.error('Error initializing app:', error);
-        this.showNotificationMessage(this.t('errorOccurred'), 'error');
+      console.log('[App] Initializing Meeting Cost Calculator v' + APP_CONFIG.version);
+      
+      // Initialize managers
+      this.initializeManagers();
+      
+      // Load saved data
+      this.loadSavedData();
+      
+      // Check URL parameters
+      this.checkUrlParams();
+      
+      // Setup keyboard shortcuts
+      this.setupKeyboardShortcuts();
+      
+      // Setup auto-save
+      this.setupAutoSave();
+      
+      // Check native share support
+      this.canUseNativeShare = isSupported('share');
+      
+      // Setup timer callbacks
+      this.setupTimerCallbacks();
+      
+      // Apply theme
+      this.applyTheme();
+      
+      // Initial update
+      this.updateDisplay();
+      
+      console.log('[App] Initialization complete');
+    },
+    
+    /**
+     * Initialize manager instances
+     */
+    initializeManagers() {
+      this.timerManager = new TimerManager();
+      this.costCalculator = new CostCalculator();
+      this.segmentManager = new SegmentManager();
+      
+      if (DEBUG_CONFIG?.enabled) {
+        console.log('[App] Managers initialized');
       }
     },
-
-    setupEventListeners() {
-      // Listen for system theme changes
-      const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      darkModeMediaQuery.addEventListener('change', () => {
-        if (this.theme === 'auto') {
-          this.applyTheme();
+    
+    /**
+     * Setup timer callbacks
+     */
+    setupTimerCallbacks() {
+      // On tick - update display
+      this.timerManager.on('onTick', (data) => {
+        this.elapsedTime = data.elapsedTime;
+        this.updateDisplay();
+      });
+      
+      // On start
+      this.timerManager.on('onStart', () => {
+        this.isRunning = true;
+        showTimerNotification('started', this.language);
+        if (feedbackManager) {
+          feedbackManager.haptic('light');
         }
       });
       
-      // Keyboard shortcuts mit globalem Debouncing
-      let isProcessingKey = false;
-      
-      const keydownHandler = (e) => {
-        // WICHTIG: Blockiere wenn bereits ein Key verarbeitet wird
-        if (isProcessingKey) {
-          console.log('Key blocked - already processing');
-          e.preventDefault();
-          return;
+      // On pause
+      this.timerManager.on('onPause', () => {
+        this.isRunning = false;
+        showTimerNotification('paused', this.language);
+        if (feedbackManager) {
+          feedbackManager.haptic('light');
         }
-        
-        // Ignore if typing in input fields
-        const isInputField = ['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName);
-        const hasModals = this.modalManager && this.modalManager.hasOpenModals();
-        
-        // Allow Escape even in modals
-        if (e.key === 'Escape' && hasModals) {
-          e.preventDefault();
-          this.closeAllModals();
-          return;
-        }
-        
-        // Block all other shortcuts if modal is open or typing
-        if (hasModals || isInputField) {
-          return;
-        }
-        
-        // Ignore key repeat
-        if (e.repeat) {
-          e.preventDefault();
-          return;
-        }
-        
-        const key = e.key.toLowerCase();
-        const code = e.code;
-        const ctrl = e.ctrlKey || e.metaKey;
-        
-        // Helper function to execute action with debouncing
-        const executeAction = (action, logMessage) => {
-          e.preventDefault();
-          e.stopPropagation();
-          e.stopImmediatePropagation();
-          
-          isProcessingKey = true;
-          console.log(logMessage);
-          
-          // Execute action
-          action();
-          
-          // Reset flag after 300ms
-          setTimeout(() => {
-            isProcessingKey = false;
-          }, 300);
-        };
-        
-        // Enter: Toggle timer
-        if (key === 'enter' && !ctrl && !e.shiftKey && !e.altKey) {
-          executeAction(() => this.toggleTimer(), 'Enter → toggleTimer()');
-          return;
-        }
-        
-        // Ctrl+Space: Toggle timer
-        if (code === 'Space' && ctrl) {
-          executeAction(() => this.toggleTimer(), 'Ctrl+Space → toggleTimer()');
-          return;
-        }
-        
-        // Space: Toggle timer
-        if (code === 'Space' && !ctrl && !e.shiftKey && !e.altKey) {
-          executeAction(() => this.toggleTimer(), 'Space → toggleTimer()');
-          return;
-        }
-        
-        // Ctrl+R: Reset
-        if (key === 'r' && ctrl) {
-          executeAction(() => this.resetTimer(), 'Ctrl+R → resetTimer()');
-          return;
-        }
-        
-        // Ctrl+I: Info
-        if (key === 'i' && ctrl) {
-          executeAction(() => this.openInfoModal(), 'Ctrl+I → openInfoModal()');
-          return;
-        }
-        
-        // Ctrl+S: Share
-        if (key === 's' && ctrl) {
-          executeAction(() => this.openShareModal(), 'Ctrl+S → openShareModal()');
-          return;
-        }
-        
-        // Ctrl+?: Shortcuts
-        if ((key === '?' || key === '/' || key === '_') && ctrl) {
-          executeAction(() => this.openShortcutsModal(), 'Ctrl+? → openShortcutsModal()');
-          return;
-        }
-        
-        // +: Increase
-        if (key === '+' || key === '=' || code === 'Equal' || code === 'NumpadAdd') {
-          executeAction(() => this.updatePeopleCount(1), '+ → updatePeopleCount(1)');
-          return;
-        }
-        
-        // -: Decrease
-        if (key === '-' || key === '_' || code === 'Minus' || code === 'NumpadSubtract') {
-          executeAction(() => this.updatePeopleCount(-1), '- → updatePeopleCount(-1)');
-          return;
-        }
-      };
-      
-      // Add keydown listener ONCE
-      document.addEventListener('keydown', keydownHandler, { 
-        capture: true,
-        once: false,
-        passive: false 
       });
       
-      // Prevent space scroll
-      window.addEventListener('keydown', (e) => {
-        if (e.code === 'Space' && e.target === document.body) {
-          e.preventDefault();
+      // On reset
+      this.timerManager.on('onReset', () => {
+        this.elapsedTime = 0;
+        this.segments = [];
+        this.segmentManager.clear();
+        this.updateDisplay();
+        showTimerNotification('reset', this.language);
+        if (feedbackManager) {
+          feedbackManager.haptic('medium');
         }
-      }, { capture: true, passive: false });
+        if (emojiManager) {
+          emojiManager.clear();
+        }
+      });
       
-      // Auto-save interval
-      setInterval(() => {
-        if (this.elapsedTime > 0) {
-          this.saveState();
+      // On milestone
+      this.timerManager.on('onMilestone', (data) => {
+        this.handleMilestone(data);
+      });
+    },
+    
+    /**
+     * Handle milestone events
+     */
+    handleMilestone(data) {
+      if (DEBUG_CONFIG?.enabled) {
+        console.log('[App] Milestone:', data);
+      }
+      
+      // Show emojis
+      if (emojiManager && APP_CONFIG.features.enableEmojis) {
+        emojiManager.milestone(data.type, data.value);
+      }
+      
+      // Play sound
+      if (feedbackManager) {
+        feedbackManager.playSound('milestone');
+        feedbackManager.vibrate([100, 50, 100]);
+      }
+    },
+    
+    /**
+     * Load saved data from storage
+     */
+    loadSavedData() {
+      // Load settings
+      const settings = loadSettings();
+      this.costPerPerson = settings.costPerPerson;
+      this.currency = settings.currency;
+      this.language = settings.language;
+      this.theme = settings.theme;
+      
+      // Load session
+      const session = loadSession();
+      if (session) {
+        this.elapsedTime = session.elapsedTime || 0;
+        this.currentPeopleCount = session.currentPeopleCount || APP_CONFIG.defaults.people;
+        this.segments = session.segments || [];
+        
+        // Load into managers
+        this.timerManager.setElapsedTime(this.elapsedTime);
+        this.segmentManager.loadSegments(this.segments);
+      }
+      
+      // Update calculators
+      this.costCalculator.setCostPerPerson(this.costPerPerson);
+      this.costCalculator.setCurrency(this.currency);
+      this.costCalculator.setPeopleCount(this.currentPeopleCount);
+      
+      // Add initial segment if none exists
+      if (this.segments.length === 0) {
+        this.segmentManager.addSegment(this.currentPeopleCount, 0);
+        this.segments = this.segmentManager.getSegments();
+      }
+      
+      if (DEBUG_CONFIG?.enabled) {
+        console.log('[App] Data loaded from storage');
+      }
+    },
+    
+    /**
+     * Check and apply URL parameters
+     */
+    checkUrlParams() {
+      const params = getAllUrlParams();
+      const urlConfig = APP_CONFIG.urlParams;
+      
+      // People count
+      if (params[urlConfig.people]) {
+        const people = parseInt(params[urlConfig.people]);
+        if (validatePeopleCount(people)) {
+          this.currentPeopleCount = people;
+          this.costCalculator.setPeopleCount(people);
         }
-      }, 2000);
+      }
+      
+      // Cost per person
+      if (params[urlConfig.cost]) {
+        const cost = parseFloat(params[urlConfig.cost]);
+        if (validateCost(cost)) {
+          this.costPerPerson = cost;
+          this.costCalculator.setCostPerPerson(cost);
+        }
+      }
+      
+      // Currency
+      if (params[urlConfig.currency]) {
+        const currency = params[urlConfig.currency].toUpperCase();
+        if (validateCurrency(currency)) {
+          this.currency = currency;
+          this.costCalculator.setCurrency(currency);
+        }
+      }
+      
+      // Language
+      if (params[urlConfig.language]) {
+        const lang = params[urlConfig.language].toLowerCase();
+        if (validateLanguage(lang)) {
+          this.language = lang;
+        }
+      }
+      
+      // Elapsed time
+      if (params[urlConfig.elapsed]) {
+        const elapsed = parseInt(params[urlConfig.elapsed]);
+        if (elapsed > 0) {
+          this.elapsedTime = elapsed;
+          this.timerManager.setElapsedTime(elapsed);
+        }
+      }
+      
+      if (DEBUG_CONFIG?.enabled && Object.keys(params).length > 0) {
+        console.log('[App] URL parameters applied:', params);
+      }
+    },
+    
+    /**
+     * Setup keyboard shortcuts
+     */
+    setupKeyboardShortcuts() {
+      if (!APP_CONFIG.features.enableKeyboardShortcuts) return;
+      
+      document.addEventListener('keydown', (event) => {
+        // Ignore if typing in input
+        if (event.target.matches('input, textarea, select')) {
+          return;
+        }
+        
+        // Ctrl/Cmd + Space or Enter - Toggle timer
+        if ((event.key === 'Enter' || event.key === ' ') || 
+            (event.ctrlKey && event.key === ' ')) {
+          event.preventDefault();
+          this.toggleTimer();
+        }
+        
+        // Ctrl/Cmd + R - Reset
+        if (event.ctrlKey && event.key === 'r') {
+          event.preventDefault();
+          this.resetTimer();
+        }
+        
+        // Ctrl/Cmd + I - Info
+        if (event.ctrlKey && event.key === 'i') {
+          event.preventDefault();
+          this.openInfoModal();
+        }
+        
+        // Ctrl/Cmd + S - Share
+        if (event.ctrlKey && event.key === 's') {
+          event.preventDefault();
+          this.openShareModal();
+        }
+        
+        // Ctrl/Cmd + ? - Shortcuts
+        if (event.ctrlKey && (event.key === '?' || event.key === '/')) {
+          event.preventDefault();
+          this.openShortcutsModal();
+        }
+        
+        // + - Increase people
+        if (event.key === '+' || event.key === '=') {
+          event.preventDefault();
+          this.updatePeopleCount(1);
+        }
+        
+        // - - Decrease people
+        if (event.key === '-' || event.key === '_') {
+          event.preventDefault();
+          this.updatePeopleCount(-1);
+        }
+      });
+      
+      if (DEBUG_CONFIG?.enabled) {
+        console.log('[App] Keyboard shortcuts enabled');
+      }
+    },
+    
+    /**
+     * Setup auto-save
+     */
+    setupAutoSave() {
+      if (!APP_CONFIG.features.enableAutoSave) return;
+      
+      this.autoSaveInterval = setInterval(() => {
+        this.saveSession();
+      }, APP_CONFIG.performance.autoSaveInterval);
       
       // Save on page unload
-      window.addEventListener('beforeunload', () => this.saveState());
-      
-      // Save on visibility change
-      document.addEventListener('visibilitychange', () => {
-        if (document.hidden) {
-          this.saveState();
-        } else if (!document.hidden && this.isRunning) {
-          this.elapsedTime = updateElapsedTime(this.startTimestamp);
-        }
+      window.addEventListener('beforeunload', () => {
+        this.saveSession();
       });
       
-      // Save on page hide
-      window.addEventListener('pagehide', () => this.saveState());
-    },
-
-    
-
-    /* ==================== STATE MANAGEMENT ==================== */
-    
-    loadStateFromBrowserOrStorage() {
-      try {
-        // Detect browser language
-        const detectedLanguage = detectBrowserLanguage();
-        const savedLanguage = localStorage.getItem('language');
-        
-        this.language = (savedLanguage && isLanguageSupported(savedLanguage)) 
-          ? savedLanguage 
-          : detectedLanguage;
-        
-        // Detect currency
-        const detectedCurrency = detectCurrencyFromLanguage();
-        const savedCurrency = localStorage.getItem('currency');
-        
-        this.currency = (savedCurrency && CURRENCY_CONFIG[savedCurrency]) 
-          ? savedCurrency 
-          : detectedCurrency;
-        
-        // Load theme
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme && ['auto', 'light', 'dark'].includes(savedTheme)) {
-          this.theme = savedTheme;
-        }
-        
-        // Load session from localStorage
-        const savedState = loadFromLocalStorage();
-        if (savedState) {
-          this.applyState(savedState);
-          
-          if (this.elapsedTime > 0) {
-            setTimeout(() => {
-              this.showNotificationMessage(this.t('sessionRestored'), 'info');
-            }, 500);
-          }
-        }
-      } catch (error) {
-        console.error('Error loading from browser/storage:', error);
+      if (DEBUG_CONFIG?.enabled) {
+        console.log('[App] Auto-save enabled');
       }
     },
-
-    loadStateFromURL(params) {
-      try {
-        const urlState = loadFromURL(params);
-        
-        if (!urlState) return;
-        
-        if (urlState.language) {
-          this.language = urlState.language;
-        }
-        
-        this.applyState(urlState);
-        
-        // Auto-start if needed
-        if (urlState.autoStart) {
-          setTimeout(() => {
-            if (!this.isRunning) {
-              this.startTimer();
-            }
-          }, 100);
-        }
-        
-        setTimeout(() => {
-          this.showNotificationMessage(this.t('sharedSessionLoaded'), 'info');
-        }, 500);
-      } catch (error) {
-        console.error('Error loading from URL:', error);
-        this.showNotificationMessage(this.t('errorInvalidData'), 'error');
-      }
-    },
-
-    applyState(state) {
-      if (state.elapsedTime !== undefined) this.elapsedTime = state.elapsedTime;
-      if (state.startTimestamp !== undefined) this.startTimestamp = state.startTimestamp;
-      if (state.segments) this.segments = state.segments;
-      if (state.currentSegmentIndex !== undefined) this.currentSegmentIndex = state.currentSegmentIndex;
-      if (state.costPerPerson !== undefined) this.costPerPerson = state.costPerPerson;
-      if (state.currency) this.currency = state.currency;
-      if (state.shownTimeNotifications) this.shownTimeNotifications = state.shownTimeNotifications;
-      if (state.shownCostNotifications) this.shownCostNotifications = state.shownCostNotifications;
-    },
-
-    saveState() {
-      saveToLocalStorage({
-        elapsedTime: this.elapsedTime,
-        isRunning: this.isRunning,
-        startTimestamp: this.startTimestamp,
-        segments: this.segments,
-        currentSegmentIndex: this.currentSegmentIndex,
-        costPerPerson: this.costPerPerson,
-        currency: this.currency,
-        shownTimeNotifications: this.shownTimeNotifications,
-        shownCostNotifications: this.shownCostNotifications,
-        loadedFromURL: this.loadedFromURL
-      });
-    },
-
-    /* ==================== TRANSLATION ==================== */
     
-    t(key) {
-      return getTranslation(key, this.language);
+    // ==================== TIMER CONTROLS ====================
+    
+    /**
+     * Start timer
+     */
+    startTimer() {
+      this.timerManager.start();
     },
-
-    setLanguage(lang) {
-      if (!isLanguageSupported(lang)) {
-        console.warn(`Language "${lang}" not supported`);
+    
+    /**
+     * Pause timer
+     */
+    pauseTimer() {
+      this.timerManager.pause();
+    },
+    
+    /**
+     * Reset timer
+     */
+    resetTimer() {
+      this.timerManager.reset();
+      clearSession();
+    },
+    
+    /**
+     * Toggle timer (start/pause)
+     */
+    toggleTimer() {
+      this.timerManager.toggle();
+    },
+    
+    // ==================== PEOPLE MANAGEMENT ====================
+    
+    /**
+     * Update people count
+     * @param {number} delta - Change amount (+1 or -1)
+     */
+    updatePeopleCount(delta) {
+      const newCount = this.currentPeopleCount + delta;
+      
+      if (!validatePeopleCount(newCount)) {
+        if (feedbackManager) {
+          feedbackManager.haptic('error');
+        }
         return;
       }
       
-      this.language = lang;
-      localStorage.setItem('language', this.language);
-      document.documentElement.lang = this.language;
+      this.currentPeopleCount = newCount;
+      this.costCalculator.setPeopleCount(newCount);
       
-      this.updateHreflangTags();
-      this.updateTitle();
+      // Add segment
+      this.segmentManager.addSegment(newCount, this.elapsedTime);
+      this.segments = this.segmentManager.getSegments();
       
-      const url = new URL(window.location);
-      url.searchParams.set(URL_PARAMS.LANGUAGE, lang);
-      window.history.replaceState({}, '', url);
-    },
-
-    updateHreflangTags() {
-      try {
-        const baseURL = window.location.origin + window.location.pathname;
-        
-        document.querySelectorAll('link[rel="alternate"]').forEach(link => link.remove());
-        
-        SUPPORTED_LANGUAGES.forEach(lang => {
-          const link = document.createElement('link');
-          link.rel = 'alternate';
-          link.hreflang = lang;
-          link.href = `${baseURL}?${URL_PARAMS.LANGUAGE}=${lang}`;
-          document.head.appendChild(link);
-        });
-        
-        const defaultLink = document.createElement('link');
-        defaultLink.rel = 'alternate';
-        defaultLink.hreflang = 'x-default';
-        defaultLink.href = baseURL;
-        document.head.appendChild(defaultLink);
-      } catch (error) {
-        console.error('Error updating hreflang tags:', error);
+      // Update display
+      this.updateDisplay();
+      
+      // Feedback
+      if (feedbackManager) {
+        feedbackManager.haptic('light');
       }
+      
+      // Save
+      this.saveSession();
     },
-
-    updateOpenGraphURL() {
-      try {
-        const ogUrl = document.getElementById('og-url');
-        if (ogUrl) {
-          ogUrl.content = window.location.href;
-        }
-      } catch (error) {
-        console.error('Error updating OG URL:', error);
-      }
-    },
-
-    /* ==================== THEME MANAGEMENT ==================== */
     
+    /**
+     * Handle people input change
+     */
+    onPeopleInputChange() {
+      const count = sanitizePeopleCount(this.currentPeopleCount);
+      
+      if (count !== this.currentPeopleCount) {
+        this.currentPeopleCount = count;
+      }
+      
+      this.costCalculator.setPeopleCount(count);
+      
+      // Add segment
+      this.segmentManager.addSegment(count, this.elapsedTime);
+      this.segments = this.segmentManager.getSegments();
+      
+      this.updateDisplay();
+      this.saveSession();
+    },
+    
+    // ==================== COST MANAGEMENT ====================
+    
+    /**
+     * Update cost calculation
+     */
+    updateCost() {
+      this.costCalculator.setCostPerPerson(this.costPerPerson);
+      this.costCalculator.setCurrency(this.currency);
+      this.updateDisplay();
+      this.saveSettings();
+    },
+    
+    // ==================== DISPLAY UPDATE ====================
+    
+    /**
+     * Update all display values
+     */
+    updateDisplay() {
+      // Update time display
+      this.formattedElapsedTime = formatElapsedTime(this.elapsedTime);
+      
+      // Update cost display
+      this.totalCost = this.costCalculator.calculateTotalCost(this.elapsedTime);
+      this.formattedTotalCost = formatCost(this.totalCost, this.currency);
+      
+      // Check cost milestones
+      if (this.timerManager) {
+        this.timerManager.checkCostMilestone(this.totalCost);
+      }
+    },
+    
+    // ==================== SETTINGS ====================
+    
+    /**
+     * Save settings to storage
+     */
+    saveSettings() {
+      saveSettings({
+        costPerPerson: this.costPerPerson,
+        currency: this.currency,
+        language: this.language,
+        theme: this.theme,
+      });
+    },
+    
+    /**
+     * Save session to storage
+     */
+    saveSession() {
+      saveSession({
+        elapsedTime: this.elapsedTime,
+        isRunning: this.isRunning,
+        currentPeopleCount: this.currentPeopleCount,
+        segments: this.segments,
+      });
+    },
+    
+    // ==================== LANGUAGE ====================
+    
+    /**
+     * Get translation
+     * @param {string} key - Translation key
+     * @returns {string} Translated text
+     */
+    t(key) {
+      return getTranslation(key, this.language);
+    },
+    
+    /**
+     * Set language
+     * @param {string} lang - Language code
+     */
+    setLanguage(lang) {
+      if (!validateLanguage(lang)) return;
+      
+      this.language = lang;
+      saveLanguage(lang);
+      
+      // Update document language
+      document.documentElement.lang = lang;
+      
+      if (DEBUG_CONFIG?.enabled) {
+        console.log('[App] Language changed to:', lang);
+      }
+    },
+    
+    // ==================== THEME ====================
+    
+    /**
+     * Toggle theme
+     */
     toggleTheme() {
       const themes = ['auto', 'light', 'dark'];
       const currentIndex = themes.indexOf(this.theme);
-      this.theme = themes[(currentIndex + 1) % themes.length];
-      localStorage.setItem('theme', this.theme);
+      const nextIndex = (currentIndex + 1) % themes.length;
+      
+      this.theme = themes[nextIndex];
       this.applyTheme();
-    },
-
-    applyTheme() {
-      try {
-        const effectiveTheme = this.isDarkTheme ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', effectiveTheme);
-      } catch (error) {
-        console.error('Error applying theme:', error);
+      saveTheme(this.theme);
+      
+      if (feedbackManager) {
+        feedbackManager.haptic('light');
       }
     },
-
-    /* ==================== MODAL MANAGEMENT ==================== */
     
+    /**
+     * Apply theme to document
+     */
+    applyTheme() {
+      const root = document.documentElement;
+      
+      if (this.theme === 'auto') {
+        // Use system preference
+        if (prefersDarkMode()) {
+          root.setAttribute('data-theme', 'dark');
+        } else {
+          root.setAttribute('data-theme', 'light');
+        }
+      } else {
+        root.setAttribute('data-theme', this.theme);
+      }
+      
+      if (DEBUG_CONFIG?.enabled) {
+        console.log('[App] Theme applied:', this.theme);
+      }
+    },
+    
+    // ==================== HISTORY ====================
+    
+    /**
+     * Format history entry
+     * @param {Object} segment - History segment
+     * @param {number} index - Segment index
+     * @returns {string} Formatted entry
+     */
+    formatHistoryEntry(segment, index) {
+      return formatHistoryEntry(segment, index, this.language);
+    },
+    
+    // ==================== MODALS ====================
+    
+    /**
+     * Open info modal
+     */
     openInfoModal() {
       this.infoOpen = true;
-      this.modalManager.open('info');
     },
-
+    
+    /**
+     * Close info modal
+     */
     closeInfoModal() {
       this.infoOpen = false;
-      this.modalManager.close('info');
     },
-
+    
+    /**
+     * Open share modal
+     */
     openShareModal() {
-      try {
-        this.shareUrl = buildShareURL({
-          language: this.language,
-          elapsedTime: this.elapsedTime,
-          startTimestamp: this.startTimestamp,
-          segments: this.segments,
-          currentSegmentIndex: this.currentSegmentIndex,
-          costPerPerson: this.costPerPerson,
-          currency: this.currency,
-          isRunning: this.isRunning
-        });
-        
-        this.shareOpen = true;
-        this.copied = false;
-        this.modalManager.open('share');
-      } catch (error) {
-        console.error('Error opening share modal:', error);
-        this.showNotificationMessage(this.t('errorOccurred'), 'error');
-      }
+      this.shareOpen = true;
+      this.generateShareUrl();
     },
-
+    
+    /**
+     * Close share modal
+     */
     closeShareModal() {
       this.shareOpen = false;
-      this.modalManager.close('share');
+      this.copied = false;
     },
-
+    
+    /**
+     * Open shortcuts modal
+     */
     openShortcutsModal() {
       this.shortcutsOpen = true;
-      this.modalManager.open('shortcuts');
     },
-
+    
+    /**
+     * Close shortcuts modal
+     */
     closeShortcutsModal() {
       this.shortcutsOpen = false;
-      this.modalManager.close('shortcuts');
     },
-
-    closeAllModals() {
-      if (this.infoOpen) this.closeInfoModal();
-      if (this.shareOpen) this.closeShareModal();
-      if (this.shortcutsOpen) this.closeShortcutsModal();
-    },
-
-    async copyShareUrl() {
-      await copyToClipboard(
-        this.shareUrl,
-        () => {
-          this.copied = true;
-          this.showNotificationMessage(this.t('linkCopied'), 'info');
-          setTimeout(() => { this.copied = false; }, 2000);
-        },
-        () => {
-          this.showNotificationMessage(this.t('errorOccurred'), 'error');
-        }
-      );
-    },
-
-    shareViaEmail() {
-      shareViaEmail(this.shareUrl, {
-        shareEmailSubject: this.t('shareEmailSubject'),
-        shareEmailBody: this.t('shareEmailBody'),
-        elapsedTime: this.t('elapsedTime'),
-        totalCostLabel: this.t('totalCostLabel')
-      }, this.formattedElapsedTime, this.formattedTotalCost);
-    },
-
-    shareViaWhatsApp() {
-      shareViaWhatsApp(this.shareUrl, {
-        shareWhatsAppText: this.t('shareWhatsAppText')
-      }, this.formattedElapsedTime, this.formattedTotalCost);
-    },
-
-    shareViaSlack() {
-      shareViaSlack(this.shareUrl, {
-        shareSlackText: this.t('shareSlackText')
-      }, this.formattedElapsedTime, this.formattedTotalCost);
-    },
-
-    async shareViaNative() {
-      await shareViaNative(this.shareUrl, {
-        title: this.t('title'),
-        shareWhatsAppText: this.t('shareWhatsAppText')
-      }, this.formattedElapsedTime, this.formattedTotalCost);
-    },
-
-    /* ==================== TIMER MANAGEMENT ==================== */
     
-    toggleTimer() {
-      if (this.isRunning) {
-        this.pauseTimer();
+    // ==================== SHARING ====================
+    
+    /**
+     * Generate share URL
+     */
+    generateShareUrl() {
+      const params = {
+        [APP_CONFIG.urlParams.people]: this.currentPeopleCount,
+        [APP_CONFIG.urlParams.cost]: this.costPerPerson,
+        [APP_CONFIG.urlParams.currency]: this.currency,
+        [APP_CONFIG.urlParams.language]: this.language,
+        [APP_CONFIG.urlParams.elapsed]: this.elapsedTime,
+      };
+      
+      this.shareUrl = formatShareUrl(params);
+    },
+    
+    /**
+     * Copy share URL to clipboard
+     */
+    async copyShareUrl() {
+      const success = await copyToClipboard(this.shareUrl);
+      
+      if (success) {
+        this.copied = true;
+        notificationManager.success(this.t('linkCopied'));
+        
+        if (feedbackManager) {
+          feedbackManager.haptic('success');
+        }
+        
+        setTimeout(() => {
+          this.copied = false;
+        }, 2000);
       } else {
-        this.startTimer();
+        notificationManager.error(this.t('errorOccurred'));
       }
     },
-
-    startTimer() {
-      try {
-        this.isRunning = true;
-        
-        if (!this.startTimestamp) {
-          this.startTimestamp = Date.now() - (this.elapsedTime * 1000);
+    
+    /**
+     * Share via email
+     */
+    shareViaEmail() {
+      const data = {
+        cost: this.formattedTotalCost,
+        time: formatElapsedTime(this.elapsedTime),
+        people: this.currentPeopleCount,
+        url: this.shareUrl,
+      };
+      
+      const emailData = formatShareText(data, 'email');
+      const mailtoUrl = `mailto:?subject=${encodeURIComponent(emailData.subject)}&body=${encodeURIComponent(emailData.body)}`;
+      
+      window.location.href = mailtoUrl;
+    },
+    
+    /**
+     * Share via WhatsApp
+     */
+    shareViaWhatsApp() {
+      const data = {
+        cost: this.formattedTotalCost,
+        time: formatElapsedTime(this.elapsedTime),
+        people: this.currentPeopleCount,
+        url: this.shareUrl,
+      };
+      
+      const text = formatShareText(data, 'whatsapp');
+      const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+      
+      window.open(whatsappUrl, '_blank');
+    },
+    
+    /**
+     * Share via Slack
+     */
+    shareViaSlack() {
+      const data = {
+        cost: this.formattedTotalCost,
+        time: formatElapsedTime(this.elapsedTime),
+        people: this.currentPeopleCount,
+        url: this.shareUrl,
+      };
+      
+      const text = formatShareText(data, 'slack');
+      
+      // Copy to clipboard for Slack
+      copyToClipboard(text).then(success => {
+        if (success) {
+          notificationManager.info('Text copied! Paste it in Slack.');
         }
-        
-        this.elapsedTime = updateElapsedTime(this.startTimestamp);
-        
-        this.timerManager.start({
-          onTick: () => {
-            this.elapsedTime = updateElapsedTime(this.startTimestamp);
-            this.updateTitle();
-            this.checkNotifications();
-            if (this.debouncedSave) this.debouncedSave();
-          },
-          onEmojiTick: () => {
-            createFallingEmoji(this.currentPeopleCount);
-          }
+      });
+    },
+    
+    /**
+     * Share via native share API
+     */
+    async shareViaNative() {
+      if (!this.canUseNativeShare) return;
+      
+      const data = {
+        cost: this.formattedTotalCost,
+        time: formatElapsedTime(this.elapsedTime),
+        people: this.currentPeopleCount,
+        url: this.shareUrl,
+      };
+      
+      try {
+        await navigator.share({
+          title: this.t('title'),
+          text: formatShareText(data, 'default'),
+          url: this.shareUrl,
         });
         
-        this.updateTitle();
-        this.saveState();
+        notificationManager.success(this.t('sessionShared'));
       } catch (error) {
-        console.error('Error starting timer:', error);
-        this.showNotificationMessage(this.t('errorOccurred'), 'error');
-      }
-    },
-
-    pauseTimer() {
-      try {
-        this.isRunning = false;
-        this.timerManager.pause();
-        clearEmojis();
-        this.updateTitle();
-        this.saveState();
-      } catch (error) {
-        console.error('Error pausing timer:', error);
-      }
-    },
-
-    resetTimer() {
-      try {
-        if (this.isRunning) {
-          this.pauseTimer();
+        if (error.name !== 'AbortError') {
+          console.error('[App] Share failed:', error);
         }
-        
-        this.timerManager.reset();
-        clearEmojis();
-        
-        this.isRunning = false;
-        this.elapsedTime = 0;
-        this.startTimestamp = null;
-        
-        this.shownTimeNotifications.clear();
-        this.shownCostNotifications.clear();
-        
-        const currentPeople = this.segments[this.currentSegmentIndex].numberOfPeople;
-        this.segments = [{ startTime: 0, numberOfPeople: currentPeople }];
-        this.currentSegmentIndex = 0;
-        
-        this.updateTitle();
-        
-        if (isLocalStorageAvailable()) {
-          localStorage.removeItem(STORAGE_KEY);
-        }
-        
-        const url = new URL(window.location);
-        url.search = '';
-        window.history.replaceState({}, '', url);
-      } catch (error) {
-        console.error('Error resetting timer:', error);
-        this.showNotificationMessage(this.t('errorOccurred'), 'error');
       }
     },
-
-    updateTitle() {
-      try {
-        const status = this.isRunning ? '▶️' : '⏸️';
-        const time = formatElapsedTime(this.elapsedTime);
-        const cost = this.formattedTotalCost;
-        const title = this.t('title');
-        
-        document.title = `${status} ${time} | ${cost} - ${title}`;
-      } catch (error) {
-        console.error('Error updating title:', error);
-      }
-    },
-
-    /* ==================== PEOPLE MANAGEMENT ==================== */
     
-    updatePeopleCount(delta) {
-      try {
-        const currentSegment = this.segments[this.currentSegmentIndex];
-        const newValue = clampNumber(
-          currentSegment.numberOfPeople + delta,
-          VALIDATION.MIN_PEOPLE,
-          VALIDATION.MAX_PEOPLE
-        );
-        
-        if (newValue === currentSegment.numberOfPeople) return;
-
-        if (this.isRunning) {
-          this.segments.push({
-            startTime: this.elapsedTime,
-            numberOfPeople: newValue
-          });
-          this.currentSegmentIndex = this.segments.length - 1;
-          
-          const absValue = Math.abs(delta);
-          let message;
-          let type;
-          
-          if (delta > 0) {
-            message = `✅ ${absValue} ${absValue === 1 ? this.t('personJoined') : this.t('personsJoined')}`;
-            type = 'join';
-          } else {
-            message = `👋 ${absValue} ${absValue === 1 ? this.t('personLeft') : this.t('personsLeft')}`;
-            type = 'leave';
-          }
-          
-          this.showNotificationMessage(message, type);
-        } else {
-          currentSegment.numberOfPeople = newValue;
-        }
-        
-        this.saveState();
-      } catch (error) {
-        console.error('Error updating people count:', error);
-        this.showNotificationMessage(this.t('errorOccurred'), 'error');
-      }
-    },
-
-    onPeopleInputChange() {
-      if (this.debouncedSave) {
-        this.debouncedSave();
-      }
-    },
-
-    /* ==================== COST MANAGEMENT ==================== */
+    // ==================== CLEANUP ====================
     
-    updateCost() {
-      if (this.debouncedUpdateCost) {
-        this.debouncedUpdateCost();
+    /**
+     * Destroy application
+     */
+    destroy() {
+      // Clear auto-save
+      if (this.autoSaveInterval) {
+        clearInterval(this.autoSaveInterval);
       }
-    },
-
-    updateCostInternal() {
-      try {
-        this.costPerPerson = clampNumber(
-          this.costPerPerson,
-          VALIDATION.MIN_COST,
-          VALIDATION.MAX_COST
-        );
-        
-        this.updateTitle();
-        this.saveState();
-        localStorage.setItem('currency', this.currency);
-      } catch (error) {
-        console.error('Error updating cost:', error);
-      }
-    },
-
-    /* ==================== NOTIFICATIONS ==================== */
-    
-    showNotificationMessage(message, type = 'info') {
-      const notification = showNotification(message, type, (notif) => {
-        this.notification = notif;
-      });
       
-      setTimeout(() => {
-        this.notification.visible = false;
-      }, 3000);
+      // Save final state
+      this.saveSession();
+      
+      // Destroy managers
+      if (this.timerManager) {
+        this.timerManager.destroy();
+      }
+      
+      console.log('[App] Application destroyed');
     },
+  };
+}
 
-    checkNotifications() {
-      checkFunNotifications(
-        this.elapsedTime,
-        this.totalCost,
-        this.shownTimeNotifications,
-        this.shownCostNotifications,
-        this.language,
-        (message, type) => this.showNotificationMessage(message, type)
-      );
-    },
+/**
+ * ==================== INITIALIZATION ====================
+ */
 
-    /* ==================== FORMATTING ==================== */
-    
-    formatHistoryEntry(segment, index) {
-      return formatHistoryEntry(segment, index, {
-        start_history: this.t('start_history'),
-        person: this.t('person'),
-        persons: this.t('persons'),
-        hour: this.t('hour'),
-        hours: this.t('hours'),
-        minute: this.t('minute'),
-        minutes: this.t('minutes'),
-        second: this.t('second'),
-        seconds: this.t('seconds')
-      });
-    }
+// Wait for DOM to be ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeApp);
+} else {
+  initializeApp();
+}
+
+/**
+ * Initialize application
+ */
+function initializeApp() {
+  console.log('[App] DOM ready, starting application...');
+  
+  // Check if Alpine.js is loaded
+  if (typeof Alpine === 'undefined') {
+    console.error('[App] Alpine.js not loaded!');
+    return;
+  }
+  
+  // Log application info
+  if (DEBUG_CONFIG?.enabled) {
+    console.group('[App] Application Info');
+    console.log('Version:', APP_CONFIG.version);
+    console.log('Features:', APP_CONFIG.features);
+    console.log('Browser:', getBrowserName());
+    console.log('Mobile:', isMobile());
+    console.log('Storage:', getStorageInfo());
+    console.groupEnd();
   }
 }
 
-/* ==================== INITIALIZATION ==================== */
+/**
+ * ==================== SERVICE WORKER ====================
+ */
 
-document.addEventListener('DOMContentLoaded', () => {
-  console.log('Meeting Cost Calculator - DOM ready');
-});
+// Register service worker for PWA
+if ('serviceWorker' in navigator && APP_CONFIG.features.enablePWA) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(registration => {
+        if (DEBUG_CONFIG?.enabled) {
+          console.log('[PWA] Service Worker registered:', registration);
+        }
+      })
+      .catch(error => {
+        console.error('[PWA] Service Worker registration failed:', error);
+      });
+  });
+}
 
-window.addEventListener('error', (event) => {
-  console.error('Global error:', event.error);
-});
+/**
+ * ==================== EXPORTS ====================
+ */
 
-window.addEventListener('unhandledrejection', (event) => {
-  console.error('Unhandled promise rejection:', event.reason);
-});
+// Export for use in other modules
+if (typeof window !== 'undefined') {
+  window.meetingCalculator = meetingCalculator;
+}
+
+// Log app module loaded
+console.log('[App] Application module loaded');
