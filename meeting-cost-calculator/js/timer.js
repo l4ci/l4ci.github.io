@@ -1,9 +1,13 @@
 /**
  * ==================== TIMER MANAGER ====================
- * Timer logic and state management
+ * Timer and cost calculation logic
  * 
  * @file timer.js
  * @version 2.0.0
+ */
+
+/**
+ * ==================== TIMER MANAGER ====================
  */
 
 /**
@@ -13,11 +17,11 @@ class TimerManager {
   constructor() {
     this.elapsedTime = 0;
     this.isRunning = false;
-    this.startTime = null;
     this.intervalId = null;
-    this.updateInterval = APP_CONFIG.performance.timerUpdateInterval;
-    this.lastMilestone = 0;
-    this.lastCostMilestone = 0;
+    this.startTimestamp = null;
+    this.pausedTime = 0;
+    
+    // Event callbacks
     this.callbacks = {
       onTick: null,
       onStart: null,
@@ -26,13 +30,13 @@ class TimerManager {
       onMilestone: null,
     };
     
-    if (DEBUG_CONFIG?.enabled) {
-      console.log('[Timer] Timer Manager initialized');
-    }
+    // Milestone tracking
+    this.lastTimeMilestone = 0;
+    this.lastCostMilestone = 0;
   }
   
   /**
-   * Register callback functions
+   * Register event callback
    * @param {string} event - Event name
    * @param {Function} callback - Callback function
    */
@@ -43,171 +47,182 @@ class TimerManager {
   }
   
   /**
-   * Trigger callback
+   * Trigger event callback
    * @param {string} event - Event name
    * @param {*} data - Event data
    */
-  trigger(event, data = null) {
-    if (this.callbacks[event] && typeof this.callbacks[event] === 'function') {
-      try {
-        this.callbacks[event](data);
-      } catch (error) {
-        logError(`Timer.trigger.${event}`, error, { data });
-      }
+  trigger(event, data = {}) {
+    if (this.callbacks[event]) {
+      this.callbacks[event](data);
     }
   }
   
   /**
-   * Start the timer
-   * @returns {boolean} Success
+   * Start timer
    */
   start() {
-    if (this.isRunning) {
-      if (DEBUG_CONFIG?.enabled) {
-        console.warn('[Timer] Timer is already running');
-      }
-      return false;
-    }
+    if (this.isRunning) return;
     
     this.isRunning = true;
-    this.startTime = Date.now() - (this.elapsedTime * 1000);
+    this.startTimestamp = Date.now() - (this.pausedTime * 1000);
     
     this.intervalId = setInterval(() => {
       this.tick();
-    }, this.updateInterval);
+    }, APP_CONFIG.performance.timerUpdateInterval);
     
-    this.trigger('onStart', { elapsedTime: this.elapsedTime });
+    this.trigger('onStart', {
+      elapsedTime: this.elapsedTime,
+    });
     
     if (DEBUG_CONFIG?.enabled) {
-      console.log('[Timer] Started at', this.elapsedTime, 'seconds');
+      console.log('[Timer] Started');
     }
-    
-    return true;
   }
   
   /**
-   * Pause the timer
-   * @returns {boolean} Success
+   * Pause timer
    */
   pause() {
-    if (!this.isRunning) {
-      if (DEBUG_CONFIG?.enabled) {
-        console.warn('[Timer] Timer is not running');
-      }
-      return false;
-    }
+    if (!this.isRunning) return;
     
     this.isRunning = false;
+    this.pausedTime = this.elapsedTime;
     
     if (this.intervalId) {
       clearInterval(this.intervalId);
       this.intervalId = null;
     }
     
-    this.trigger('onPause', { elapsedTime: this.elapsedTime });
+    this.trigger('onPause', {
+      elapsedTime: this.elapsedTime,
+    });
     
     if (DEBUG_CONFIG?.enabled) {
-      console.log('[Timer] Paused at', this.elapsedTime, 'seconds');
+      console.log('[Timer] Paused at', this.elapsedTime);
     }
-    
-    return true;
   }
   
   /**
-   * Reset the timer
-   * @returns {boolean} Success
+   * Reset timer
    */
   reset() {
-    const wasRunning = this.isRunning;
-    
-    if (this.isRunning) {
-      this.pause();
-    }
+    this.pause();
     
     this.elapsedTime = 0;
-    this.startTime = null;
-    this.lastMilestone = 0;
+    this.pausedTime = 0;
+    this.startTimestamp = null;
+    this.lastTimeMilestone = 0;
     this.lastCostMilestone = 0;
     
-    this.trigger('onReset', { wasRunning });
+    this.trigger('onReset', {
+      elapsedTime: 0,
+    });
     
     if (DEBUG_CONFIG?.enabled) {
       console.log('[Timer] Reset');
     }
-    
-    return true;
   }
   
   /**
    * Toggle timer (start/pause)
-   * @returns {boolean} New running state
    */
   toggle() {
     if (this.isRunning) {
       this.pause();
-      return false;
     } else {
       this.start();
-      return true;
     }
   }
   
   /**
-   * Timer tick (called every interval)
+   * Timer tick
    */
   tick() {
     if (!this.isRunning) return;
     
     const now = Date.now();
-    this.elapsedTime = Math.floor((now - this.startTime) / 1000);
+    this.elapsedTime = Math.floor((now - this.startTimestamp) / 1000);
+    
+    // Check time milestones
+    this.checkTimeMilestone(this.elapsedTime);
     
     // Trigger tick callback
     this.trigger('onTick', {
       elapsedTime: this.elapsedTime,
       isRunning: this.isRunning,
     });
-    
-    // Check for milestones
-    this.checkMilestones();
   }
   
   /**
-   * Check and trigger milestone events
+   * Set elapsed time (for loading saved state)
+   * @param {number} seconds - Elapsed seconds
    */
-  checkMilestones() {
-    // Time milestones
-    const timeMilestones = Object.keys(EMOJI_CONFIG.milestones)
+  setElapsedTime(seconds) {
+    this.elapsedTime = seconds;
+    this.pausedTime = seconds;
+    
+    if (DEBUG_CONFIG?.enabled) {
+      console.log('[Timer] Elapsed time set to', seconds);
+    }
+  }
+  
+  /**
+   * Get elapsed time
+   * @returns {number} Elapsed seconds
+   */
+  getElapsedTime() {
+    return this.elapsedTime;
+  }
+  
+  /**
+   * Check if timer is running
+   * @returns {boolean} Is running
+   */
+  getIsRunning() {
+    return this.isRunning;
+  }
+  
+  /**
+   * Check time milestone
+   * @param {number} seconds - Current elapsed seconds
+   */
+  checkTimeMilestone(seconds) {
+    const milestones = Object.keys(EMOJI_CONFIG.milestones)
       .map(Number)
       .sort((a, b) => a - b);
     
-    for (const milestone of timeMilestones) {
-      if (this.elapsedTime >= milestone && this.lastMilestone < milestone) {
-        this.lastMilestone = milestone;
+    for (const milestone of milestones) {
+      if (seconds >= milestone && this.lastTimeMilestone < milestone) {
+        this.lastTimeMilestone = milestone;
+        
         this.trigger('onMilestone', {
           type: 'time',
           value: milestone,
-          elapsedTime: this.elapsedTime,
+          seconds: seconds,
         });
         
         if (DEBUG_CONFIG?.enabled) {
-          console.log('[Timer] Time milestone reached:', milestone, 'seconds');
+          console.log('[Timer] Time milestone reached:', milestone);
         }
+        
+        break;
       }
     }
   }
   
   /**
-   * Check cost milestone (called externally)
-   * @param {number} cost - Current cost
+   * Check cost milestone
+   * @param {number} cost - Current total cost
    */
   checkCostMilestone(cost) {
-    const costMilestones = Object.keys(EMOJI_CONFIG.costMilestones)
+    const milestones = Object.keys(EMOJI_CONFIG.costMilestones)
       .map(Number)
       .sort((a, b) => a - b);
     
-    for (const milestone of costMilestones) {
+    for (const milestone of milestones) {
       if (cost >= milestone && this.lastCostMilestone < milestone) {
         this.lastCostMilestone = milestone;
+        
         this.trigger('onMilestone', {
           type: 'cost',
           value: milestone,
@@ -217,127 +232,21 @@ class TimerManager {
         if (DEBUG_CONFIG?.enabled) {
           console.log('[Timer] Cost milestone reached:', milestone);
         }
-      }
-    }
-  }
-  
-  /**
-   * Set elapsed time (for loading saved sessions)
-   * @param {number} seconds - Elapsed time in seconds
-   */
-  setElapsedTime(seconds) {
-    if (!isValidNumber(seconds) || seconds < 0) {
-      console.warn('[Timer] Invalid elapsed time:', seconds);
-      return;
-    }
-    
-    this.elapsedTime = Math.floor(seconds);
-    
-    if (this.isRunning) {
-      this.startTime = Date.now() - (this.elapsedTime * 1000);
-    }
-    
-    // Update milestone trackers
-    this.updateMilestoneTrackers();
-    
-    if (DEBUG_CONFIG?.enabled) {
-      console.log('[Timer] Elapsed time set to', this.elapsedTime, 'seconds');
-    }
-  }
-  
-  /**
-   * Update milestone trackers based on current time
-   */
-  updateMilestoneTrackers() {
-    const timeMilestones = Object.keys(EMOJI_CONFIG.milestones)
-      .map(Number)
-      .sort((a, b) => b - a);
-    
-    for (const milestone of timeMilestones) {
-      if (this.elapsedTime >= milestone) {
-        this.lastMilestone = milestone;
+        
         break;
       }
     }
   }
   
   /**
-   * Get current state
-   * @returns {Object} Timer state
-   */
-  getState() {
-    return {
-      elapsedTime: this.elapsedTime,
-      isRunning: this.isRunning,
-      startTime: this.startTime,
-      lastMilestone: this.lastMilestone,
-      lastCostMilestone: this.lastCostMilestone,
-    };
-  }
-  
-  /**
-   * Load state (for restoring sessions)
-   * @param {Object} state - Timer state
-   */
-  loadState(state) {
-    if (!state) return;
-    
-    this.elapsedTime = state.elapsedTime || 0;
-    this.lastMilestone = state.lastMilestone || 0;
-    this.lastCostMilestone = state.lastCostMilestone || 0;
-    
-    // Don't restore running state - always start paused
-    this.isRunning = false;
-    this.startTime = null;
-    
-    this.updateMilestoneTrackers();
-    
-    if (DEBUG_CONFIG?.enabled) {
-      console.log('[Timer] State loaded:', this.getState());
-    }
-  }
-  
-  /**
-   * Get formatted elapsed time
-   * @param {boolean} showHours - Always show hours
-   * @returns {string} Formatted time
-   */
-  getFormattedTime(showHours = false) {
-    return formatElapsedTime(this.elapsedTime, showHours);
-  }
-  
-  /**
-   * Get elapsed time in different units
-   * @returns {Object} Time in different units
-   */
-  getTimeUnits() {
-    const hours = Math.floor(this.elapsedTime / 3600);
-    const minutes = Math.floor((this.elapsedTime % 3600) / 60);
-    const seconds = this.elapsedTime % 60;
-    
-    return {
-      hours,
-      minutes,
-      seconds,
-      totalMinutes: Math.floor(this.elapsedTime / 60),
-      totalSeconds: this.elapsedTime,
-    };
-  }
-  
-  /**
-   * Destroy timer (cleanup)
+   * Destroy timer
    */
   destroy() {
-    if (this.intervalId) {
-      clearInterval(this.intervalId);
-      this.intervalId = null;
-    }
-    
-    this.isRunning = false;
+    this.pause();
     this.callbacks = {};
     
     if (DEBUG_CONFIG?.enabled) {
-      console.log('[Timer] Timer destroyed');
+      console.log('[Timer] Destroyed');
     }
   }
 }
@@ -352,12 +261,8 @@ class TimerManager {
 class CostCalculator {
   constructor() {
     this.costPerPerson = APP_CONFIG.defaults.costPerPerson;
-    this.peopleCount = APP_CONFIG.defaults.people;
     this.currency = APP_CONFIG.defaults.currency;
-    
-    if (DEBUG_CONFIG?.enabled) {
-      console.log('[CostCalculator] Cost Calculator initialized');
-    }
+    this.peopleCount = APP_CONFIG.defaults.people;
   }
   
   /**
@@ -365,25 +270,9 @@ class CostCalculator {
    * @param {number} cost - Cost per person per hour
    */
   setCostPerPerson(cost) {
-    if (!validateCost(cost)) {
-      console.warn('[CostCalculator] Invalid cost:', cost);
-      return;
+    if (validateCost(cost)) {
+      this.costPerPerson = cost;
     }
-    
-    this.costPerPerson = cost;
-  }
-  
-  /**
-   * Set people count
-   * @param {number} count - Number of people
-   */
-  setPeopleCount(count) {
-    if (!validatePeopleCount(count)) {
-      console.warn('[CostCalculator] Invalid people count:', count);
-      return;
-    }
-    
-    this.peopleCount = count;
   }
   
   /**
@@ -391,17 +280,24 @@ class CostCalculator {
    * @param {string} currency - Currency code
    */
   setCurrency(currency) {
-    if (!validateCurrency(currency)) {
-      console.warn('[CostCalculator] Invalid currency:', currency);
-      return;
+    if (validateCurrency(currency)) {
+      this.currency = currency;
     }
-    
-    this.currency = currency;
   }
   
   /**
-   * Calculate total cost for elapsed time
-   * @param {number} elapsedSeconds - Elapsed time in seconds
+   * Set people count
+   * @param {number} count - Number of people
+   */
+  setPeopleCount(count) {
+    if (validatePeopleCount(count)) {
+      this.peopleCount = count;
+    }
+  }
+  
+  /**
+   * Calculate total cost (simple - without segments)
+   * @param {number} elapsedSeconds - Total elapsed time
    * @returns {number} Total cost
    */
   calculateTotalCost(elapsedSeconds) {
@@ -416,11 +312,44 @@ class CostCalculator {
   }
   
   /**
-   * Calculate cost per second
-   * @returns {number} Cost per second
+   * Calculate total cost with segments
+   * @param {number} elapsedSeconds - Total elapsed time
+   * @param {Array} segments - People count segments
+   * @returns {number} Total cost
    */
-  getCostPerSecond() {
-    return (this.costPerPerson * this.peopleCount) / 3600;
+  calculateTotalCostWithSegments(elapsedSeconds, segments) {
+    if (!segments || segments.length === 0) {
+      return this.calculateTotalCost(elapsedSeconds);
+    }
+    
+    let totalCost = 0;
+    
+    // Calculate cost for each segment
+    for (let i = 0; i < segments.length; i++) {
+      const segment = segments[i];
+      const nextSegment = segments[i + 1];
+      
+      // Calculate segment duration
+      const segmentStart = segment.startTime;
+      const segmentEnd = nextSegment ? nextSegment.startTime : elapsedSeconds;
+      const segmentDuration = segmentEnd - segmentStart;
+      
+      if (segmentDuration > 0) {
+        // Calculate cost for this segment
+        const hours = segmentDuration / 3600;
+        const segmentCost = this.costPerPerson * segment.people * hours;
+        totalCost += segmentCost;
+        
+        if (DEBUG_CONFIG?.enabled && DEBUG_CONFIG.showStateChanges) {
+          console.log(
+            `[CostCalculator] Segment ${i}: ${segment.people} people, ` +
+            `${segmentDuration}s = ${segmentCost.toFixed(2)}`
+          );
+        }
+      }
+    }
+    
+    return roundTo(totalCost, 2);
   }
   
   /**
@@ -428,81 +357,27 @@ class CostCalculator {
    * @returns {number} Cost per minute
    */
   getCostPerMinute() {
-    return (this.costPerPerson * this.peopleCount) / 60;
+    return roundTo((this.costPerPerson * this.peopleCount) / 60, 4);
   }
   
   /**
-   * Calculate cost per hour
-   * @returns {number} Cost per hour
+   * Calculate cost per second
+   * @returns {number} Cost per second
    */
-  getCostPerHour() {
-    return this.costPerPerson * this.peopleCount;
+  getCostPerSecond() {
+    return roundTo((this.costPerPerson * this.peopleCount) / 3600, 6);
   }
   
   /**
-   * Get formatted total cost
-   * @param {number} elapsedSeconds - Elapsed time in seconds
-   * @returns {string} Formatted cost
+   * Get current settings
+   * @returns {Object} Current settings
    */
-  getFormattedCost(elapsedSeconds) {
-    const totalCost = this.calculateTotalCost(elapsedSeconds);
-    return formatCost(totalCost, this.currency);
-  }
-  
-  /**
-   * Get cost breakdown
-   * @param {number} elapsedSeconds - Elapsed time in seconds
-   * @returns {Object} Cost breakdown
-   */
-  getCostBreakdown(elapsedSeconds) {
-    const totalCost = this.calculateTotalCost(elapsedSeconds);
-    const costPerPerson = totalCost / this.peopleCount;
-    
-    return {
-      total: totalCost,
-      perPerson: roundTo(costPerPerson, 2),
-      perSecond: roundTo(this.getCostPerSecond(), 4),
-      perMinute: roundTo(this.getCostPerMinute(), 2),
-      perHour: roundTo(this.getCostPerHour(), 2),
-      currency: this.currency,
-      people: this.peopleCount,
-    };
-  }
-  
-  /**
-   * Get current state
-   * @returns {Object} Calculator state
-   */
-  getState() {
+  getSettings() {
     return {
       costPerPerson: this.costPerPerson,
-      peopleCount: this.peopleCount,
       currency: this.currency,
+      peopleCount: this.peopleCount,
     };
-  }
-  
-  /**
-   * Load state
-   * @param {Object} state - Calculator state
-   */
-  loadState(state) {
-    if (!state) return;
-    
-    if (state.costPerPerson !== undefined) {
-      this.setCostPerPerson(state.costPerPerson);
-    }
-    
-    if (state.peopleCount !== undefined) {
-      this.setPeopleCount(state.peopleCount);
-    }
-    
-    if (state.currency !== undefined) {
-      this.setCurrency(state.currency);
-    }
-    
-    if (DEBUG_CONFIG?.enabled) {
-      console.log('[CostCalculator] State loaded:', this.getState());
-    }
   }
 }
 
@@ -511,63 +386,56 @@ class CostCalculator {
  */
 
 /**
- * Segment Manager Class (for tracking people count changes)
+ * Segment Manager Class
+ * Manages people count changes over time
  */
 class SegmentManager {
   constructor() {
     this.segments = [];
-    
-    if (DEBUG_CONFIG?.enabled) {
-      console.log('[SegmentManager] Segment Manager initialized');
-    }
   }
   
   /**
-   * Add a new segment
-   * @param {number} people - Number of people
+   * Add new segment
+   * @param {number} peopleCount - Number of people
    * @param {number} startTime - Start time in seconds
    */
-  addSegment(people, startTime) {
-    if (!validatePeopleCount(people)) {
-      console.warn('[SegmentManager] Invalid people count:', people);
-      return;
-    }
-    
-    if (!isValidNumber(startTime) || startTime < 0) {
-      console.warn('[SegmentManager] Invalid start time:', startTime);
+  addSegment(peopleCount, startTime) {
+    // Don't add if same as last segment
+    const lastSegment = this.getLastSegment();
+    if (lastSegment && lastSegment.people === peopleCount) {
       return;
     }
     
     this.segments.push({
-      people: people,
+      people: peopleCount,
       startTime: startTime,
       timestamp: Date.now(),
     });
     
-    // Limit segments
-    if (this.segments.length > APP_CONFIG.limits.maxHistoryEntries) {
-      this.segments.shift();
-    }
-    
     if (DEBUG_CONFIG?.enabled) {
-      console.log('[SegmentManager] Segment added:', { people, startTime });
+      console.log('[SegmentManager] Added segment:', {
+        people: peopleCount,
+        startTime: startTime,
+      });
     }
   }
   
   /**
    * Get all segments
-   * @returns {Array} Segments array
+   * @returns {Array} All segments
    */
   getSegments() {
-    return [...this.segments];
+    return this.segments;
   }
   
   /**
-   * Get current segment
-   * @returns {Object|null} Current segment
+   * Get last segment
+   * @returns {Object|null} Last segment
    */
-  getCurrentSegment() {
-    return this.segments.length > 0 ? last(this.segments) : null;
+  getLastSegment() {
+    return this.segments.length > 0 
+      ? this.segments[this.segments.length - 1]
+      : null;
   }
   
   /**
@@ -577,7 +445,21 @@ class SegmentManager {
     this.segments = [];
     
     if (DEBUG_CONFIG?.enabled) {
-      console.log('[SegmentManager] Segments cleared');
+      console.log('[SegmentManager] Cleared all segments');
+    }
+  }
+  
+  /**
+   * Load segments from saved data
+   * @param {Array} segments - Segments array
+   */
+  loadSegments(segments) {
+    if (Array.isArray(segments)) {
+      this.segments = segments;
+      
+      if (DEBUG_CONFIG?.enabled) {
+        console.log('[SegmentManager] Loaded segments:', segments.length);
+      }
     }
   }
   
@@ -590,60 +472,64 @@ class SegmentManager {
   }
   
   /**
-   * Get formatted segments for display
-   * @param {string} language - Language code
-   * @returns {Array<string>} Formatted segments
+   * Get segment at index
+   * @param {number} index - Segment index
+   * @returns {Object|null} Segment
    */
-  getFormattedSegments(language = 'de') {
-    return this.segments.map((segment, index) => {
-      return formatHistoryEntry(segment, index, language);
-    });
+  getSegment(index) {
+    return this.segments[index] || null;
   }
   
   /**
-   * Load segments
-   * @param {Array} segments - Segments array
+   * Remove segment at index
+   * @param {number} index - Segment index
+   * @returns {boolean} Success
    */
-  loadSegments(segments) {
-    if (!Array.isArray(segments)) {
-      console.warn('[SegmentManager] Invalid segments:', segments);
-      return;
+  removeSegment(index) {
+    if (index >= 0 && index < this.segments.length) {
+      this.segments.splice(index, 1);
+      
+      if (DEBUG_CONFIG?.enabled) {
+        console.log('[SegmentManager] Removed segment at index:', index);
+      }
+      
+      return true;
     }
     
-    this.segments = segments.filter(segment => {
-      return segment.people !== undefined && 
-             segment.startTime !== undefined &&
-             validatePeopleCount(segment.people);
-    });
-    
-    if (DEBUG_CONFIG?.enabled) {
-      console.log('[SegmentManager] Segments loaded:', this.segments.length);
-    }
+    return false;
   }
   
   /**
-   * Export segments
-   * @returns {Array} Segments array
+   * Get total duration for people count
+   * @param {number} peopleCount - Number of people
+   * @param {number} totalTime - Total elapsed time
+   * @returns {number} Total duration in seconds
    */
-  export() {
-    return this.getSegments();
+  getDurationForPeopleCount(peopleCount, totalTime) {
+    let duration = 0;
+    
+    for (let i = 0; i < this.segments.length; i++) {
+      const segment = this.segments[i];
+      
+      if (segment.people === peopleCount) {
+        const nextSegment = this.segments[i + 1];
+        const segmentEnd = nextSegment ? nextSegment.startTime : totalTime;
+        duration += segmentEnd - segment.startTime;
+      }
+    }
+    
+    return duration;
   }
-}
-
-/**
- * ==================== INITIALIZATION ====================
- */
-
-// Log timer module loaded (only in debug mode)
-if (DEBUG_CONFIG?.enabled) {
-  console.log('[Timer] Timer module loaded');
 }
 
 /**
  * ==================== EXPORTS ====================
  */
 
-// Export classes for use in other modules
+// Log timer module loaded
+console.log('[Timer] Timer module loaded');
+
+// Export for use in other modules
 if (typeof window !== 'undefined') {
   window.TimerManager = TimerManager;
   window.CostCalculator = CostCalculator;

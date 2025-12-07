@@ -1,9 +1,13 @@
 /**
  * ==================== MODAL MANAGER ====================
- * Modal dialogs and overlays management
+ * Modal dialog management
  * 
  * @file modals.js
  * @version 2.0.0
+ */
+
+/**
+ * ==================== MODAL MANAGER ====================
  */
 
 /**
@@ -11,699 +15,423 @@
  */
 class ModalManager {
   constructor() {
-    this.activeModals = [];
-    this.focusTrapStack = [];
-    this.escapeHandlers = [];
-    this.isInitialized = false;
-    
+    this.openModals = [];
     this.init();
   }
   
   /**
-   * Initialize modal system
+   * Initialize modal manager
    */
   init() {
-    if (this.isInitialized) return;
-    
-    // Global escape key handler
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') {
-        this.handleEscape();
+    // Listen for escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        this.closeTopModal();
       }
     });
     
-    // Prevent body scroll when modal is open
-    this.setupScrollLock();
-    
-    this.isInitialized = true;
-    
     if (DEBUG_CONFIG?.enabled) {
-      console.log('[Modals] Modal Manager initialized');
+      console.log('[Modals] Modal manager initialized');
     }
-  }
-  
-  /**
-   * Setup scroll lock functionality
-   */
-  setupScrollLock() {
-    this.originalOverflow = '';
-    this.originalPaddingRight = '';
   }
   
   /**
    * Open modal
-   * @param {string} modalId - Modal element ID or element
-   * @param {Object} options - Modal options
-   * @returns {boolean} Success
+   * @param {string} modalId - Modal identifier
    */
-  open(modalId, options = {}) {
-    const modal = typeof modalId === 'string' 
-      ? document.getElementById(modalId)
-      : modalId;
-    
-    if (!modal) {
-      console.warn('[Modals] Modal not found:', modalId);
-      return false;
+  open(modalId) {
+    if (this.openModals.includes(modalId)) {
+      return;
     }
     
-    // Check if already open
-    if (this.isOpen(modal)) {
-      return false;
-    }
+    this.openModals.push(modalId);
     
-    // Lock body scroll
-    this.lockScroll();
-    
-    // Show modal
-    modal.style.display = 'flex';
-    modal.setAttribute('aria-hidden', 'false');
-    
-    // Focus management
-    if (options.autoFocus !== false) {
-      this.setupFocusTrap(modal);
-    }
-    
-    // Store active modal
-    this.activeModals.push({
-      element: modal,
-      options: options,
-      timestamp: Date.now(),
-    });
-    
-    // Trigger open callback
-    if (options.onOpen) {
-      options.onOpen(modal);
+    // Prevent body scroll
+    if (this.openModals.length === 1) {
+      document.body.style.overflow = 'hidden';
     }
     
     if (DEBUG_CONFIG?.enabled) {
-      console.log('[Modals] Open:', modalId);
+      console.log('[Modals] Opened:', modalId);
     }
-    
-    return true;
   }
   
   /**
    * Close modal
-   * @param {string|HTMLElement} modalId - Modal element ID or element
-   * @param {Object} options - Close options
-   * @returns {boolean} Success
+   * @param {string} modalId - Modal identifier
    */
-  close(modalId, options = {}) {
-    const modal = typeof modalId === 'string'
-      ? document.getElementById(modalId)
-      : modalId;
+  close(modalId) {
+    const index = this.openModals.indexOf(modalId);
     
-    if (!modal) {
-      console.warn('[Modals] Modal not found:', modalId);
-      return false;
+    if (index === -1) {
+      return;
     }
     
-    // Check if open
-    if (!this.isOpen(modal)) {
-      return false;
-    }
+    this.openModals.splice(index, 1);
     
-    // Hide modal
-    modal.style.display = 'none';
-    modal.setAttribute('aria-hidden', 'true');
-    
-    // Remove from active modals
-    this.activeModals = this.activeModals.filter(m => m.element !== modal);
-    
-    // Unlock scroll if no modals open
-    if (this.activeModals.length === 0) {
-      this.unlockScroll();
-    }
-    
-    // Remove focus trap
-    this.removeFocusTrap(modal);
-    
-    // Get modal data for callback
-    const modalData = this.activeModals.find(m => m.element === modal);
-    
-    // Trigger close callback
-    if (modalData?.options.onClose) {
-      modalData.options.onClose(modal);
-    }
-    
-    if (options.onClose) {
-      options.onClose(modal);
+    // Restore body scroll if no modals open
+    if (this.openModals.length === 0) {
+      document.body.style.overflow = '';
     }
     
     if (DEBUG_CONFIG?.enabled) {
-      console.log('[Modals] Close:', modalId);
-    }
-    
-    return true;
-  }
-  
-  /**
-   * Toggle modal
-   * @param {string|HTMLElement} modalId - Modal element ID or element
-   * @param {Object} options - Modal options
-   * @returns {boolean} New state (true = open)
-   */
-  toggle(modalId, options = {}) {
-    const modal = typeof modalId === 'string'
-      ? document.getElementById(modalId)
-      : modalId;
-    
-    if (!modal) return false;
-    
-    if (this.isOpen(modal)) {
-      this.close(modal, options);
-      return false;
-    } else {
-      this.open(modal, options);
-      return true;
+      console.log('[Modals] Closed:', modalId);
     }
   }
   
   /**
-   * Check if modal is open
-   * @param {string|HTMLElement} modalId - Modal element ID or element
-   * @returns {boolean} Is open
+   * Close top modal
    */
-  isOpen(modalId) {
-    const modal = typeof modalId === 'string'
-      ? document.getElementById(modalId)
-      : modalId;
-    
-    if (!modal) return false;
-    
-    return this.activeModals.some(m => m.element === modal);
+  closeTopModal() {
+    if (this.openModals.length > 0) {
+      const topModal = this.openModals[this.openModals.length - 1];
+      this.close(topModal);
+      return topModal;
+    }
+    return null;
   }
   
   /**
    * Close all modals
    */
   closeAll() {
-    const modals = [...this.activeModals];
-    modals.forEach(modalData => {
-      this.close(modalData.element);
-    });
-  }
-  
-  /**
-   * Get active modal count
-   * @returns {number} Count
-   */
-  getCount() {
-    return this.activeModals.length;
-  }
-  
-  /**
-   * Get topmost modal
-   * @returns {HTMLElement|null} Modal element
-   */
-  getTopModal() {
-    if (this.activeModals.length === 0) return null;
-    return this.activeModals[this.activeModals.length - 1].element;
-  }
-  
-  /**
-   * Handle escape key press
-   */
-  handleEscape() {
-    const topModal = this.getTopModal();
-    if (topModal) {
-      this.close(topModal);
-    }
-  }
-  
-  /**
-   * Lock body scroll
-   */
-  lockScroll() {
-    if (this.activeModals.length > 0) return; // Already locked
-    
-    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-    
-    this.originalOverflow = document.body.style.overflow;
-    this.originalPaddingRight = document.body.style.paddingRight;
-    
-    document.body.style.overflow = 'hidden';
-    
-    if (scrollbarWidth > 0) {
-      document.body.style.paddingRight = `${scrollbarWidth}px`;
-    }
-  }
-  
-  /**
-   * Unlock body scroll
-   */
-  unlockScroll() {
-    document.body.style.overflow = this.originalOverflow;
-    document.body.style.paddingRight = this.originalPaddingRight;
-  }
-  
-  /**
-   * Setup focus trap for modal
-   * @param {HTMLElement} modal - Modal element
-   */
-  setupFocusTrap(modal) {
-    // Get all focusable elements
-    const focusableElements = modal.querySelectorAll(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-    );
-    
-    if (focusableElements.length === 0) return;
-    
-    const firstElement = focusableElements[0];
-    const lastElement = focusableElements[focusableElements.length - 1];
-    
-    // Focus first element
-    setTimeout(() => {
-      firstElement.focus();
-    }, 100);
-    
-    // Trap focus
-    const trapFocus = (event) => {
-      if (event.key !== 'Tab') return;
-      
-      if (event.shiftKey) {
-        // Shift + Tab
-        if (document.activeElement === firstElement) {
-          event.preventDefault();
-          lastElement.focus();
-        }
-      } else {
-        // Tab
-        if (document.activeElement === lastElement) {
-          event.preventDefault();
-          firstElement.focus();
-        }
-      }
-    };
-    
-    modal.addEventListener('keydown', trapFocus);
-    
-    // Store for cleanup
-    this.focusTrapStack.push({
-      modal,
-      handler: trapFocus,
-    });
-  }
-  
-  /**
-   * Remove focus trap
-   * @param {HTMLElement} modal - Modal element
-   */
-  removeFocusTrap(modal) {
-    const index = this.focusTrapStack.findIndex(trap => trap.modal === modal);
-    
-    if (index !== -1) {
-      const trap = this.focusTrapStack[index];
-      modal.removeEventListener('keydown', trap.handler);
-      this.focusTrapStack.splice(index, 1);
-    }
-  }
-  
-  /**
-   * Destroy modal manager
-   */
-  destroy() {
-    this.closeAll();
-    this.unlockScroll();
-    this.focusTrapStack = [];
-    this.activeModals = [];
-    this.isInitialized = false;
+    this.openModals = [];
+    document.body.style.overflow = '';
     
     if (DEBUG_CONFIG?.enabled) {
-      console.log('[Modals] Modal Manager destroyed');
+      console.log('[Modals] Closed all modals');
     }
+  }
+  
+  /**
+   * Check if modal is open
+   * @param {string} modalId - Modal identifier
+   * @returns {boolean} Is open
+   */
+  isOpen(modalId) {
+    return this.openModals.includes(modalId);
+  }
+  
+  /**
+   * Check if any modal is open
+   * @returns {boolean} Any open
+   */
+  hasOpenModals() {
+    return this.openModals.length > 0;
   }
 }
 
 /**
- * ==================== MODAL HELPERS ====================
+ * ==================== SHARE MANAGER ====================
  */
 
 /**
- * Create modal programmatically
- * @param {Object} config - Modal configuration
- * @returns {HTMLElement} Modal element
+ * Share Manager Class
  */
-function createModal(config = {}) {
-  const {
-    id = `modal-${Date.now()}`,
-    title = 'Modal',
-    content = '',
-    buttons = [],
-    closeButton = true,
-    backdrop = true,
-    className = '',
-  } = config;
-  
-  // Create modal structure
-  const modal = document.createElement('div');
-  modal.id = id;
-  modal.className = `modal-backdrop ${className}`;
-  modal.setAttribute('role', 'dialog');
-  modal.setAttribute('aria-modal', 'true');
-  modal.setAttribute('aria-labelledby', `${id}-title`);
-  modal.style.display = 'none';
-  
-  // Close on backdrop click
-  if (backdrop) {
-    modal.addEventListener('click', (event) => {
-      if (event.target === modal) {
-        modalManager.close(modal);
-      }
-    });
+class ShareManager {
+  constructor() {
+    this.canUseNativeShare = this.checkNativeShare();
   }
   
-  // Modal content container
-  const modalContent = document.createElement('div');
-  modalContent.className = 'modal-content';
-  
-  // Header
-  const header = document.createElement('div');
-  header.className = 'modal-header';
-  
-  const titleElement = document.createElement('h2');
-  titleElement.id = `${id}-title`;
-  titleElement.className = 'modal-title';
-  titleElement.textContent = title;
-  header.appendChild(titleElement);
-  
-  if (closeButton) {
-    const closeBtn = document.createElement('button');
-    closeBtn.className = 'modal-close';
-    closeBtn.setAttribute('aria-label', 'Close dialog');
-    closeBtn.textContent = '×';
-    closeBtn.addEventListener('click', () => {
-      modalManager.close(modal);
-    });
-    header.appendChild(closeBtn);
+  /**
+   * Check if native share is available
+   * @returns {boolean} Is available
+   */
+  checkNativeShare() {
+    return isSupported('share');
   }
   
-  modalContent.appendChild(header);
-  
-  // Body
-  const body = document.createElement('div');
-  body.className = 'modal-body';
-  
-  if (typeof content === 'string') {
-    body.innerHTML = content;
-  } else if (content instanceof HTMLElement) {
-    body.appendChild(content);
-  }
-  
-  modalContent.appendChild(body);
-  
-  // Footer with buttons
-  if (buttons.length > 0) {
-    const footer = document.createElement('div');
-    footer.className = 'modal-footer';
+  /**
+   * Generate share URL
+   * @param {Object} data - Share data
+   * @returns {string} Share URL
+   */
+  generateShareUrl(data) {
+    const params = {};
     
-    buttons.forEach(buttonConfig => {
-      const button = document.createElement('button');
-      button.className = buttonConfig.className || 'modal-button';
-      button.textContent = buttonConfig.text || 'Button';
+    if (data.people) {
+      params[APP_CONFIG.urlParams.people] = data.people;
+    }
+    if (data.cost) {
+      params[APP_CONFIG.urlParams.cost] = data.cost;
+    }
+    if (data.currency) {
+      params[APP_CONFIG.urlParams.currency] = data.currency;
+    }
+    if (data.elapsed) {
+      params[APP_CONFIG.urlParams.elapsed] = data.elapsed;
+    }
+    if (data.language) {
+      params[APP_CONFIG.urlParams.language] = data.language;
+    }
+    
+    return formatShareUrl(params);
+  }
+  
+  /**
+   * Copy share URL to clipboard
+   * @param {string} url - URL to copy
+   * @returns {Promise<boolean>} Success
+   */
+  async copyUrl(url) {
+    return await copyToClipboard(url);
+  }
+  
+  /**
+   * Share via native share API
+   * @param {Object} data - Share data
+   * @returns {Promise<boolean>} Success
+   */
+  async shareNative(data) {
+    if (!this.canUseNativeShare) {
+      return false;
+    }
+    
+    try {
+      await navigator.share({
+        title: data.title || '💰 Meeting-Kostenrechner',
+        text: data.text || '',
+        url: data.url || '',
+      });
       
-      if (buttonConfig.onClick) {
-        button.addEventListener('click', () => {
-          buttonConfig.onClick(modal);
-        });
+      return true;
+    } catch (error) {
+      if (error.name !== 'AbortError') {
+        logError('shareNative', error, { data });
       }
-      
-      footer.appendChild(button);
-    });
-    
-    modalContent.appendChild(footer);
+      return false;
+    }
   }
   
-  modal.appendChild(modalContent);
-  document.body.appendChild(modal);
-  
-  return modal;
-}
-
-/**
- * Show confirmation dialog
- * @param {Object} config - Confirmation config
- * @returns {Promise<boolean>} User choice
- */
-function showConfirmDialog(config = {}) {
-  const {
-    title = 'Confirm',
-    message = 'Are you sure?',
-    confirmText = 'Confirm',
-    cancelText = 'Cancel',
-    confirmClass = 'btn-primary',
-    cancelClass = 'btn-secondary',
-  } = config;
-  
-  return new Promise((resolve) => {
-    const modal = createModal({
-      title,
-      content: `<p>${message}</p>`,
-      buttons: [
-        {
-          text: cancelText,
-          className: `modal-button ${cancelClass}`,
-          onClick: (modal) => {
-            modalManager.close(modal);
-            resolve(false);
-          },
-        },
-        {
-          text: confirmText,
-          className: `modal-button ${confirmClass}`,
-          onClick: (modal) => {
-            modalManager.close(modal);
-            resolve(true);
-          },
-        },
-      ],
-    });
+  /**
+   * Share via email
+   * @param {Object} data - Share data
+   */
+  shareEmail(data) {
+    const emailData = formatShareText(data, 'email');
+    const subject = encodeURIComponent(emailData.subject);
+    const body = encodeURIComponent(emailData.body);
     
-    modalManager.open(modal, {
-      onClose: () => {
-        // Clean up modal element
-        setTimeout(() => {
-          if (modal.parentNode) {
-            modal.parentNode.removeChild(modal);
-          }
-        }, 300);
-      },
-    });
-  });
-}
-
-/**
- * Show alert dialog
- * @param {Object} config - Alert config
- * @returns {Promise<void>}
- */
-function showAlertDialog(config = {}) {
-  const {
-    title = 'Alert',
-    message = '',
-    buttonText = 'OK',
-    buttonClass = 'btn-primary',
-  } = config;
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+  }
   
-  return new Promise((resolve) => {
-    const modal = createModal({
-      title,
-      content: `<p>${message}</p>`,
-      buttons: [
-        {
-          text: buttonText,
-          className: `modal-button ${buttonClass}`,
-          onClick: (modal) => {
-            modalManager.close(modal);
-            resolve();
-          },
-        },
-      ],
-    });
+  /**
+   * Share via WhatsApp
+   * @param {Object} data - Share data
+   */
+  shareWhatsApp(data) {
+    const text = formatShareText(data, 'whatsapp');
+    const encoded = encodeURIComponent(text);
     
-    modalManager.open(modal, {
-      onClose: () => {
-        setTimeout(() => {
-          if (modal.parentNode) {
-            modal.parentNode.removeChild(modal);
-          }
-        }, 300);
-      },
-    });
-  });
-}
-
-/**
- * Show prompt dialog
- * @param {Object} config - Prompt config
- * @returns {Promise<string|null>} User input or null
- */
-function showPromptDialog(config = {}) {
-  const {
-    title = 'Input',
-    message = '',
-    defaultValue = '',
-    placeholder = '',
-    confirmText = 'OK',
-    cancelText = 'Cancel',
-  } = config;
-  
-  return new Promise((resolve) => {
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.className = 'form-input';
-    input.value = defaultValue;
-    input.placeholder = placeholder;
-    
-    const content = document.createElement('div');
-    if (message) {
-      const p = document.createElement('p');
-      p.textContent = message;
-      content.appendChild(p);
+    if (isMobile()) {
+      window.location.href = `whatsapp://send?text=${encoded}`;
+    } else {
+      window.open(`https://web.whatsapp.com/send?text=${encoded}`, '_blank');
     }
-    content.appendChild(input);
+  }
+  
+  /**
+   * Share via Slack
+   * @param {Object} data - Share data
+   */
+  shareSlack(data) {
+    const text = formatShareText(data, 'slack');
+    const encoded = encodeURIComponent(text);
     
-    const modal = createModal({
-      title,
-      content,
-      buttons: [
-        {
-          text: cancelText,
-          className: 'modal-button btn-secondary',
-          onClick: (modal) => {
-            modalManager.close(modal);
-            resolve(null);
-          },
-        },
-        {
-          text: confirmText,
-          className: 'modal-button btn-primary',
-          onClick: (modal) => {
-            modalManager.close(modal);
-            resolve(input.value);
-          },
-        },
-      ],
+    window.open(
+      `https://slack.com/intl/de-de/help/articles/201330256#share-a-link`,
+      '_blank'
+    );
+    
+    // Copy to clipboard as fallback
+    copyToClipboard(text);
+  }
+  
+  /**
+   * Share via Twitter
+   * @param {Object} data - Share data
+   */
+  shareTwitter(data) {
+    const text = formatShareText(data, 'default');
+    const encoded = encodeURIComponent(text);
+    
+    window.open(
+      `https://twitter.com/intent/tweet?text=${encoded}`,
+      '_blank',
+      'width=550,height=420'
+    );
+  }
+  
+  /**
+   * Share via LinkedIn
+   * @param {Object} data - Share data
+   */
+  shareLinkedIn(data) {
+    const url = encodeURIComponent(data.url);
+    
+    window.open(
+      `https://www.linkedin.com/sharing/share-offsite/?url=${url}`,
+      '_blank',
+      'width=550,height=420'
+    );
+  }
+}
+
+/**
+ * ==================== KEYBOARD SHORTCUTS ====================
+ */
+
+/**
+ * Keyboard Shortcut Manager
+ */
+class KeyboardShortcutManager {
+  constructor() {
+    this.shortcuts = new Map();
+    this.enabled = APP_CONFIG.features.enableKeyboardShortcuts;
+    this.init();
+  }
+  
+  /**
+   * Initialize keyboard shortcuts
+   */
+  init() {
+    if (!this.enabled) return;
+    
+    document.addEventListener('keydown', (e) => {
+      this.handleKeydown(e);
     });
     
-    modalManager.open(modal, {
-      onOpen: () => {
-        setTimeout(() => input.focus(), 100);
-      },
-      onClose: () => {
-        setTimeout(() => {
-          if (modal.parentNode) {
-            modal.parentNode.removeChild(modal);
-          }
-        }, 300);
-      },
+    if (DEBUG_CONFIG?.enabled) {
+      console.log('[Keyboard] Keyboard shortcuts initialized');
+    }
+  }
+  
+  /**
+   * Register shortcut
+   * @param {string} key - Key combination (e.g., 'ctrl+s')
+   * @param {Function} callback - Callback function
+   * @param {string} description - Description
+   */
+  register(key, callback, description = '') {
+    this.shortcuts.set(key.toLowerCase(), {
+      callback,
+      description,
     });
     
-    // Submit on Enter
-    input.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter') {
-        modalManager.close(modal);
-        resolve(input.value);
+    if (DEBUG_CONFIG?.enabled) {
+      console.log('[Keyboard] Registered shortcut:', key);
+    }
+  }
+  
+  /**
+   * Unregister shortcut
+   * @param {string} key - Key combination
+   */
+  unregister(key) {
+    this.shortcuts.delete(key.toLowerCase());
+  }
+  
+  /**
+   * Handle keydown event
+   * @param {KeyboardEvent} e - Keyboard event
+   */
+  handleKeydown(e) {
+    // Don't handle if typing in input
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+      return;
+    }
+    
+    const key = this.getKeyString(e);
+    const shortcut = this.shortcuts.get(key);
+    
+    if (shortcut) {
+      e.preventDefault();
+      shortcut.callback(e);
+      
+      if (DEBUG_CONFIG?.enabled) {
+        console.log('[Keyboard] Triggered shortcut:', key);
       }
-    });
-  });
-}
-
-/**
- * ==================== LOADING MODAL ====================
- */
-
-/**
- * Show loading modal
- * @param {string} message - Loading message
- * @returns {string} Modal ID
- */
-function showLoadingModal(message = 'Loading...') {
-  const content = `
-    <div style="text-align: center; padding: 2rem;">
-      <div class="loading-spinner"></div>
-      <p style="margin-top: 1rem;">${message}</p>
-    </div>
-  `;
-  
-  const modal = createModal({
-    id: 'loading-modal',
-    title: '',
-    content,
-    closeButton: false,
-    backdrop: false,
-  });
-  
-  modalManager.open(modal, { autoFocus: false });
-  
-  return modal.id;
-}
-
-/**
- * Hide loading modal
- */
-function hideLoadingModal() {
-  modalManager.close('loading-modal');
-  
-  setTimeout(() => {
-    const modal = document.getElementById('loading-modal');
-    if (modal && modal.parentNode) {
-      modal.parentNode.removeChild(modal);
     }
-  }, 300);
+  }
+  
+  /**
+   * Get key string from event
+   * @param {KeyboardEvent} e - Keyboard event
+   * @returns {string} Key string
+   */
+  getKeyString(e) {
+    const parts = [];
+    
+    if (e.ctrlKey || e.metaKey) parts.push('ctrl');
+    if (e.altKey) parts.push('alt');
+    if (e.shiftKey) parts.push('shift');
+    
+    const key = e.key.toLowerCase();
+    
+    // Special keys
+    if (key === ' ') {
+      parts.push('space');
+    } else if (key === 'escape') {
+      parts.push('esc');
+    } else if (key === 'enter') {
+      parts.push('enter');
+    } else if (key === '+') {
+      parts.push('plus');
+    } else if (key === '-') {
+      parts.push('minus');
+    } else if (key === '?') {
+      parts.push('question');
+    } else {
+      parts.push(key);
+    }
+    
+    return parts.join('+');
+  }
+  
+  /**
+   * Get all shortcuts
+   * @returns {Map} All shortcuts
+   */
+  getAll() {
+    return this.shortcuts;
+  }
+  
+  /**
+   * Enable shortcuts
+   */
+  enable() {
+    this.enabled = true;
+  }
+  
+  /**
+   * Disable shortcuts
+   */
+  disable() {
+    this.enabled = false;
+  }
 }
 
 /**
- * ==================== INITIALIZATION ====================
+ * ==================== GLOBAL INSTANCES ====================
  */
 
-// Create global instance
 const modalManager = new ModalManager();
-
-// Add loading spinner styles if not present
-if (!document.getElementById('loading-spinner-styles')) {
-  const style = document.createElement('style');
-  style.id = 'loading-spinner-styles';
-  style.textContent = `
-    .loading-spinner {
-      width: 40px;
-      height: 40px;
-      margin: 0 auto;
-      border: 4px solid rgba(0, 0, 0, 0.1);
-      border-left-color: var(--primary-color, #667eea);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-    
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-    
-    [data-theme="dark"] .loading-spinner {
-      border-color: rgba(255, 255, 255, 0.1);
-      border-left-color: var(--primary-color, #667eea);
-    }
-  `;
-  document.head.appendChild(style);
-}
-
-// Log modals module loaded (only in debug mode)
-if (DEBUG_CONFIG?.enabled) {
-  console.log('[Modals] Modal module loaded');
-}
+const shareManager = new ShareManager();
+const keyboardManager = new KeyboardShortcutManager();
 
 /**
  * ==================== EXPORTS ====================
  */
 
+// Log modals loaded
+console.log('[Modals] Modal manager loaded');
+
 // Export for use in other modules
 if (typeof window !== 'undefined') {
   window.ModalManager = ModalManager;
+  window.ShareManager = ShareManager;
+  window.KeyboardShortcutManager = KeyboardShortcutManager;
   window.modalManager = modalManager;
-  window.createModal = createModal;
-  window.showConfirmDialog = showConfirmDialog;
-  window.showAlertDialog = showAlertDialog;
-  window.showPromptDialog = showPromptDialog;
-  window.showLoadingModal = showLoadingModal;
-  window.hideLoadingModal = hideLoadingModal;
+  window.shareManager = shareManager;
+  window.keyboardManager = keyboardManager;
 }

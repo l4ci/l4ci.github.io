@@ -1,35 +1,59 @@
 /**
  * ==================== UTILITY FUNCTIONS ====================
- * Helper functions used throughout the application
+ * Helper functions and utilities
  * 
  * @file utils.js
  * @version 2.0.0
  */
 
 /**
- * ==================== NUMBER UTILITIES ====================
+ * ==================== VALIDATION ====================
  */
 
 /**
- * Clamp a number between min and max
- * @param {number} value - Value to clamp
- * @param {number} min - Minimum value
- * @param {number} max - Maximum value
- * @returns {number} Clamped value
+ * Validate people count
+ * @param {number} count - People count
+ * @returns {boolean} Is valid
  */
-function clamp(value, min, max) {
-  return Math.min(Math.max(value, min), max);
+function validatePeopleCount(count) {
+  return (
+    typeof count === 'number' &&
+    !isNaN(count) &&
+    count >= APP_CONFIG.limits.minPeople &&
+    count <= APP_CONFIG.limits.maxPeople
+  );
 }
 
 /**
- * Round number to specified decimal places
- * @param {number} value - Value to round
- * @param {number} decimals - Number of decimal places
- * @returns {number} Rounded value
+ * Validate cost
+ * @param {number} cost - Cost value
+ * @returns {boolean} Is valid
  */
-function roundTo(value, decimals = 2) {
-  const multiplier = Math.pow(10, decimals);
-  return Math.round(value * multiplier) / multiplier;
+function validateCost(cost) {
+  return (
+    typeof cost === 'number' &&
+    !isNaN(cost) &&
+    cost >= APP_CONFIG.limits.minCost &&
+    cost <= APP_CONFIG.limits.maxCost
+  );
+}
+
+/**
+ * Validate currency
+ * @param {string} currency - Currency code
+ * @returns {boolean} Is valid
+ */
+function validateCurrency(currency) {
+  return SUPPORTED_CURRENCIES.includes(currency);
+}
+
+/**
+ * Validate language
+ * @param {string} language - Language code
+ * @returns {boolean} Is valid
+ */
+function validateLanguage(language) {
+  return SUPPORTED_LANGUAGES.includes(language);
 }
 
 /**
@@ -42,295 +66,8 @@ function isValidNumber(value) {
 }
 
 /**
- * Parse number safely
- * @param {*} value - Value to parse
- * @param {number} defaultValue - Default value if parsing fails
- * @returns {number} Parsed number or default
+ * ==================== SANITIZATION ====================
  */
-function parseNumber(value, defaultValue = 0) {
-  const parsed = Number(value);
-  return isValidNumber(parsed) ? parsed : defaultValue;
-}
-
-/**
- * Format number with thousand separators
- * @param {number} value - Number to format
- * @param {string} locale - Locale for formatting
- * @returns {string} Formatted number
- */
-function formatNumber(value, locale = 'de-DE') {
-  return new Intl.NumberFormat(locale).format(value);
-}
-
-/**
- * ==================== STRING UTILITIES ====================
- */
-
-/**
- * Pad number with leading zeros
- * @param {number} num - Number to pad
- * @param {number} length - Target length
- * @returns {string} Padded string
- */
-function padZero(num, length = 2) {
-  return String(num).padStart(length, '0');
-}
-
-/**
- * Truncate string with ellipsis
- * @param {string} str - String to truncate
- * @param {number} maxLength - Maximum length
- * @returns {string} Truncated string
- */
-function truncate(str, maxLength = 50) {
-  if (str.length <= maxLength) return str;
-  return str.substring(0, maxLength - 3) + '...';
-}
-
-/**
- * Capitalize first letter
- * @param {string} str - String to capitalize
- * @returns {string} Capitalized string
- */
-function capitalize(str) {
-  if (!str) return '';
-  return str.charAt(0).toUpperCase() + str.slice(1);
-}
-
-/**
- * Generate random string
- * @param {number} length - Length of string
- * @returns {string} Random string
- */
-function randomString(length = 8) {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-  for (let i = 0; i < length; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result;
-}
-
-/**
- * ==================== URL UTILITIES ====================
- */
-
-/**
- * Get URL parameter
- * @param {string} name - Parameter name
- * @returns {string|null} Parameter value
- */
-function getUrlParam(name) {
-  const params = new URLSearchParams(window.location.search);
-  return params.get(name);
-}
-
-/**
- * Set URL parameter without reload
- * @param {string} name - Parameter name
- * @param {string} value - Parameter value
- */
-function setUrlParam(name, value) {
-  const url = new URL(window.location);
-  url.searchParams.set(name, value);
-  window.history.replaceState({}, '', url);
-}
-
-/**
- * Remove URL parameter without reload
- * @param {string} name - Parameter name
- */
-function removeUrlParam(name) {
-  const url = new URL(window.location);
-  url.searchParams.delete(name);
-  window.history.replaceState({}, '', url);
-}
-
-/**
- * Get all URL parameters as object
- * @returns {Object} Parameters object
- */
-function getAllUrlParams() {
-  const params = new URLSearchParams(window.location.search);
-  const result = {};
-  for (const [key, value] of params.entries()) {
-    result[key] = value;
-  }
-  return result;
-}
-
-/**
- * Build URL with parameters
- * @param {string} baseUrl - Base URL
- * @param {Object} params - Parameters object
- * @returns {string} Complete URL
- */
-function buildUrl(baseUrl, params = {}) {
-  const url = new URL(baseUrl);
-  for (const [key, value] of Object.entries(params)) {
-    if (value !== null && value !== undefined) {
-      url.searchParams.set(key, value);
-    }
-  }
-  return url.toString();
-}
-
-/**
- * ==================== TIME UTILITIES ====================
- */
-
-/**
- * Convert seconds to milliseconds
- * @param {number} seconds - Seconds
- * @returns {number} Milliseconds
- */
-function secondsToMs(seconds) {
-  return seconds * 1000;
-}
-
-/**
- * Convert milliseconds to seconds
- * @param {number} ms - Milliseconds
- * @returns {number} Seconds
- */
-function msToSeconds(ms) {
-  return Math.floor(ms / 1000);
-}
-
-/**
- * Get current timestamp in seconds
- * @returns {number} Current timestamp
- */
-function getCurrentTimestamp() {
-  return Math.floor(Date.now() / 1000);
-}
-
-/**
- * Format duration in seconds to HH:MM:SS
- * @param {number} seconds - Duration in seconds
- * @returns {string} Formatted time
- */
-function formatDuration(seconds) {
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  const secs = seconds % 60;
-  
-  if (hours > 0) {
-    return `${hours}:${padZero(minutes)}:${padZero(secs)}`;
-  }
-  return `${minutes}:${padZero(secs)}`;
-}
-
-/**
- * Parse duration string (HH:MM:SS or MM:SS) to seconds
- * @param {string} duration - Duration string
- * @returns {number} Seconds
- */
-function parseDuration(duration) {
-  const parts = duration.split(':').map(Number);
-  if (parts.length === 3) {
-    return parts[0] * 3600 + parts[1] * 60 + parts[2];
-  } else if (parts.length === 2) {
-    return parts[0] * 60 + parts[1];
-  }
-  return 0;
-}
-
-/**
- * ==================== DOM UTILITIES ====================
- */
-
-/**
- * Query selector with error handling
- * @param {string} selector - CSS selector
- * @param {Element} parent - Parent element (optional)
- * @returns {Element|null} Found element
- */
-function qs(selector, parent = document) {
-  try {
-    return parent.querySelector(selector);
-  } catch (error) {
-    console.error(`[Utils] Invalid selector: ${selector}`, error);
-    return null;
-  }
-}
-
-/**
- * Query selector all with error handling
- * @param {string} selector - CSS selector
- * @param {Element} parent - Parent element (optional)
- * @returns {NodeList} Found elements
- */
-function qsAll(selector, parent = document) {
-  try {
-    return parent.querySelectorAll(selector);
-  } catch (error) {
-    console.error(`[Utils] Invalid selector: ${selector}`, error);
-    return [];
-  }
-}
-
-/**
- * Add event listener with cleanup
- * @param {Element} element - Target element
- * @param {string} event - Event name
- * @param {Function} handler - Event handler
- * @param {Object} options - Event options
- * @returns {Function} Cleanup function
- */
-function addListener(element, event, handler, options = {}) {
-  if (!element || !event || !handler) return () => {};
-  
-  element.addEventListener(event, handler, options);
-  
-  return () => {
-    element.removeEventListener(event, handler, options);
-  };
-}
-
-/**
- * ==================== VALIDATION UTILITIES ====================
- */
-
-/**
- * Validate people count
- * @param {number} count - People count
- * @returns {boolean} Is valid
- */
-function validatePeopleCount(count) {
-  return isValidNumber(count) && 
-         count >= APP_CONFIG.limits.minPeople && 
-         count <= APP_CONFIG.limits.maxPeople;
-}
-
-/**
- * Validate cost value
- * @param {number} cost - Cost value
- * @returns {boolean} Is valid
- */
-function validateCost(cost) {
-  return isValidNumber(cost) && 
-         cost >= APP_CONFIG.limits.minCost && 
-         cost <= APP_CONFIG.limits.maxCost;
-}
-
-/**
- * Validate currency code
- * @param {string} currency - Currency code
- * @returns {boolean} Is valid
- */
-function validateCurrency(currency) {
-  return CURRENCY_CONFIG.hasOwnProperty(currency);
-}
-
-/**
- * Validate language code
- * @param {string} language - Language code
- * @returns {boolean} Is valid
- */
-function validateLanguage(language) {
-  return LANGUAGE_CONFIG.hasOwnProperty(language);
-}
 
 /**
  * Sanitize people count
@@ -338,99 +75,304 @@ function validateLanguage(language) {
  * @returns {number} Sanitized count
  */
 function sanitizePeopleCount(count) {
-  const parsed = parseNumber(count, APP_CONFIG.defaults.people);
-  return clamp(parsed, APP_CONFIG.limits.minPeople, APP_CONFIG.limits.maxPeople);
+  const num = parseInt(count);
+  if (isNaN(num)) return APP_CONFIG.defaults.people;
+  return Math.max(
+    APP_CONFIG.limits.minPeople,
+    Math.min(APP_CONFIG.limits.maxPeople, num)
+  );
 }
 
 /**
- * Sanitize cost value
+ * Sanitize cost
  * @param {number} cost - Cost value
  * @returns {number} Sanitized cost
  */
 function sanitizeCost(cost) {
-  const parsed = parseNumber(cost, APP_CONFIG.defaults.costPerPerson);
-  return clamp(parsed, APP_CONFIG.limits.minCost, APP_CONFIG.limits.maxCost);
+  const num = parseFloat(cost);
+  if (isNaN(num)) return APP_CONFIG.defaults.costPerPerson;
+  return Math.max(
+    APP_CONFIG.limits.minCost,
+    Math.min(APP_CONFIG.limits.maxCost, num)
+  );
 }
 
 /**
- * ==================== OBJECT UTILITIES ====================
+ * ==================== MATH ====================
  */
 
 /**
- * Deep clone object
- * @param {Object} obj - Object to clone
- * @returns {Object} Cloned object
+ * Round number to decimals
+ * @param {number} num - Number to round
+ * @param {number} decimals - Number of decimals
+ * @returns {number} Rounded number
  */
-function deepClone(obj) {
+function roundTo(num, decimals = 2) {
+  const factor = Math.pow(10, decimals);
+  return Math.round(num * factor) / factor;
+}
+
+/**
+ * Clamp number between min and max
+ * @param {number} num - Number to clamp
+ * @param {number} min - Minimum value
+ * @param {number} max - Maximum value
+ * @returns {number} Clamped number
+ */
+function clamp(num, min, max) {
+  return Math.min(Math.max(num, min), max);
+}
+
+/**
+ * ==================== URL PARAMETERS ====================
+ */
+
+/**
+ * Get URL parameter
+ * @param {string} param - Parameter name
+ * @returns {string|null} Parameter value
+ */
+function getUrlParam(param) {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get(param);
+}
+
+/**
+ * Get all URL parameters
+ * @returns {Object} All parameters
+ */
+function getAllUrlParams() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const params = {};
+  
+  for (const [key, value] of urlParams) {
+    params[key] = value;
+  }
+  
+  return params;
+}
+
+/**
+ * Set URL parameter without reload
+ * @param {string} param - Parameter name
+ * @param {string} value - Parameter value
+ */
+function setUrlParam(param, value) {
+  const url = new URL(window.location);
+  url.searchParams.set(param, value);
+  window.history.replaceState({}, '', url);
+}
+
+/**
+ * ==================== BROWSER DETECTION ====================
+ */
+
+/**
+ * Check if feature is supported
+ * @param {string} feature - Feature name
+ * @returns {boolean} Is supported
+ */
+function isSupported(feature) {
+  switch (feature) {
+    case 'localStorage':
+      try {
+        const test = '__test__';
+        localStorage.setItem(test, test);
+        localStorage.removeItem(test);
+        return true;
+      } catch (e) {
+        return false;
+      }
+    
+    case 'notifications':
+      return 'Notification' in window;
+    
+    case 'share':
+      return 'share' in navigator;
+    
+    case 'clipboard':
+      return 'clipboard' in navigator;
+    
+    case 'serviceWorker':
+      return 'serviceWorker' in navigator;
+    
+    default:
+      return false;
+  }
+}
+
+/**
+ * Check if mobile device
+ * @returns {boolean} Is mobile
+ */
+function isMobile() {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent
+  );
+}
+
+/**
+ * Get browser name
+ * @returns {string} Browser name
+ */
+function getBrowserName() {
+  const userAgent = navigator.userAgent;
+  
+  if (userAgent.includes('Firefox')) return 'Firefox';
+  if (userAgent.includes('Chrome')) return 'Chrome';
+  if (userAgent.includes('Safari')) return 'Safari';
+  if (userAgent.includes('Edge')) return 'Edge';
+  if (userAgent.includes('Opera')) return 'Opera';
+  
+  return 'Unknown';
+}
+
+/**
+ * Check if dark mode is preferred
+ * @returns {boolean} Prefers dark mode
+ */
+function prefersDarkMode() {
+  return window.matchMedia && 
+         window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
+
+/**
+ * ==================== CLIPBOARD ====================
+ */
+
+/**
+ * Copy text to clipboard
+ * @param {string} text - Text to copy
+ * @returns {Promise<boolean>} Success
+ */
+async function copyToClipboard(text) {
+  if (!text) return false;
+  
   try {
-    return JSON.parse(JSON.stringify(obj));
+    // Modern clipboard API
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+    
+    // Fallback for older browsers
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+    
+    const success = document.execCommand('copy');
+    document.body.removeChild(textarea);
+    
+    return success;
   } catch (error) {
-    console.error('[Utils] Deep clone failed:', error);
-    return obj;
+    console.error('[Utils] Copy to clipboard failed:', error);
+    return false;
   }
 }
 
 /**
- * Merge objects deeply
- * @param {Object} target - Target object
- * @param {Object} source - Source object
- * @returns {Object} Merged object
+ * ==================== ERROR HANDLING ====================
  */
-function deepMerge(target, source) {
-  const result = { ...target };
+
+/**
+ * Log error
+ * @param {string} context - Error context
+ * @param {Error} error - Error object
+ * @param {Object} data - Additional data
+ */
+function logError(context, error, data = {}) {
+  if (!DEBUG_CONFIG.logErrors) return;
   
-  for (const key in source) {
-    if (source[key] instanceof Object && !Array.isArray(source[key])) {
-      result[key] = deepMerge(result[key] || {}, source[key]);
-    } else {
-      result[key] = source[key];
+  console.error(`[Error] ${context}:`, error);
+  
+  if (Object.keys(data).length > 0) {
+    console.error('[Error] Additional data:', data);
+  }
+}
+
+/**
+ * ==================== DEBOUNCE & THROTTLE ====================
+ */
+
+/**
+ * Debounce function
+ * @param {Function} func - Function to debounce
+ * @param {number} wait - Wait time in ms
+ * @returns {Function} Debounced function
+ */
+function debounce(func, wait = 300) {
+  let timeout;
+  
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
+/**
+ * Throttle function
+ * @param {Function} func - Function to throttle
+ * @param {number} limit - Time limit in ms
+ * @returns {Function} Throttled function
+ */
+function throttle(func, limit = 300) {
+  let inThrottle;
+  
+  return function executedFunction(...args) {
+    if (!inThrottle) {
+      func(...args);
+      inThrottle = true;
+      setTimeout(() => (inThrottle = false), limit);
     }
+  };
+}
+
+/**
+ * ==================== STORAGE INFO ====================
+ */
+
+/**
+ * Get storage information
+ * @returns {Object} Storage info
+ */
+function getStorageInfo() {
+  if (!isSupported('localStorage')) {
+    return { available: false };
   }
   
-  return result;
-}
-
-/**
- * Check if object is empty
- * @param {Object} obj - Object to check
- * @returns {boolean} Is empty
- */
-function isEmptyObject(obj) {
-  return Object.keys(obj).length === 0;
-}
-
-/**
- * Pick properties from object
- * @param {Object} obj - Source object
- * @param {Array<string>} keys - Keys to pick
- * @returns {Object} New object with picked properties
- */
-function pick(obj, keys) {
-  const result = {};
-  for (const key of keys) {
-    if (obj.hasOwnProperty(key)) {
-      result[key] = obj[key];
+  try {
+    const test = '__storage_test__';
+    localStorage.setItem(test, test);
+    localStorage.removeItem(test);
+    
+    // Calculate used space (approximate)
+    let totalSize = 0;
+    for (let key in localStorage) {
+      if (localStorage.hasOwnProperty(key)) {
+        totalSize += localStorage[key].length + key.length;
+      }
     }
+    
+    return {
+      available: true,
+      used: totalSize,
+      usedKB: (totalSize / 1024).toFixed(2),
+    };
+  } catch (e) {
+    return { available: false, error: e.message };
   }
-  return result;
 }
 
 /**
- * Omit properties from object
- * @param {Object} obj - Source object
- * @param {Array<string>} keys - Keys to omit
- * @returns {Object} New object without omitted properties
- */
-function omit(obj, keys) {
-  const result = { ...obj };
-  for (const key of keys) {
-    delete result[key];
-  }
-  return result;
-}
-
-/**
- * ==================== ARRAY UTILITIES ====================
+ * ==================== ARRAY HELPERS ====================
  */
 
 /**
@@ -452,248 +394,26 @@ function first(arr) {
 }
 
 /**
- * Remove duplicates from array
- * @param {Array} arr - Array
- * @returns {Array} Array without duplicates
- */
-function unique(arr) {
-  return [...new Set(arr)];
-}
-
-/**
- * Chunk array into smaller arrays
- * @param {Array} arr - Array to chunk
- * @param {number} size - Chunk size
- * @returns {Array<Array>} Chunked arrays
- */
-function chunk(arr, size) {
-  const result = [];
-  for (let i = 0; i < arr.length; i += size) {
-    result.push(arr.slice(i, i + size));
-  }
-  return result;
-}
-
-/**
- * ==================== DEBOUNCE & THROTTLE ====================
+ * ==================== DOM HELPERS ====================
  */
 
 /**
- * Debounce function
- * @param {Function} func - Function to debounce
- * @param {number} wait - Wait time in ms
- * @returns {Function} Debounced function
+ * Wait for DOM to be ready
+ * @returns {Promise<void>}
  */
-function debounce(func, wait = 300) {
-  let timeout;
-  return function executedFunction(...args) {
-    const later = () => {
-      clearTimeout(timeout);
-      func(...args);
-    };
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-  };
-}
-
-/**
- * Throttle function
- * @param {Function} func - Function to throttle
- * @param {number} limit - Limit time in ms
- * @returns {Function} Throttled function
- */
-function throttle(func, limit = 300) {
-  let inThrottle;
-  return function executedFunction(...args) {
-    if (!inThrottle) {
-      func(...args);
-      inThrottle = true;
-      setTimeout(() => inThrottle = false, limit);
-    }
-  };
-}
-
-/**
- * ==================== BROWSER UTILITIES ====================
- */
-
-/**
- * Check if browser supports feature
- * @param {string} feature - Feature name
- * @returns {boolean} Is supported
- */
-function isSupported(feature) {
-  const features = {
-    localStorage: () => {
-      try {
-        const test = '__test__';
-        localStorage.setItem(test, test);
-        localStorage.removeItem(test);
-        return true;
-      } catch (e) {
-        return false;
-      }
-    },
-    serviceWorker: () => 'serviceWorker' in navigator,
-    share: () => navigator.share !== undefined,
-    clipboard: () => navigator.clipboard !== undefined,
-    notifications: () => 'Notification' in window,
-  };
-  
-  return features[feature] ? features[feature]() : false;
-}
-
-/**
- * Copy text to clipboard
- * @param {string} text - Text to copy
- * @returns {Promise<boolean>} Success
- */
-async function copyToClipboard(text) {
-  try {
-    if (isSupported('clipboard')) {
-      await navigator.clipboard.writeText(text);
-      return true;
+function domReady() {
+  return new Promise((resolve) => {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', resolve);
     } else {
-      // Fallback for older browsers
-      const textarea = document.createElement('textarea');
-      textarea.value = text;
-      textarea.style.position = 'fixed';
-      textarea.style.opacity = '0';
-      document.body.appendChild(textarea);
-      textarea.select();
-      const success = document.execCommand('copy');
-      document.body.removeChild(textarea);
-      return success;
+      resolve();
     }
-  } catch (error) {
-    console.error('[Utils] Copy to clipboard failed:', error);
-    return false;
-  }
-}
-
-/**
- * Detect if user prefers dark mode
- * @returns {boolean} Prefers dark mode
- */
-function prefersDarkMode() {
-  return window.matchMedia && 
-         window.matchMedia('(prefers-color-scheme: dark)').matches;
-}
-
-/**
- * Detect if user is on mobile device
- * @returns {boolean} Is mobile
- */
-function isMobile() {
-  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-}
-
-/**
- * Detect if user is on iOS
- * @returns {boolean} Is iOS
- */
-function isIOS() {
-  return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-}
-
-/**
- * Get browser name
- * @returns {string} Browser name
- */
-function getBrowserName() {
-  const userAgent = navigator.userAgent;
-  if (userAgent.includes('Firefox')) return 'Firefox';
-  if (userAgent.includes('Chrome')) return 'Chrome';
-  if (userAgent.includes('Safari')) return 'Safari';
-  if (userAgent.includes('Edge')) return 'Edge';
-  if (userAgent.includes('Opera')) return 'Opera';
-  return 'Unknown';
-}
-
-/**
- * ==================== PERFORMANCE UTILITIES ====================
- */
-
-/**
- * Measure function execution time
- * @param {Function} func - Function to measure
- * @param {string} label - Label for logging
- * @returns {*} Function result
- */
-function measurePerformance(func, label = 'Function') {
-  const start = performance.now();
-  const result = func();
-  const end = performance.now();
-  
-  if (DEBUG_CONFIG?.enabled) {
-    console.log(`[Performance] ${label} took ${(end - start).toFixed(2)}ms`);
-  }
-  
-  return result;
-}
-
-/**
- * Request animation frame with fallback
- * @param {Function} callback - Callback function
- * @returns {number} Request ID
- */
-function raf(callback) {
-  return window.requestAnimationFrame(callback) || 
-         window.setTimeout(callback, 16);
-}
-
-/**
- * Cancel animation frame with fallback
- * @param {number} id - Request ID
- */
-function cancelRaf(id) {
-  if (window.cancelAnimationFrame) {
-    window.cancelAnimationFrame(id);
-  } else {
-    window.clearTimeout(id);
-  }
-}
-
-/**
- * ==================== ERROR HANDLING ====================
- */
-
-/**
- * Safe function execution with error handling
- * @param {Function} func - Function to execute
- * @param {*} fallback - Fallback value on error
- * @param {string} context - Context for logging
- * @returns {*} Function result or fallback
- */
-function safeExecute(func, fallback = null, context = 'Function') {
-  try {
-    return func();
-  } catch (error) {
-    console.error(`[Utils] ${context} failed:`, error);
-    return fallback;
-  }
-}
-
-/**
- * Log error with context
- * @param {string} context - Error context
- * @param {Error} error - Error object
- * @param {Object} data - Additional data
- */
-function logError(context, error, data = {}) {
-  console.error(`[Error] ${context}:`, error, data);
-  
-  // Could send to error tracking service here
-  if (DEBUG_CONFIG?.enabled) {
-    console.trace();
-  }
+  });
 }
 
 /**
  * ==================== EXPORTS ====================
  */
 
-// Log utilities loaded (only in debug mode)
-if (DEBUG_CONFIG?.enabled) {
-  console.log('[Utils] Utility functions loaded');
-}
+// Log utils loaded
+console.log('[Utils] Utility functions loaded');

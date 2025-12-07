@@ -1,85 +1,143 @@
 /**
- * ==================== MEETING COST CALCULATOR ====================
- * Main application logic using Alpine.js
+ * ==================== MAIN APPLICATION ====================
+ * Vue.js application instance and logic
  * 
  * @file app.js
  * @version 2.0.0
  */
 
 /**
- * Main Alpine.js Component
+ * ==================== VUE APP ====================
  */
-function meetingCalculator() {
-  return {
-    // ==================== STATE ====================
+
+const { createApp } = Vue;
+
+const app = createApp({
+  data() {
+    return {
+      // Timer state
+      elapsedTime: 0,
+      isRunning: false,
+      
+      // Cost settings
+      costPerPerson: APP_CONFIG.defaults.costPerPerson,
+      currency: APP_CONFIG.defaults.currency,
+      
+      // People
+      currentPeopleCount: APP_CONFIG.defaults.people,
+      
+      // Segments (people count changes over time)
+      segments: [],
+      
+      // Calculated values
+      totalCost: 0,
+      formattedElapsedTime: '0:00',
+      formattedTotalCost: '0,00 €',
+      
+      // UI state
+      language: APP_CONFIG.defaults.language,
+      theme: APP_CONFIG.defaults.theme,
+      
+      // Modals
+      showInfoModal: false,
+      showShareModal: false,
+      showHistoryModal: false,
+      showKeyboardModal: false,
+      
+      // History
+      meetingHistory: [],
+      
+      // Share
+      shareUrl: '',
+      
+      // Managers
+      timerManager: null,
+      costCalculator: null,
+      segmentManager: null,
+    };
+  },
+  
+  computed: {
+    /**
+     * Get translation
+     */
+    t() {
+      return (key, replacements = {}) => {
+        return getTranslation(key, this.language, replacements);
+      };
+    },
     
-    // Timer state
-    elapsedTime: 0,
-    isRunning: false,
-    formattedElapsedTime: '0:00',
+    /**
+     * Get supported currencies
+     */
+    currencies() {
+      return SUPPORTED_CURRENCIES;
+    },
     
-    // Cost state
-    totalCost: 0,
-    formattedTotalCost: '0,00 €',
-    costPerPerson: APP_CONFIG.defaults.costPerPerson,
-    currency: APP_CONFIG.defaults.currency,
+    /**
+     * Get supported languages
+     */
+    languages() {
+      return SUPPORTED_LANGUAGES;
+    },
     
-    // People state
-    currentPeopleCount: APP_CONFIG.defaults.people,
-    segments: [],
+    /**
+     * Get timer button text
+     */
+    timerButtonText() {
+      return this.isRunning ? this.t('pause') : this.t('start');
+    },
     
-    // UI state
-    settingsOpen: false,
-    historyOpen: false,
-    infoOpen: false,
-    shareOpen: false,
-    shortcutsOpen: false,
+    /**
+     * Get timer button icon
+     */
+    timerButtonIcon() {
+      return this.isRunning ? '⏸️' : '▶️';
+    },
     
-    // Settings
-    language: APP_CONFIG.defaults.language,
-    theme: APP_CONFIG.defaults.theme,
+    /**
+     * Get history button text
+     */
+    historyButtonText() {
+      return this.showHistoryModal ? this.t('historyHide') : this.t('historyShow');
+    },
     
-    // Share state
-    shareUrl: '',
-    copied: false,
-    canUseNativeShare: false,
+    /**
+     * Check if can decrease people
+     */
+    canDecreasePeople() {
+      return this.currentPeopleCount > APP_CONFIG.limits.minPeople;
+    },
     
-    // Managers
-    timerManager: null,
-    costCalculator: null,
-    segmentManager: null,
-    
-    // Auto-save
-    autoSaveInterval: null,
-    
-    // ==================== INITIALIZATION ====================
-    
+    /**
+     * Check if can increase people
+     */
+    canIncreasePeople() {
+      return this.currentPeopleCount < APP_CONFIG.limits.maxPeople;
+    },
+  },
+  
+  methods: {
     /**
      * Initialize application
      */
     init() {
-      console.log('[App] Initializing Meeting Cost Calculator v' + APP_CONFIG.version);
+      // Create managers
+      this.timerManager = new TimerManager();
+      this.costCalculator = new CostCalculator();
+      this.segmentManager = new SegmentManager();
       
-      // Initialize managers
-      this.initializeManagers();
-      
-      // Load saved data
-      this.loadSavedData();
-      
-      // Check URL parameters
-      this.checkUrlParams();
+      // Setup timer callbacks
+      this.setupTimerCallbacks();
       
       // Setup keyboard shortcuts
       this.setupKeyboardShortcuts();
       
-      // Setup auto-save
-      this.setupAutoSave();
+      // Load saved data
+      this.loadSavedData();
       
-      // Check native share support
-      this.canUseNativeShare = isSupported('share');
-      
-      // Setup timer callbacks
-      this.setupTimerCallbacks();
+      // Load URL parameters
+      this.loadUrlParams();
       
       // Apply theme
       this.applyTheme();
@@ -87,19 +145,13 @@ function meetingCalculator() {
       // Initial update
       this.updateDisplay();
       
-      console.log('[App] Initialization complete');
-    },
-    
-    /**
-     * Initialize manager instances
-     */
-    initializeManagers() {
-      this.timerManager = new TimerManager();
-      this.costCalculator = new CostCalculator();
-      this.segmentManager = new SegmentManager();
+      // Setup auto-save
+      if (APP_CONFIG.features.enableAutoSave) {
+        this.setupAutoSave();
+      }
       
       if (DEBUG_CONFIG?.enabled) {
-        console.log('[App] Managers initialized');
+        console.log('[App] Application initialized');
       }
     },
     
@@ -107,69 +159,115 @@ function meetingCalculator() {
      * Setup timer callbacks
      */
     setupTimerCallbacks() {
-      // On tick - update display
       this.timerManager.on('onTick', (data) => {
         this.elapsedTime = data.elapsedTime;
         this.updateDisplay();
       });
       
-      // On start
       this.timerManager.on('onStart', () => {
         this.isRunning = true;
         showTimerNotification('started', this.language);
-        if (feedbackManager) {
-          feedbackManager.haptic('light');
-        }
-      });
-      
-      // On pause
-      this.timerManager.on('onPause', () => {
-        this.isRunning = false;
-        showTimerNotification('paused', this.language);
-        if (feedbackManager) {
-          feedbackManager.haptic('light');
-        }
-      });
-      
-      // On reset
-      this.timerManager.on('onReset', () => {
-        this.elapsedTime = 0;
-        this.segments = [];
-        this.segmentManager.clear();
-        this.updateDisplay();
-        showTimerNotification('reset', this.language);
+        
         if (feedbackManager) {
           feedbackManager.haptic('medium');
         }
-        if (emojiManager) {
-          emojiManager.clear();
-        }
       });
       
-      // On milestone
+      this.timerManager.on('onPause', () => {
+        this.isRunning = false;
+        showTimerNotification('paused', this.language);
+        
+        if (feedbackManager) {
+          feedbackManager.haptic('light');
+        }
+        
+        this.saveSession();
+      });
+      
+      this.timerManager.on('onReset', () => {
+        this.isRunning = false;
+        this.elapsedTime = 0;
+        
+        // Save to history before reset
+        if (this.totalCost > 0) {
+          this.saveMeetingToHistory();
+        }
+        
+        // Reset segments
+        this.segmentManager.clear();
+        this.segmentManager.addSegment(this.currentPeopleCount, 0);
+        this.segments = this.segmentManager.getSegments();
+        
+        showTimerNotification('reset', this.language);
+        
+        if (feedbackManager) {
+          feedbackManager.haptic('heavy');
+        }
+        
+        this.updateDisplay();
+        this.clearSession();
+      });
+      
       this.timerManager.on('onMilestone', (data) => {
-        this.handleMilestone(data);
+        if (data.type === 'time') {
+          handleTimeMilestone(data.value);
+        } else if (data.type === 'cost') {
+          handleCostMilestone(data.value);
+        }
       });
     },
     
     /**
-     * Handle milestone events
+     * Setup keyboard shortcuts
      */
-    handleMilestone(data) {
-      if (DEBUG_CONFIG?.enabled) {
-        console.log('[App] Milestone:', data);
-      }
+    setupKeyboardShortcuts() {
+      // Space: Start/Pause
+      keyboardManager.register('space', () => {
+        this.toggleTimer();
+      }, this.t('startPauseTimer'));
       
-      // Show emojis
-      if (emojiManager && APP_CONFIG.features.enableEmojis) {
-        emojiManager.milestone(data.type, data.value);
-      }
+      // R: Reset
+      keyboardManager.register('r', () => {
+        this.resetTimer();
+      }, this.t('resetTimer'));
       
-      // Play sound
-      if (feedbackManager) {
-        feedbackManager.playSound('milestone');
-        feedbackManager.vibrate([100, 50, 100]);
-      }
+      // Plus: Increase people
+      keyboardManager.register('plus', () => {
+        this.updatePeopleCount(1);
+      }, this.t('adjustParticipants'));
+      
+      keyboardManager.register('shift+plus', () => {
+        this.updatePeopleCount(1);
+      }, this.t('adjustParticipants'));
+      
+      // Minus: Decrease people
+      keyboardManager.register('minus', () => {
+        this.updatePeopleCount(-1);
+      }, this.t('adjustParticipants'));
+      
+      // I: Info
+      keyboardManager.register('i', () => {
+        this.toggleInfoModal();
+      }, this.t('openInfo'));
+      
+      // S: Share
+      keyboardManager.register('ctrl+s', () => {
+        this.toggleShareModal();
+      }, this.t('openShare'));
+      
+      // ?: Keyboard shortcuts
+      keyboardManager.register('ctrl+question', () => {
+        this.toggleKeyboardModal();
+      }, this.t('showShortcuts'));
+      
+      keyboardManager.register('shift+question', () => {
+        this.toggleKeyboardModal();
+      }, this.t('showShortcuts'));
+      
+      // ESC: Close modals
+      keyboardManager.register('esc', () => {
+        this.closeAllModals();
+      }, this.t('closeModal'));
     },
     
     /**
@@ -190,8 +288,27 @@ function meetingCalculator() {
         this.currentPeopleCount = session.currentPeopleCount || APP_CONFIG.defaults.people;
         this.segments = session.segments || [];
         
-        // Load into managers
-        this.timerManager.setElapsedTime(this.elapsedTime);
+        // Timer wiederherstellen wenn er lief
+        if (session.isRunning && session.lastTimestamp) {
+          // Berechne vergangene Zeit seit letztem Save
+          const timeSinceLastSave = Math.floor((Date.now() - session.lastTimestamp) / 1000);
+          this.elapsedTime += timeSinceLastSave;
+          
+          // Timer automatisch starten
+          this.$nextTick(() => {
+            this.timerManager.setElapsedTime(this.elapsedTime);
+            this.timerManager.start();
+            this.isRunning = true;
+            
+            if (DEBUG_CONFIG?.enabled) {
+              console.log('[App] Timer restored and started');
+            }
+          });
+        } else {
+          // Load into managers
+          this.timerManager.setElapsedTime(this.elapsedTime);
+        }
+        
         this.segmentManager.loadSegments(this.segments);
       }
       
@@ -206,56 +323,53 @@ function meetingCalculator() {
         this.segments = this.segmentManager.getSegments();
       }
       
+      // Load history
+      this.meetingHistory = loadMeetingHistory();
+      
       if (DEBUG_CONFIG?.enabled) {
         console.log('[App] Data loaded from storage');
       }
     },
     
     /**
-     * Check and apply URL parameters
+     * Load URL parameters
      */
-    checkUrlParams() {
+    loadUrlParams() {
       const params = getAllUrlParams();
-      const urlConfig = APP_CONFIG.urlParams;
       
-      // People count
-      if (params[urlConfig.people]) {
-        const people = parseInt(params[urlConfig.people]);
+      if (params[APP_CONFIG.urlParams.people]) {
+        const people = parseInt(params[APP_CONFIG.urlParams.people]);
         if (validatePeopleCount(people)) {
           this.currentPeopleCount = people;
           this.costCalculator.setPeopleCount(people);
         }
       }
       
-      // Cost per person
-      if (params[urlConfig.cost]) {
-        const cost = parseFloat(params[urlConfig.cost]);
+      if (params[APP_CONFIG.urlParams.cost]) {
+        const cost = parseFloat(params[APP_CONFIG.urlParams.cost]);
         if (validateCost(cost)) {
           this.costPerPerson = cost;
           this.costCalculator.setCostPerPerson(cost);
         }
       }
       
-      // Currency
-      if (params[urlConfig.currency]) {
-        const currency = params[urlConfig.currency].toUpperCase();
+      if (params[APP_CONFIG.urlParams.currency]) {
+        const currency = params[APP_CONFIG.urlParams.currency].toUpperCase();
         if (validateCurrency(currency)) {
           this.currency = currency;
           this.costCalculator.setCurrency(currency);
         }
       }
       
-      // Language
-      if (params[urlConfig.language]) {
-        const lang = params[urlConfig.language].toLowerCase();
-        if (validateLanguage(lang)) {
-          this.language = lang;
+      if (params[APP_CONFIG.urlParams.language]) {
+        const language = params[APP_CONFIG.urlParams.language].toLowerCase();
+        if (validateLanguage(language)) {
+          this.language = language;
         }
       }
       
-      // Elapsed time
-      if (params[urlConfig.elapsed]) {
-        const elapsed = parseInt(params[urlConfig.elapsed]);
+      if (params[APP_CONFIG.urlParams.elapsed]) {
+        const elapsed = parseInt(params[APP_CONFIG.urlParams.elapsed]);
         if (elapsed > 0) {
           this.elapsedTime = elapsed;
           this.timerManager.setElapsedTime(elapsed);
@@ -263,68 +377,7 @@ function meetingCalculator() {
       }
       
       if (DEBUG_CONFIG?.enabled && Object.keys(params).length > 0) {
-        console.log('[App] URL parameters applied:', params);
-      }
-    },
-    
-    /**
-     * Setup keyboard shortcuts
-     */
-    setupKeyboardShortcuts() {
-      if (!APP_CONFIG.features.enableKeyboardShortcuts) return;
-      
-      document.addEventListener('keydown', (event) => {
-        // Ignore if typing in input
-        if (event.target.matches('input, textarea, select')) {
-          return;
-        }
-        
-        // Ctrl/Cmd + Space or Enter - Toggle timer
-        if ((event.key === 'Enter' || event.key === ' ') || 
-            (event.ctrlKey && event.key === ' ')) {
-          event.preventDefault();
-          this.toggleTimer();
-        }
-        
-        // Ctrl/Cmd + R - Reset
-        if (event.ctrlKey && event.key === 'r') {
-          event.preventDefault();
-          this.resetTimer();
-        }
-        
-        // Ctrl/Cmd + I - Info
-        if (event.ctrlKey && event.key === 'i') {
-          event.preventDefault();
-          this.openInfoModal();
-        }
-        
-        // Ctrl/Cmd + S - Share
-        if (event.ctrlKey && event.key === 's') {
-          event.preventDefault();
-          this.openShareModal();
-        }
-        
-        // Ctrl/Cmd + ? - Shortcuts
-        if (event.ctrlKey && (event.key === '?' || event.key === '/')) {
-          event.preventDefault();
-          this.openShortcutsModal();
-        }
-        
-        // + - Increase people
-        if (event.key === '+' || event.key === '=') {
-          event.preventDefault();
-          this.updatePeopleCount(1);
-        }
-        
-        // - - Decrease people
-        if (event.key === '-' || event.key === '_') {
-          event.preventDefault();
-          this.updatePeopleCount(-1);
-        }
-      });
-      
-      if (DEBUG_CONFIG?.enabled) {
-        console.log('[App] Keyboard shortcuts enabled');
+        console.log('[App] Loaded URL parameters:', params);
       }
     },
     
@@ -332,44 +385,50 @@ function meetingCalculator() {
      * Setup auto-save
      */
     setupAutoSave() {
-      if (!APP_CONFIG.features.enableAutoSave) return;
-      
-      this.autoSaveInterval = setInterval(() => {
-        this.saveSession();
+      setInterval(() => {
+        if (this.isRunning) {
+          this.saveSession();
+        }
       }, APP_CONFIG.performance.autoSaveInterval);
+    },
+    
+    /**
+     * Update all display values
+     */
+    updateDisplay() {
+      // Update time display
+      this.formattedElapsedTime = formatElapsedTime(this.elapsedTime);
       
-      // Save on page unload
-      window.addEventListener('beforeunload', () => {
-        this.saveSession();
-      });
+      // Store old cost for animation
+      const oldCost = this.totalCost;
       
-      if (DEBUG_CONFIG?.enabled) {
-        console.log('[App] Auto-save enabled');
+      // Update cost display mit Segmenten
+      this.totalCost = this.costCalculator.calculateTotalCostWithSegments(
+        this.elapsedTime,
+        this.segments
+      );
+      this.formattedTotalCost = formatCost(this.totalCost, this.currency);
+      
+      // Trigger animation wenn Kosten sich ändern
+      if (oldCost !== this.totalCost && this.isRunning) {
+        this.$nextTick(() => {
+          const costElement = document.querySelector('.cost-value');
+          if (costElement) {
+            costElement.classList.remove('cost-changed');
+            void costElement.offsetWidth; // Force reflow
+            costElement.classList.add('cost-changed');
+            
+            setTimeout(() => {
+              costElement.classList.remove('cost-changed');
+            }, 600);
+          }
+        });
       }
-    },
-    
-    // ==================== TIMER CONTROLS ====================
-    
-    /**
-     * Start timer
-     */
-    startTimer() {
-      this.timerManager.start();
-    },
-    
-    /**
-     * Pause timer
-     */
-    pauseTimer() {
-      this.timerManager.pause();
-    },
-    
-    /**
-     * Reset timer
-     */
-    resetTimer() {
-      this.timerManager.reset();
-      clearSession();
+      
+      // Check cost milestones
+      if (this.timerManager) {
+        this.timerManager.checkCostMilestone(this.totalCost);
+      }
     },
     
     /**
@@ -379,13 +438,21 @@ function meetingCalculator() {
       this.timerManager.toggle();
     },
     
-    // ==================== PEOPLE MANAGEMENT ====================
+    /**
+     * Reset timer
+     */
+    resetTimer() {
+      if (this.elapsedTime === 0) return;
+      
+      this.timerManager.reset();
+    },
     
     /**
      * Update people count
      * @param {number} delta - Change amount (+1 or -1)
      */
     updatePeopleCount(delta) {
+      const oldCount = this.currentPeopleCount;
       const newCount = this.currentPeopleCount + delta;
       
       if (!validatePeopleCount(newCount)) {
@@ -402,6 +469,33 @@ function meetingCalculator() {
       this.segmentManager.addSegment(newCount, this.elapsedTime);
       this.segments = this.segmentManager.getSegments();
       
+      // Notification anzeigen
+      if (delta > 0) {
+        // Teilnehmer beigetreten
+        notificationManager.success(
+          this.t('participantJoined') + ' - ' +
+          this.t('nowParticipants', { count: newCount }),
+          3000
+        );
+        
+        // Emoji spawnen
+        if (emojiManager && APP_CONFIG.features.enableEmojis) {
+          emojiManager.spawn('👤');
+        }
+      } else {
+        // Teilnehmer verlassen
+        notificationManager.info(
+          this.t('participantLeft') + ' - ' +
+          this.t('nowParticipants', { count: newCount }),
+          3000
+        );
+        
+        // Emoji spawnen
+        if (emojiManager && APP_CONFIG.features.enableEmojis) {
+          emojiManager.spawn('👋');
+        }
+      }
+      
       // Update display
       this.updateDisplay();
       
@@ -412,12 +506,17 @@ function meetingCalculator() {
       
       // Save
       this.saveSession();
+      
+      if (DEBUG_CONFIG?.enabled) {
+        console.log(`[App] People count changed: ${oldCount} → ${newCount}`);
+      }
     },
     
     /**
      * Handle people input change
      */
     onPeopleInputChange() {
+      const oldCount = this.currentPeopleCount;
       const count = sanitizePeopleCount(this.currentPeopleCount);
       
       if (count !== this.currentPeopleCount) {
@@ -430,123 +529,89 @@ function meetingCalculator() {
       this.segmentManager.addSegment(count, this.elapsedTime);
       this.segments = this.segmentManager.getSegments();
       
+      // Notification bei manueller Änderung
+      if (count !== oldCount) {
+        const delta = count - oldCount;
+        
+        if (delta > 0) {
+          notificationManager.success(
+            this.t('participantsChanged', { count: count }),
+            3000
+          );
+          
+          if (emojiManager && APP_CONFIG.features.enableEmojis) {
+            emojiManager.burst(['👤', '👥'], Math.abs(delta), 100);
+          }
+        } else if (delta < 0) {
+          notificationManager.info(
+            this.t('participantsChanged', { count: count }),
+            3000
+          );
+          
+          if (emojiManager && APP_CONFIG.features.enableEmojis) {
+            emojiManager.burst(['👋'], Math.abs(delta), 100);
+          }
+        }
+      }
+      
       this.updateDisplay();
       this.saveSession();
+      
+      if (DEBUG_CONFIG?.enabled) {
+        console.log(`[App] People input changed: ${oldCount} → ${count}`);
+      }
     },
     
-    // ==================== COST MANAGEMENT ====================
+    /**
+     * Handle cost input change
+     */
+    onCostInputChange() {
+      const cost = sanitizeCost(this.costPerPerson);
+      
+      if (cost !== this.costPerPerson) {
+        this.costPerPerson = cost;
+      }
+      
+      this.costCalculator.setCostPerPerson(cost);
+      this.updateDisplay();
+      this.saveSettings();
+    },
     
     /**
-     * Update cost calculation
+     * Handle currency change
      */
-    updateCost() {
-      this.costCalculator.setCostPerPerson(this.costPerPerson);
+    onCurrencyChange() {
       this.costCalculator.setCurrency(this.currency);
       this.updateDisplay();
       this.saveSettings();
     },
     
-    // ==================== DISPLAY UPDATE ====================
-    
     /**
-     * Update all display values
+     * Handle language change
      */
-    updateDisplay() {
-      // Update time display
-      this.formattedElapsedTime = formatElapsedTime(this.elapsedTime);
-      
-      // Update cost display
-      this.totalCost = this.costCalculator.calculateTotalCost(this.elapsedTime);
-      this.formattedTotalCost = formatCost(this.totalCost, this.currency);
-      
-      // Check cost milestones
-      if (this.timerManager) {
-        this.timerManager.checkCostMilestone(this.totalCost);
-      }
-    },
-    
-    // ==================== SETTINGS ====================
-    
-    /**
-     * Save settings to storage
-     */
-    saveSettings() {
-      saveSettings({
-        costPerPerson: this.costPerPerson,
-        currency: this.currency,
-        language: this.language,
-        theme: this.theme,
-      });
-    },
-    
-    /**
-     * Save session to storage
-     */
-    saveSession() {
-      saveSession({
-        elapsedTime: this.elapsedTime,
-        isRunning: this.isRunning,
-        currentPeopleCount: this.currentPeopleCount,
-        segments: this.segments,
-      });
-    },
-    
-    // ==================== LANGUAGE ====================
-    
-    /**
-     * Get translation
-     * @param {string} key - Translation key
-     * @returns {string} Translated text
-     */
-    t(key) {
-      return getTranslation(key, this.language);
-    },
-    
-    /**
-     * Set language
-     * @param {string} lang - Language code
-     */
-    setLanguage(lang) {
-      if (!validateLanguage(lang)) return;
-      
-      this.language = lang;
-      saveLanguage(lang);
-      
-      // Update document language
-      document.documentElement.lang = lang;
+    onLanguageChange() {
+      this.saveSettings();
       
       if (DEBUG_CONFIG?.enabled) {
-        console.log('[App] Language changed to:', lang);
+        console.log('[App] Language changed to:', this.language);
       }
     },
     
-    // ==================== THEME ====================
-    
     /**
-     * Toggle theme
+     * Handle theme change
      */
-    toggleTheme() {
-      const themes = ['auto', 'light', 'dark'];
-      const currentIndex = themes.indexOf(this.theme);
-      const nextIndex = (currentIndex + 1) % themes.length;
-      
-      this.theme = themes[nextIndex];
+    onThemeChange() {
       this.applyTheme();
-      saveTheme(this.theme);
-      
-      if (feedbackManager) {
-        feedbackManager.haptic('light');
-      }
+      this.saveSettings();
     },
     
     /**
-     * Apply theme to document
+     * Apply theme
      */
     applyTheme() {
       const root = document.documentElement;
       
       if (this.theme === 'auto') {
-        // Use system preference
         if (prefersDarkMode()) {
           root.setAttribute('data-theme', 'dark');
         } else {
@@ -561,272 +626,259 @@ function meetingCalculator() {
       }
     },
     
-    // ==================== HISTORY ====================
-    
     /**
-     * Format history entry
-     * @param {Object} segment - History segment
-     * @param {number} index - Segment index
-     * @returns {string} Formatted entry
+     * Toggle info modal
      */
-    formatHistoryEntry(segment, index) {
-      return formatHistoryEntry(segment, index, this.language);
-    },
-    
-    // ==================== MODALS ====================
-    
-    /**
-     * Open info modal
-     */
-    openInfoModal() {
-      this.infoOpen = true;
+    toggleInfoModal() {
+      this.showInfoModal = !this.showInfoModal;
+      
+      if (this.showInfoModal) {
+        modalManager.open('info');
+      } else {
+        modalManager.close('info');
+      }
     },
     
     /**
-     * Close info modal
+     * Toggle share modal
      */
-    closeInfoModal() {
-      this.infoOpen = false;
+    toggleShareModal() {
+      this.showShareModal = !this.showShareModal;
+      
+      if (this.showShareModal) {
+        this.generateShareUrl();
+        modalManager.open('share');
+      } else {
+        modalManager.close('share');
+      }
     },
     
     /**
-     * Open share modal
+     * Toggle history modal
      */
-    openShareModal() {
-      this.shareOpen = true;
-      this.generateShareUrl();
+    toggleHistoryModal() {
+      this.showHistoryModal = !this.showHistoryModal;
+      
+      if (this.showHistoryModal) {
+        this.meetingHistory = loadMeetingHistory();
+        modalManager.open('history');
+      } else {
+        modalManager.close('history');
+      }
     },
     
     /**
-     * Close share modal
+     * Toggle keyboard shortcuts modal
      */
-    closeShareModal() {
-      this.shareOpen = false;
-      this.copied = false;
+    toggleKeyboardModal() {
+      this.showKeyboardModal = !this.showKeyboardModal;
+      
+      if (this.showKeyboardModal) {
+        modalManager.open('keyboard');
+      } else {
+        modalManager.close('keyboard');
+      }
     },
     
     /**
-     * Open shortcuts modal
+     * Close all modals
      */
-    openShortcutsModal() {
-      this.shortcutsOpen = true;
+    closeAllModals() {
+      this.showInfoModal = false;
+      this.showShareModal = false;
+      this.showHistoryModal = false;
+      this.showKeyboardModal = false;
+      modalManager.closeAll();
     },
-    
-    /**
-     * Close shortcuts modal
-     */
-    closeShortcutsModal() {
-      this.shortcutsOpen = false;
-    },
-    
-    // ==================== SHARING ====================
     
     /**
      * Generate share URL
      */
     generateShareUrl() {
-      const params = {
-        [APP_CONFIG.urlParams.people]: this.currentPeopleCount,
-        [APP_CONFIG.urlParams.cost]: this.costPerPerson,
-        [APP_CONFIG.urlParams.currency]: this.currency,
-        [APP_CONFIG.urlParams.language]: this.language,
-        [APP_CONFIG.urlParams.elapsed]: this.elapsedTime,
-      };
-      
-      this.shareUrl = formatShareUrl(params);
+      this.shareUrl = shareManager.generateShareUrl({
+        people: this.currentPeopleCount,
+        cost: this.costPerPerson,
+        currency: this.currency,
+        elapsed: this.elapsedTime,
+        language: this.language,
+      });
     },
     
     /**
-     * Copy share URL to clipboard
+     * Copy share URL
      */
     async copyShareUrl() {
-      const success = await copyToClipboard(this.shareUrl);
+      const success = await shareManager.copyUrl(this.shareUrl);
       
       if (success) {
-        this.copied = true;
-        notificationManager.success(this.t('linkCopied'));
+        notificationManager.success(this.t('linkCopied'), 2000);
         
         if (feedbackManager) {
           feedbackManager.haptic('success');
         }
-        
-        setTimeout(() => {
-          this.copied = false;
-        }, 2000);
       } else {
-        notificationManager.error(this.t('errorOccurred'));
+        notificationManager.error(this.t('errorOccurred'), 3000);
+      }
+    },
+    
+    /**
+     * Share via native share
+     */
+    async shareNative() {
+      const shareData = {
+        cost: this.formattedTotalCost,
+        time: this.formattedElapsedTime,
+        people: this.currentPeopleCount,
+        url: this.shareUrl,
+      };
+      
+      const text = formatShareText(shareData, 'default');
+      
+      const success = await shareManager.shareNative({
+        title: '💰 Meeting-Kostenrechner',
+        text: text,
+        url: this.shareUrl,
+      });
+      
+      if (success) {
+        notificationManager.success(this.t('sessionShared'), 2000);
       }
     },
     
     /**
      * Share via email
      */
-    shareViaEmail() {
-      const data = {
+    shareEmail() {
+      const shareData = {
         cost: this.formattedTotalCost,
-        time: formatElapsedTime(this.elapsedTime),
+        time: this.formattedElapsedTime,
         people: this.currentPeopleCount,
         url: this.shareUrl,
       };
       
-      const emailData = formatShareText(data, 'email');
-      const mailtoUrl = `mailto:?subject=${encodeURIComponent(emailData.subject)}&body=${encodeURIComponent(emailData.body)}`;
-      
-      window.location.href = mailtoUrl;
+      shareManager.shareEmail(shareData);
     },
     
     /**
-     * Share via WhatsApp
+     * Save meeting to history
      */
-    shareViaWhatsApp() {
-      const data = {
-        cost: this.formattedTotalCost,
-        time: formatElapsedTime(this.elapsedTime),
-        people: this.currentPeopleCount,
-        url: this.shareUrl,
+    saveMeetingToHistory() {
+      const meeting = {
+        elapsedTime: this.elapsedTime,
+        totalCost: this.totalCost,
+        peopleCount: this.currentPeopleCount,
+        costPerPerson: this.costPerPerson,
+        currency: this.currency,
+        segments: this.segments,
       };
       
-      const text = formatShareText(data, 'whatsapp');
-      const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+      saveMeetingToHistory(meeting);
+      this.meetingHistory = loadMeetingHistory();
       
-      window.open(whatsappUrl, '_blank');
+      if (DEBUG_CONFIG?.enabled) {
+        console.log('[App] Meeting saved to history');
+      }
     },
     
     /**
-     * Share via Slack
+     * Delete history entry
      */
-    shareViaSlack() {
-      const data = {
-        cost: this.formattedTotalCost,
-        time: formatElapsedTime(this.elapsedTime),
-        people: this.currentPeopleCount,
-        url: this.shareUrl,
-      };
-      
-      const text = formatShareText(data, 'slack');
-      
-      // Copy to clipboard for Slack
-      copyToClipboard(text).then(success => {
-        if (success) {
-          notificationManager.info('Text copied! Paste it in Slack.');
-        }
+    deleteHistoryEntry(id) {
+      deleteHistoryEntry(id);
+      this.meetingHistory = loadMeetingHistory();
+    },
+    
+    /**
+     * Clear history
+     */
+    clearHistory() {
+      clearMeetingHistory();
+      this.meetingHistory = [];
+      notificationManager.success('Historie gelöscht', 2000);
+    },
+    
+    /**
+     * Save session
+     */
+    saveSession() {
+      saveSession({
+        elapsedTime: this.elapsedTime,
+        isRunning: this.isRunning,
+        currentPeopleCount: this.currentPeopleCount,
+        segments: this.segments,
       });
     },
     
     /**
-     * Share via native share API
+     * Clear session
      */
-    async shareViaNative() {
-      if (!this.canUseNativeShare) return;
-      
-      const data = {
-        cost: this.formattedTotalCost,
-        time: formatElapsedTime(this.elapsedTime),
-        people: this.currentPeopleCount,
-        url: this.shareUrl,
-      };
-      
-      try {
-        await navigator.share({
-          title: this.t('title'),
-          text: formatShareText(data, 'default'),
-          url: this.shareUrl,
-        });
-        
-        notificationManager.success(this.t('sessionShared'));
-      } catch (error) {
-        if (error.name !== 'AbortError') {
-          console.error('[App] Share failed:', error);
-        }
-      }
+    clearSession() {
+      clearSession();
     },
-    
-    // ==================== CLEANUP ====================
     
     /**
-     * Destroy application
+     * Save settings
      */
-    destroy() {
-      // Clear auto-save
-      if (this.autoSaveInterval) {
-        clearInterval(this.autoSaveInterval);
-      }
-      
-      // Save final state
-      this.saveSession();
-      
-      // Destroy managers
-      if (this.timerManager) {
-        this.timerManager.destroy();
-      }
-      
-      console.log('[App] Application destroyed');
+    saveSettings() {
+      saveSettings({
+        costPerPerson: this.costPerPerson,
+        currency: this.currency,
+        language: this.language,
+        theme: this.theme,
+      });
     },
-  };
-}
+    
+    /**
+     * Format history entry
+     */
+    formatHistoryEntry(segment, index) {
+      return formatHistoryEntry(segment, index, this.language);
+    },
+    
+    /**
+     * Format date
+     */
+    formatDate(date) {
+      return formatDate(date, this.language);
+    },
+  },
+  
+  mounted() {
+    this.init();
+    
+    // Add timer-running class to body
+    this.$watch('isRunning', (newVal) => {
+      if (newVal) {
+        document.body.classList.add('timer-running');
+      } else {
+        document.body.classList.remove('timer-running');
+      }
+    });
+    
+    // Listen for theme changes
+    if (window.matchMedia) {
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+        if (this.theme === 'auto') {
+          this.applyTheme();
+        }
+      });
+    }
+  },
+  
+  beforeUnmount() {
+    // Cleanup
+    if (this.timerManager) {
+      this.timerManager.destroy();
+    }
+  },
+});
 
 /**
- * ==================== INITIALIZATION ====================
+ * ==================== MOUNT APP ====================
  */
 
 // Wait for DOM to be ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initializeApp);
-} else {
-  initializeApp();
-}
-
-/**
- * Initialize application
- */
-function initializeApp() {
-  console.log('[App] DOM ready, starting application...');
-  
-  // Check if Alpine.js is loaded
-  if (typeof Alpine === 'undefined') {
-    console.error('[App] Alpine.js not loaded!');
-    return;
-  }
-  
-  // Log application info
-  if (DEBUG_CONFIG?.enabled) {
-    console.group('[App] Application Info');
-    console.log('Version:', APP_CONFIG.version);
-    console.log('Features:', APP_CONFIG.features);
-    console.log('Browser:', getBrowserName());
-    console.log('Mobile:', isMobile());
-    console.log('Storage:', getStorageInfo());
-    console.groupEnd();
-  }
-}
-
-/**
- * ==================== SERVICE WORKER ====================
- */
-
-// Register service worker for PWA
-if ('serviceWorker' in navigator && APP_CONFIG.features.enablePWA) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
-      .then(registration => {
-        if (DEBUG_CONFIG?.enabled) {
-          console.log('[PWA] Service Worker registered:', registration);
-        }
-      })
-      .catch(error => {
-        console.error('[PWA] Service Worker registration failed:', error);
-      });
-  });
-}
-
-/**
- * ==================== EXPORTS ====================
- */
-
-// Export for use in other modules
-if (typeof window !== 'undefined') {
-  window.meetingCalculator = meetingCalculator;
-}
-
-// Log app module loaded
-console.log('[App] Application module loaded');
+domReady().then(() => {
+  app.mount('#app');
+  console.log('[App] Vue app mounted');
+});

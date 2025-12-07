@@ -1,6 +1,6 @@
 /**
  * ==================== STORAGE MANAGER ====================
- * LocalStorage management with error handling and validation
+ * LocalStorage management with error handling
  * 
  * @file storage.js
  * @version 2.0.0
@@ -10,14 +10,9 @@
  * Storage Manager Class
  */
 class StorageManager {
-  constructor() {
+  constructor(prefix = 'meetingCalc_') {
+    this.prefix = prefix;
     this.isAvailable = this.checkAvailability();
-    this.prefix = 'meetingCalc_';
-    
-    if (!this.isAvailable) {
-      console.warn('[Storage] LocalStorage is not available. Using in-memory storage.');
-      this.memoryStorage = {};
-    }
   }
   
   /**
@@ -34,35 +29,7 @@ class StorageManager {
    * @returns {string} Prefixed key
    */
   getKey(key) {
-    return `${this.prefix}${key}`;
-  }
-  
-  /**
-   * Set item in storage
-   * @param {string} key - Key name
-   * @param {*} value - Value to store
-   * @returns {boolean} Success
-   */
-  set(key, value) {
-    try {
-      const prefixedKey = this.getKey(key);
-      const serialized = JSON.stringify(value);
-      
-      if (this.isAvailable) {
-        localStorage.setItem(prefixedKey, serialized);
-      } else {
-        this.memoryStorage[prefixedKey] = serialized;
-      }
-      
-      if (DEBUG_CONFIG?.enabled) {
-        console.log(`[Storage] Set: ${key}`, value);
-      }
-      
-      return true;
-    } catch (error) {
-      logError('Storage.set', error, { key, value });
-      return false;
-    }
+    return this.prefix + key;
   }
   
   /**
@@ -72,30 +39,42 @@ class StorageManager {
    * @returns {*} Stored value or default
    */
   get(key, defaultValue = null) {
+    if (!this.isAvailable) {
+      return defaultValue;
+    }
+    
     try {
-      const prefixedKey = this.getKey(key);
-      let serialized;
+      const item = localStorage.getItem(this.getKey(key));
       
-      if (this.isAvailable) {
-        serialized = localStorage.getItem(prefixedKey);
-      } else {
-        serialized = this.memoryStorage[prefixedKey];
-      }
-      
-      if (serialized === null || serialized === undefined) {
+      if (item === null) {
         return defaultValue;
       }
       
-      const value = JSON.parse(serialized);
-      
-      if (DEBUG_CONFIG?.enabled) {
-        console.log(`[Storage] Get: ${key}`, value);
-      }
-      
-      return value;
+      return JSON.parse(item);
     } catch (error) {
-      logError('Storage.get', error, { key });
+      logError('StorageManager.get', error, { key });
       return defaultValue;
+    }
+  }
+  
+  /**
+   * Set item in storage
+   * @param {string} key - Key name
+   * @param {*} value - Value to store
+   * @returns {boolean} Success
+   */
+  set(key, value) {
+    if (!this.isAvailable) {
+      return false;
+    }
+    
+    try {
+      const serialized = JSON.stringify(value);
+      localStorage.setItem(this.getKey(key), serialized);
+      return true;
+    } catch (error) {
+      logError('StorageManager.set', error, { key, value });
+      return false;
     }
   }
   
@@ -105,22 +84,38 @@ class StorageManager {
    * @returns {boolean} Success
    */
   remove(key) {
+    if (!this.isAvailable) {
+      return false;
+    }
+    
     try {
-      const prefixedKey = this.getKey(key);
-      
-      if (this.isAvailable) {
-        localStorage.removeItem(prefixedKey);
-      } else {
-        delete this.memoryStorage[prefixedKey];
-      }
-      
-      if (DEBUG_CONFIG?.enabled) {
-        console.log(`[Storage] Remove: ${key}`);
-      }
-      
+      localStorage.removeItem(this.getKey(key));
       return true;
     } catch (error) {
-      logError('Storage.remove', error, { key });
+      logError('StorageManager.remove', error, { key });
+      return false;
+    }
+  }
+  
+  /**
+   * Clear all storage with prefix
+   * @returns {boolean} Success
+   */
+  clear() {
+    if (!this.isAvailable) {
+      return false;
+    }
+    
+    try {
+      const keys = Object.keys(localStorage);
+      keys.forEach(key => {
+        if (key.startsWith(this.prefix)) {
+          localStorage.removeItem(key);
+        }
+      });
+      return true;
+    } catch (error) {
+      logError('StorageManager.clear', error);
       return false;
     }
   }
@@ -131,138 +126,39 @@ class StorageManager {
    * @returns {boolean} Exists
    */
   has(key) {
-    try {
-      const prefixedKey = this.getKey(key);
-      
-      if (this.isAvailable) {
-        return localStorage.getItem(prefixedKey) !== null;
-      } else {
-        return this.memoryStorage.hasOwnProperty(prefixedKey);
-      }
-    } catch (error) {
-      logError('Storage.has', error, { key });
+    if (!this.isAvailable) {
       return false;
     }
-  }
-  
-  /**
-   * Clear all storage items with prefix
-   * @returns {boolean} Success
-   */
-  clear() {
-    try {
-      if (this.isAvailable) {
-        const keys = Object.keys(localStorage);
-        keys.forEach(key => {
-          if (key.startsWith(this.prefix)) {
-            localStorage.removeItem(key);
-          }
-        });
-      } else {
-        this.memoryStorage = {};
-      }
-      
-      if (DEBUG_CONFIG?.enabled) {
-        console.log('[Storage] Cleared all items');
-      }
-      
-      return true;
-    } catch (error) {
-      logError('Storage.clear', error);
-      return false;
-    }
+    
+    return localStorage.getItem(this.getKey(key)) !== null;
   }
   
   /**
    * Get all keys with prefix
-   * @returns {Array<string>} Array of keys (without prefix)
+   * @returns {Array<string>} All keys
    */
   keys() {
+    if (!this.isAvailable) {
+      return [];
+    }
+    
     try {
-      const allKeys = this.isAvailable 
-        ? Object.keys(localStorage)
-        : Object.keys(this.memoryStorage);
-      
+      const allKeys = Object.keys(localStorage);
       return allKeys
         .filter(key => key.startsWith(this.prefix))
         .map(key => key.replace(this.prefix, ''));
     } catch (error) {
-      logError('Storage.keys', error);
+      logError('StorageManager.keys', error);
       return [];
     }
   }
-  
-  /**
-   * Get storage size in bytes
-   * @returns {number} Size in bytes
-   */
-  getSize() {
-    try {
-      let size = 0;
-      
-      if (this.isAvailable) {
-        for (let key in localStorage) {
-          if (localStorage.hasOwnProperty(key) && key.startsWith(this.prefix)) {
-            size += localStorage[key].length + key.length;
-          }
-        }
-      } else {
-        for (let key in this.memoryStorage) {
-          if (this.memoryStorage.hasOwnProperty(key)) {
-            size += this.memoryStorage[key].length + key.length;
-          }
-        }
-      }
-      
-      return size;
-    } catch (error) {
-      logError('Storage.getSize', error);
-      return 0;
-    }
-  }
-  
-  /**
-   * Export all data
-   * @returns {Object} All stored data
-   */
-  export() {
-    try {
-      const data = {};
-      const keys = this.keys();
-      
-      keys.forEach(key => {
-        data[key] = this.get(key);
-      });
-      
-      return data;
-    } catch (error) {
-      logError('Storage.export', error);
-      return {};
-    }
-  }
-  
-  /**
-   * Import data
-   * @param {Object} data - Data to import
-   * @returns {boolean} Success
-   */
-  import(data) {
-    try {
-      for (const [key, value] of Object.entries(data)) {
-        this.set(key, value);
-      }
-      
-      if (DEBUG_CONFIG?.enabled) {
-        console.log('[Storage] Imported data:', data);
-      }
-      
-      return true;
-    } catch (error) {
-      logError('Storage.import', error, { data });
-      return false;
-    }
-  }
 }
+
+/**
+ * ==================== GLOBAL STORAGE INSTANCE ====================
+ */
+
+const storage = new StorageManager('meetingCalc_');
 
 /**
  * ==================== SESSION STORAGE ====================
@@ -281,6 +177,7 @@ function saveSession(state) {
       currentPeopleCount: state.currentPeopleCount || APP_CONFIG.defaults.people,
       segments: state.segments || [],
       lastSaved: Date.now(),
+      lastTimestamp: state.isRunning ? Date.now() : null,
       version: APP_CONFIG.version,
     };
     
@@ -293,7 +190,7 @@ function saveSession(state) {
 
 /**
  * Load session state
- * @returns {Object|null} Session state or null
+ * @returns {Object|null} Session state
  */
 function loadSession() {
   try {
@@ -303,17 +200,9 @@ function loadSession() {
       return null;
     }
     
-    // Validate session data
-    if (!session.elapsedTime && session.elapsedTime !== 0) {
-      return null;
-    }
-    
-    // Check if session is too old (older than 24 hours)
-    const maxAge = 24 * 60 * 60 * 1000; // 24 hours
-    if (session.lastSaved && (Date.now() - session.lastSaved > maxAge)) {
-      if (DEBUG_CONFIG?.enabled) {
-        console.log('[Storage] Session expired, clearing...');
-      }
+    // Validate session
+    if (session.version !== APP_CONFIG.version) {
+      console.warn('[Storage] Session version mismatch, clearing session');
       clearSession();
       return null;
     }
@@ -353,19 +242,6 @@ function saveSettings(settings) {
       version: APP_CONFIG.version,
     };
     
-    // Validate settings
-    if (!validateCost(settingsData.costPerPerson)) {
-      settingsData.costPerPerson = APP_CONFIG.defaults.costPerPerson;
-    }
-    
-    if (!validateCurrency(settingsData.currency)) {
-      settingsData.currency = APP_CONFIG.defaults.currency;
-    }
-    
-    if (!validateLanguage(settingsData.language)) {
-      settingsData.language = APP_CONFIG.defaults.language;
-    }
-    
     return storage.set(APP_CONFIG.storage.settings, settingsData);
   } catch (error) {
     logError('saveSettings', error, { settings });
@@ -375,17 +251,22 @@ function saveSettings(settings) {
 
 /**
  * Load settings
- * @returns {Object} Settings object with defaults
+ * @returns {Object} Settings object
  */
 function loadSettings() {
   try {
     const settings = storage.get(APP_CONFIG.storage.settings);
     
     if (!settings) {
-      return getDefaultSettings();
+      return {
+        costPerPerson: APP_CONFIG.defaults.costPerPerson,
+        currency: APP_CONFIG.defaults.currency,
+        language: APP_CONFIG.defaults.language,
+        theme: APP_CONFIG.defaults.theme,
+      };
     }
     
-    // Merge with defaults to ensure all properties exist
+    // Merge with defaults to ensure all keys exist
     return {
       costPerPerson: settings.costPerPerson || APP_CONFIG.defaults.costPerPerson,
       currency: settings.currency || APP_CONFIG.defaults.currency,
@@ -394,75 +275,13 @@ function loadSettings() {
     };
   } catch (error) {
     logError('loadSettings', error);
-    return getDefaultSettings();
-  }
-}
-
-/**
- * Get default settings
- * @returns {Object} Default settings
- */
-function getDefaultSettings() {
-  return {
-    costPerPerson: APP_CONFIG.defaults.costPerPerson,
-    currency: APP_CONFIG.defaults.currency,
-    language: APP_CONFIG.defaults.language,
-    theme: APP_CONFIG.defaults.theme,
-  };
-}
-
-/**
- * ==================== HISTORY STORAGE ====================
- */
-
-/**
- * Save meeting history
- * @param {Array} history - History array
- * @returns {boolean} Success
- */
-function saveHistory(history) {
-  try {
-    // Limit history size
-    const limitedHistory = history.slice(-APP_CONFIG.limits.maxHistoryEntries);
-    
-    const historyData = {
-      entries: limitedHistory,
-      lastUpdated: Date.now(),
-      version: APP_CONFIG.version,
+    return {
+      costPerPerson: APP_CONFIG.defaults.costPerPerson,
+      currency: APP_CONFIG.defaults.currency,
+      language: APP_CONFIG.defaults.language,
+      theme: APP_CONFIG.defaults.theme,
     };
-    
-    return storage.set(APP_CONFIG.storage.history, historyData);
-  } catch (error) {
-    logError('saveHistory', error, { history });
-    return false;
   }
-}
-
-/**
- * Load meeting history
- * @returns {Array} History array
- */
-function loadHistory() {
-  try {
-    const historyData = storage.get(APP_CONFIG.storage.history);
-    
-    if (!historyData || !historyData.entries) {
-      return [];
-    }
-    
-    return historyData.entries;
-  } catch (error) {
-    logError('loadHistory', error);
-    return [];
-  }
-}
-
-/**
- * Clear meeting history
- * @returns {boolean} Success
- */
-function clearHistory() {
-  return storage.remove(APP_CONFIG.storage.history);
 }
 
 /**
@@ -475,16 +294,7 @@ function clearHistory() {
  * @returns {boolean} Success
  */
 function saveTheme(theme) {
-  try {
-    if (!['auto', 'light', 'dark'].includes(theme)) {
-      theme = APP_CONFIG.defaults.theme;
-    }
-    
-    return storage.set(APP_CONFIG.storage.theme, theme);
-  } catch (error) {
-    logError('saveTheme', error, { theme });
-    return false;
-  }
+  return storage.set(APP_CONFIG.storage.theme, theme);
 }
 
 /**
@@ -492,18 +302,7 @@ function saveTheme(theme) {
  * @returns {string} Theme name
  */
 function loadTheme() {
-  try {
-    const theme = storage.get(APP_CONFIG.storage.theme);
-    
-    if (!theme || !['auto', 'light', 'dark'].includes(theme)) {
-      return APP_CONFIG.defaults.theme;
-    }
-    
-    return theme;
-  } catch (error) {
-    logError('loadTheme', error);
-    return APP_CONFIG.defaults.theme;
-  }
+  return storage.get(APP_CONFIG.storage.theme, APP_CONFIG.defaults.theme);
 }
 
 /**
@@ -516,16 +315,7 @@ function loadTheme() {
  * @returns {boolean} Success
  */
 function saveLanguage(language) {
-  try {
-    if (!validateLanguage(language)) {
-      language = APP_CONFIG.defaults.language;
-    }
-    
-    return storage.set(APP_CONFIG.storage.language, language);
-  } catch (error) {
-    logError('saveLanguage', error, { language });
-    return false;
-  }
+  return storage.set(APP_CONFIG.storage.language, language);
 }
 
 /**
@@ -533,22 +323,77 @@ function saveLanguage(language) {
  * @returns {string} Language code
  */
 function loadLanguage() {
+  return storage.get(APP_CONFIG.storage.language, APP_CONFIG.defaults.language);
+}
+
+/**
+ * ==================== HISTORY STORAGE ====================
+ */
+
+/**
+ * Save meeting to history
+ * @param {Object} meeting - Meeting data
+ * @returns {boolean} Success
+ */
+function saveMeetingToHistory(meeting) {
   try {
-    const language = storage.get(APP_CONFIG.storage.language);
+    const history = storage.get(APP_CONFIG.storage.history, []);
     
-    if (!language || !validateLanguage(language)) {
-      // Try to detect browser language
-      const browserLang = navigator.language.split('-')[0];
-      if (validateLanguage(browserLang)) {
-        return browserLang;
-      }
-      return APP_CONFIG.defaults.language;
+    const historyEntry = {
+      id: Date.now(),
+      date: new Date().toISOString(),
+      elapsedTime: meeting.elapsedTime,
+      totalCost: meeting.totalCost,
+      peopleCount: meeting.peopleCount,
+      costPerPerson: meeting.costPerPerson,
+      currency: meeting.currency,
+      segments: meeting.segments || [],
+    };
+    
+    // Add to beginning of array
+    history.unshift(historyEntry);
+    
+    // Limit history size
+    if (history.length > APP_CONFIG.limits.maxHistoryEntries) {
+      history.splice(APP_CONFIG.limits.maxHistoryEntries);
     }
     
-    return language;
+    return storage.set(APP_CONFIG.storage.history, history);
   } catch (error) {
-    logError('loadLanguage', error);
-    return APP_CONFIG.defaults.language;
+    logError('saveMeetingToHistory', error, { meeting });
+    return false;
+  }
+}
+
+/**
+ * Load meeting history
+ * @returns {Array} History entries
+ */
+function loadMeetingHistory() {
+  return storage.get(APP_CONFIG.storage.history, []);
+}
+
+/**
+ * Clear meeting history
+ * @returns {boolean} Success
+ */
+function clearMeetingHistory() {
+  return storage.remove(APP_CONFIG.storage.history);
+}
+
+/**
+ * Delete history entry
+ * @param {number} id - Entry ID
+ * @returns {boolean} Success
+ */
+function deleteHistoryEntry(id) {
+  try {
+    const history = storage.get(APP_CONFIG.storage.history, []);
+    const filtered = history.filter(entry => entry.id !== id);
+    return storage.set(APP_CONFIG.storage.history, filtered);
+  } catch (error) {
+    logError('deleteHistoryEntry', error, { id });
+    return false;
   }
 }
 
@@ -563,120 +408,37 @@ function loadLanguage() {
 function migrateStorage() {
   try {
     // Check if migration is needed
-    const oldSession = localStorage.getItem('meetingCalculatorSession');
+    const oldSession = localStorage.getItem('meeting_session');
     
-    if (oldSession) {
-      if (DEBUG_CONFIG?.enabled) {
-        console.log('[Storage] Migrating old storage format...');
-      }
-      
-      const oldData = JSON.parse(oldSession);
-      
-      // Migrate to new format
-      saveSession({
-        elapsedTime: oldData.elapsedTime || 0,
-        isRunning: false,
-        currentPeopleCount: oldData.currentPeopleCount || APP_CONFIG.defaults.people,
-        segments: oldData.segments || [],
-      });
-      
-      // Remove old key
-      localStorage.removeItem('meetingCalculatorSession');
-      
-      if (DEBUG_CONFIG?.enabled) {
-        console.log('[Storage] Migration completed');
-      }
-      
-      return true;
+    if (!oldSession) {
+      return true; // Nothing to migrate
     }
     
-    return false;
+    // Parse old session
+    const oldData = JSON.parse(oldSession);
+    
+    // Convert to new format
+    saveSession({
+      elapsedTime: oldData.time || 0,
+      isRunning: false,
+      currentPeopleCount: oldData.people || APP_CONFIG.defaults.people,
+      segments: [],
+    });
+    
+    saveSettings({
+      costPerPerson: oldData.cost || APP_CONFIG.defaults.costPerPerson,
+      currency: oldData.currency || APP_CONFIG.defaults.currency,
+      language: APP_CONFIG.defaults.language,
+      theme: APP_CONFIG.defaults.theme,
+    });
+    
+    // Remove old key
+    localStorage.removeItem('meeting_session');
+    
+    console.log('[Storage] Migration completed');
+    return true;
   } catch (error) {
     logError('migrateStorage', error);
-    return false;
-  }
-}
-
-/**
- * ==================== UTILITIES ====================
- */
-
-/**
- * Get storage info
- * @returns {Object} Storage information
- */
-function getStorageInfo() {
-  return {
-    available: storage.isAvailable,
-    size: storage.getSize(),
-    sizeFormatted: formatFileSize(storage.getSize()),
-    keys: storage.keys(),
-    keyCount: storage.keys().length,
-  };
-}
-
-/**
- * Clear all app data
- * @returns {boolean} Success
- */
-function clearAllData() {
-  try {
-    clearSession();
-    clearHistory();
-    storage.clear();
-    
-    if (DEBUG_CONFIG?.enabled) {
-      console.log('[Storage] All data cleared');
-    }
-    
-    return true;
-  } catch (error) {
-    logError('clearAllData', error);
-    return false;
-  }
-}
-
-/**
- * Export all app data
- * @returns {Object} All app data
- */
-function exportAllData() {
-  try {
-    return {
-      session: loadSession(),
-      settings: loadSettings(),
-      history: loadHistory(),
-      theme: loadTheme(),
-      language: loadLanguage(),
-      exportDate: new Date().toISOString(),
-      version: APP_CONFIG.version,
-    };
-  } catch (error) {
-    logError('exportAllData', error);
-    return null;
-  }
-}
-
-/**
- * Import all app data
- * @param {Object} data - Data to import
- * @returns {boolean} Success
- */
-function importAllData(data) {
-  try {
-    if (data.session) saveSession(data.session);
-    if (data.settings) saveSettings(data.settings);
-    if (data.history) saveHistory(data.history);
-    if (data.theme) saveTheme(data.theme);
-    if (data.language) saveLanguage(data.language);
-    
-    if (DEBUG_CONFIG?.enabled) {
-      console.log('[Storage] Data imported successfully');
-    }
-    
-    return true;
-  } catch (error) {
-    logError('importAllData', error, { data });
     return false;
   }
 }
@@ -685,25 +447,18 @@ function importAllData(data) {
  * ==================== INITIALIZATION ====================
  */
 
-// Create global storage instance
-const storage = new StorageManager();
-
 // Run migration on load
 if (storage.isAvailable) {
   migrateStorage();
 }
 
-// Log storage info (only in debug mode)
-if (DEBUG_CONFIG?.enabled) {
-  console.log('[Storage] Storage Manager initialized');
-  console.log('[Storage] Info:', getStorageInfo());
-}
+// Log storage loaded
+console.log('[Storage] Storage manager loaded');
 
 /**
  * ==================== EXPORTS ====================
  */
 
-// Export storage instance and functions for use in other modules
 if (typeof window !== 'undefined') {
   window.StorageManager = StorageManager;
   window.storage = storage;
