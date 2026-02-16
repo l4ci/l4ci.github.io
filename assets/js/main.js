@@ -21,12 +21,19 @@ const greetings = [
 
     const helloHeading = document.getElementById("hello");
     if (helloHeading) {
-        helloHeading.style.transition = GREETING_TRANSITION;
-        helloHeading.style.opacity = 0;
-        setTimeout(() => {
+        // Set initial greeting without fade on first load
+        if (!helloHeading.dataset.initialized) {
             helloHeading.textContent = greet;
-            helloHeading.style.opacity = 1;
-        }, GREETING_FADE_DURATION);
+            helloHeading.dataset.initialized = "true";
+        } else {
+            // Fade animation for subsequent changes
+            helloHeading.style.transition = GREETING_TRANSITION;
+            helloHeading.style.opacity = 0;
+            setTimeout(() => {
+                helloHeading.textContent = greet;
+                helloHeading.style.opacity = 1;
+            }, GREETING_FADE_DURATION);
+        }
     }
 
     setTimeout(changeTitle, GREETING_CHANGE_INTERVAL);
@@ -57,5 +64,55 @@ const greetings = [
     if (copyrightYearElement) {
         copyrightYearElement.textContent = currentYear;
     }
+})();
+
+/**
+ * Theme toggle functionality
+ * Allows manual switching between light and dark modes
+ * Stores preference in localStorage
+ */
+(function initThemeToggle() {
+    const themeToggle = document.getElementById("theme-toggle");
+    const THEME_KEY = "theme-preference";
+
+    // Get saved theme preference or default to system preference
+    function getThemePreference() {
+        const saved = localStorage.getItem(THEME_KEY);
+        if (saved) {
+            return saved;
+        }
+        // Check system preference
+        return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    }
+
+    // Apply theme to document
+    function applyTheme(theme) {
+        document.body.setAttribute("data-theme", theme);
+        localStorage.setItem(THEME_KEY, theme);
+    }
+
+    // Toggle between light and dark themes
+    function toggleTheme() {
+        const currentTheme = document.body.getAttribute("data-theme") || getThemePreference();
+        const newTheme = currentTheme === "dark" ? "light" : "dark";
+        applyTheme(newTheme);
+    }
+
+    // Initialize theme on page load
+    const initialTheme = getThemePreference();
+    applyTheme(initialTheme);
+
+    // Add click handler to toggle button
+    if (themeToggle) {
+        themeToggle.addEventListener("click", toggleTheme);
+    }
+
+    // Listen for system theme changes (optional: only if no manual preference is set)
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
+        // Only auto-update if user hasn't manually set a preference
+        if (!localStorage.getItem(THEME_KEY)) {
+            applyTheme(e.matches ? "dark" : "light");
+        }
+    });
 })();
 
