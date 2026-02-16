@@ -1,0 +1,26 @@
+{
+  "name": "volkerotto.net",
+  "version": "1.0.0",
+  "description": "Personal website of Volker Otto",
+  "private": true,
+  "scripts": {
+    "lint": "npm run lint:js && npm run lint:css",
+    "lint:js": "eslint assets/js/**/*.js",
+    "lint:css": "stylelint assets/css/**/*.css",
+    "format": "prettier --write \"**/*.{js,css,html,md,json}\"",
+    "format:check": "prettier --check \"**/*.{js,css,html,md,json}\""
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "prettier": "^3.2.5",
+    "stylelint": "^16.2.1",
+    "stylelint-config-standard": "^36.0.0"
+  },
+  "keywords": [
+    "portfolio",
+    "personal-website"
+  ],
+  "author": "Volker Otto",
+  "license": "UNLICENSED"
+}
