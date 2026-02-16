@@ -43,25 +43,13 @@ body {
   line-height: 1.5;
   font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   color: var(--black);
+  background: #fff;
 }
-body.dark {
-  background: #111;
-  color: var(--lightgrey);
-}
+
 @media (prefers-color-scheme: dark) {
   body {
     background: #111;
     color: var(--lightgrey);
-  }
-}
-body.light {
-  background: #fff;
-  color: var(--black);
-}
-@media (prefers-color-scheme: light) {
-  body {
-    background: #fff;
-    color: var(--black);
   }
 }
 
@@ -230,9 +218,6 @@ sup {
     top: -40%;
   }
 }
-.dark .lines-mask.first-right path:not(.p3) {
-  stroke: var(--lightgrey);
-}
 @media (prefers-color-scheme: dark) {
   .lines-mask.first-right path:not(.p3) {
     stroke: var(--lightgrey);
@@ -240,9 +225,6 @@ sup {
 }
 .lines-mask.first-left {
   top: 55vh;
-}
-.dark .lines-mask.first-left path:not(.p2) {
-  stroke: var(--lightgrey);
 }
 @media (prefers-color-scheme: dark) {
   .lines-mask.first-left path:not(.p2) {
@@ -256,9 +238,6 @@ sup {
   .lines-mask.second-right {
     top: 150vh;
   }
-}
-.dark .lines-mask.second-right path:not(.p2) {
-  stroke: var(--lightgrey);
 }
 @media (prefers-color-scheme: dark) {
   .lines-mask.second-right path:not(.p2) {
@@ -286,9 +265,6 @@ sup {
   .lines-mask.bottom {
     bottom: -5rem;
   }
-}
-.dark .lines-mask.bottom path:not(.p2) {
-  stroke: var(--lightgrey);
 }
 @media (prefers-color-scheme: dark) {
   .lines-mask.bottom path:not(.p2) {
@@ -334,9 +310,6 @@ sup {
   opacity: 0.85;
   transition: all 0.3s ease;
   border-radius: var(--border-radius);
-}
-body.dark .section__bg {
-  opacity: 0.9;
 }
 @media (prefers-color-scheme: dark) {
   .section__bg {
@@ -401,39 +374,19 @@ body.dark .section__bg {
 .header .header-text p {
   color: var(--black-50);
 }
-body.dark .header .header-text p {
-  color: var(--grey);
-}
+
 @media (prefers-color-scheme: dark) {
   .header .header-text p {
     color: var(--grey);
   }
 }
-body.light .header .header-text p {
-  color: var(--black-50);
-}
-@media (prefers-color-scheme: light) {
-  .header .header-text p {
-    color: var(--black-50);
-  }
-}
 .header .header-text strong {
   color: var(--black);
 }
-body.dark .header .header-text strong {
-  color: var(--lightgrey);
-}
+
 @media (prefers-color-scheme: dark) {
   .header .header-text strong {
     color: var(--lightgrey);
-  }
-}
-body.light .header .header-text strong {
-  color: var(--black);
-}
-@media (prefers-color-scheme: light) {
-  .header .header-text strong {
-    color: var(--black);
   }
 }
 .header .headline {
