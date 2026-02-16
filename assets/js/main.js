@@ -1,41 +1,34 @@
 "use strict";
-/*
-// Yeah, lets forget about the dark mode switcher for a second
 
-var currentTheme = localStorage.getItem("theme");
-if (currentTheme == "dark") {
-  document.body.classList.add("dark");
-}
+// Constants for timing and animations
+const GREETING_CHANGE_INTERVAL = 3456; // Time between greeting changes (ms)
+const GREETING_FADE_DURATION = 456; // Fade animation duration (ms)
+const GREETING_TRANSITION = "opacity 0.4s ease";
 
-function toggleDarkMode() {
-  document.body.classList.toggle("dark");
-  var theme = document.body.classList.contains("dark") ? "dark" : "light";
-  localStorage.setItem("theme", theme);
-  return false;
-}
-*/
-
-// Fancy title greeting
-// bitwise rounding instead of Math.floor()?! uh, how fancy!
-var greetings = [
+// Available greetings in different languages
+const greetings = [
     "Hallo", "Hello", "Bonjour", "Hola", "Ciao", "Hej", "Namaste", "Zdravím", "Ahoj",
     "こんにちは", "안녕하세요", "你好", "Moin", "Hi", "Hey", "Salü"
 ];
 
+/**
+ * Changes the page title and heading with a random greeting from different languages
+ * Continuously cycles through greetings with a fade animation
+ */
 (function changeTitle() {
-    var greet = greetings[Math.random() * greetings.length | 0];
+    const greet = greetings[Math.floor(Math.random() * greetings.length)];
     document.title = document.title.replace(/^.*?(?=@)/, "👋 " + greet + ' ');
 
-    var helloHeading = document.getElementById("hello");
+    const helloHeading = document.getElementById("hello");
     if (helloHeading) {
-        helloHeading.style.transition = "opacity 0.4s ease";
+        helloHeading.style.transition = GREETING_TRANSITION;
         helloHeading.style.opacity = 0;
         setTimeout(() => {
             helloHeading.textContent = greet;
             helloHeading.style.opacity = 1;
-        }, 456);
+        }, GREETING_FADE_DURATION);
     }
-  
-    setTimeout(changeTitle, 3456);
+
+    setTimeout(changeTitle, GREETING_CHANGE_INTERVAL);
 })();
 
