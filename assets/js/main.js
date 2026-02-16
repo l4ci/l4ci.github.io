@@ -32,3 +32,30 @@ const greetings = [
     setTimeout(changeTitle, GREETING_CHANGE_INTERVAL);
 })();
 
+/**
+ * Calculate and display years of experience
+ * Based on start year 2008
+ */
+(function updateYearsOfExperience() {
+    const startYear = 2008;
+    const currentYear = new Date().getFullYear();
+    const yearsOfExperience = currentYear - startYear;
+
+    const experienceElement = document.getElementById("years-of-experience");
+    if (experienceElement) {
+        experienceElement.textContent = yearsOfExperience;
+    }
+})();
+
+/**
+ * Update copyright year in footer
+ */
+(function updateCopyrightYear() {
+    const currentYear = new Date().getFullYear();
+    const copyrightYearElement = document.getElementById("copyright-year");
+
+    if (copyrightYearElement) {
+        copyrightYearElement.textContent = currentYear;
+    }
+})();
+
