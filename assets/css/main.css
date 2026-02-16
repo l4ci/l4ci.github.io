@@ -3,6 +3,7 @@ a,abbr,acronym,address,applet,article,aside,audio,b,big,blockquote,body,canvas,c
 
 /* Main.css: Real CSS starts here */
 :root {
+  /* Colors */
   --yellow: #fad722;
   --blue: #59c3ff;
   --purple: #9759ee;
@@ -12,12 +13,24 @@ a,abbr,acronym,address,applet,article,aside,audio,b,big,blockquote,body,canvas,c
   --grey: #afafaf;
   --black: #3a3a3a;
   --black-50: rgba(58, 58, 58, 0.5);
+
+  /* Layout */
   --border-width: 2px;
   --border-radius: 8px;
+
+  /* Typography */
   --fs-hero: 2.25rem;
   --fs-lead: 1.375rem;
   --fs: 1rem;
   --fs-tiny: 0.875rem;
+
+  /* Animations & Transitions */
+  --transition-fast: 0.1s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.4s ease;
+  --animation-spin-slow: 120s;
+  --animation-spin-medium: 80s;
+  --animation-spin-fast: 220s;
 }
 
 /**
@@ -58,7 +71,7 @@ a {
   color: inherit;
   border-bottom: 3px solid;
   border-color: transparent;
-  transition: 0.1s ease;
+  transition: var(--transition-fast);
 }
 a:hover, a:focus {
   border-color: var(--yellow);
@@ -105,6 +118,16 @@ sup {
   }
   100% {
     background-position: 0% 50%;
+  }
+}
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.1);
   }
 }
 /**
@@ -189,16 +212,16 @@ sup {
   transform-origin: 50% 50%;
 }
 .lines-mask .p1 {
-  animation: spin infinite 120s linear;
+  animation: spin infinite var(--animation-spin-slow) linear;
 }
 .lines-mask .p2 {
-  animation: spin infinite 220s linear;
+  animation: spin infinite var(--animation-spin-fast) linear;
 }
 .lines-mask .p3 {
-  animation: spin infinite 80s linear;
+  animation: spin infinite var(--animation-spin-medium) linear;
 }
 .lines-mask .p4 {
-  animation: spin infinite 80s linear reverse;
+  animation: spin infinite var(--animation-spin-medium) linear reverse;
 }
 .lines-mask.first-right {
   top: 0;
@@ -308,7 +331,7 @@ sup {
   right: 0.5rem;
   z-index: -1;
   opacity: 0.85;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
   border-radius: var(--border-radius);
 }
 @media (prefers-color-scheme: dark) {
@@ -558,4 +581,17 @@ dl dd {
 
 .footer a:hover, .footer a:focus, .footer a:active {
   opacity: 1;
+}
+
+/**
+ * PULSE DOT - Animated indicator for current position
+ */
+.pulse-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--red);
+  margin-right: 0.5rem;
+  animation: pulse 2s ease-in-out infinite;
 }
