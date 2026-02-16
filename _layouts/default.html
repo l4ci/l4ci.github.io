@@ -2,6 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <title>
       {% if page.title %}
         {{ site.title }} – {{ page.title }}
@@ -9,24 +11,28 @@
         {{ site.title }}
       {% endif %}
     </title>
+
     <meta name="description" content="{{ page.desc | default: site.desc }}">
     <meta name="author" content="Volker Otto">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#9759ee" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#9759ee" media="(prefers-color-scheme: dark)">
 
-    
+    <!-- Open Graph / Social Media -->
     <meta property="og:title" content="{{ page.ogtitle | default: page.title }}">
     {% if page.desc %}
     <meta property="og:description" content="{{ page.desc }}">
     {% endif %}
     <meta property="og:url" content="{{ site.url }}{{ page.url | remove:'index.html'}}">
     <meta property="og:type" content="website">
-  
+
+    <!-- Robots -->
     {% if page.noindex or layout.noindex or site.noindex %}
       <meta name="robots" content="noindex, nofollow">
     {% else %}
       <meta name="robots" content="index, follow">
     {% endif %}
 
+    <!-- Structured Data -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -46,12 +52,28 @@
     }
     </script>
 
+    <!-- Resource Hints -->
+    <link rel="preconnect" href="https://volkerotto.net" crossorigin>
+    <link rel="dns-prefetch" href="https://volkerotto.net">
+
+    <!-- Canonical URL -->
     <link rel="canonical" href="{{ site.url }}{{ page.url | remove:'index.html'}}">
-    
+
+    <!-- Favicon -->
     <link rel="shortcut icon" href="{{ site.url }}/favicon.ico">
+
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="{{ site.url }}/assets/css/main.css">
-    
-    <script defer async src="{{ site.url }}/assets/js/main.js"></script>
+    <style>
+      /* Font Display Swap for Inter font */
+      @font-face {
+        font-family: 'Inter';
+        font-display: swap;
+      }
+    </style>
+
+    <!-- Scripts -->
+    <script defer src="{{ site.url }}/assets/js/main.js"></script>
 </head>
 <!--
 
