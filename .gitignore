@@ -10,3 +10,10 @@ package-lock.json
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Ruby/Jekyll dependencies
+Gemfile.lock
+.bundle/
+vendor/
+.jekyll-cache/
+.sass-cache/
