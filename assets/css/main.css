@@ -58,7 +58,7 @@ html {
 }
 
 body {
-  margin: 0 auto;
+  margin-inline: auto;
   line-height: 1.5;
   font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   color: var(--black);
@@ -141,65 +141,25 @@ sup {
  */
 .container {
   position: relative;
-  margin-left: auto;
-  margin-right: auto;
+  margin-inline: auto;
   max-width: 60rem;
-  padding: 2rem;
+  padding: clamp(2rem, 3vw + 1rem, 5rem);
   z-index: 1;
-}
-@media (min-width: 800px) {
-  .container {
-    padding: 2.5rem;
-  }
-}
-@media (min-width: 1000px) {
-  .container {
-    padding: 3rem;
-  }
-}
-@media (min-width: 1200px) {
-  .container {
-    padding: 4rem;
-  }
-}
-@media (min-width: 1400px) {
-  .container {
-    padding: 5rem;
-  }
 }
 .container-big {
   max-width: 74rem;
 }
 
 .px {
-  padding-top: 0.75rem;
-  padding-bottom: 0.75rem;
+  padding-block: clamp(0.75rem, 1.5vw, 1rem);
 }
-@media (min-width: 1000px) {
-  .px {
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-  }
-}
+
 .px-2 {
-  padding-top: 1.25rem;
-  padding-bottom: 1.25rem;
+  padding-block: clamp(1.25rem, 2vw, 2rem);
 }
-@media (min-width: 1000px) {
-  .px-2 {
-    padding-top: 2rem;
-    padding-bottom: 2rem;
-  }
-}
+
 .px-3 {
-  padding-top: 2rem;
-  padding-bottom: 2rem;
-}
-@media (min-width: 1000px) {
-  .px-3 {
-    padding-top: 3rem;
-    padding-bottom: 3rem;
-  }
+  padding-block: clamp(2rem, 3vw, 3rem);
 }
 
 .lines-mask {
@@ -311,32 +271,12 @@ sup {
 .section {
   position: relative;
   contain: layout style;
-}
-@media (min-width: 800px) {
-  .section {
-    margin-top: 3rem;
-    margin-bottom: 3rem;
-  }
-}
-@media (min-width: 1000px) {
-  .section {
-    margin-top: 4rem;
-    margin-bottom: 4rem;
-  }
-}
-@media (min-width: 1200px) {
-  .section {
-    margin-top: 5rem;
-    margin-bottom: 5rem;
-  }
+  margin-block: clamp(0rem, 5vw, 5rem);
 }
 
 .section__bg {
   position: absolute;
-  top: 0.5rem;
-  left: 0.5rem;
-  bottom: 0.5rem;
-  right: 0.5rem;
+  inset: 0.5rem;
   z-index: -1;
   opacity: 0.85;
   transition: all var(--transition-normal);
@@ -363,12 +303,7 @@ sup {
   z-index: 1;
 }
 .section__text p {
-  font-size: var(--fs);
-}
-@media (min-width: 800px) {
-  .section__text p {
-    font-size: var(--fs-lead);
-  }
+  font-size: clamp(var(--fs), 1.5vw + 0.5rem, var(--fs-lead));
 }
 
 .section__subline {
@@ -391,12 +326,7 @@ sup {
 
 .header {
   position: relative;
-  padding: 10vh 0 5vh;
-}
-@media (min-width: 1000px) {
-  .header {
-    padding: 20vh 0 5vh;
-  }
+  padding-block: clamp(10vh, 15vw, 20vh) 5vh;
 }
 .header .header-text {
   position: relative;
@@ -428,33 +358,13 @@ sup {
   -webkit-text-fill-color: transparent;
   background-clip: text;
   text-fill-color: transparent;
-  font-size: 4rem;
+  font-size: clamp(4rem, 5vw + 2rem, 6rem);
   font-weight: bold;
   font-style: italic;
   animation: gradient 5s ease infinite;
 }
-@media (min-width: 800px) {
-  .header .headline {
-    font-size: 4.5rem;
-  }
-}
-@media (min-width: 1000px) {
-  .header .headline {
-    font-size: 5rem;
-  }
-}
-@media (min-width: 1200px) {
-  .header .headline {
-    font-size: 6rem;
-  }
-}
 .header p {
-  font-size: var(--fs-lead);
-}
-@media (min-width: 1000px) {
-  .header p {
-    font-size: var(--fs-hero);
-  }
+  font-size: clamp(var(--fs-lead), 2vw + 0.5rem, var(--fs-hero));
 }
 .header p a {
   border-color: var(--yellow);
@@ -478,12 +388,7 @@ sup {
 @media (min-width: 500px) {
   .header nav li {
     display: inline-block;
-    margin-right: 0.5rem;
-  }
-}
-@media (min-width: 1000px) {
-  .header nav li {
-    margin-right: 1rem;
+    margin-inline-end: clamp(0.5rem, 1vw, 1rem);
   }
 }
 .header nav a {
@@ -491,18 +396,18 @@ sup {
 }
 
 .hashtags {
-  margin: 2rem 0;
+  margin-block: 2rem;
   text-align: center;
 }
 @media (min-width: 1000px) {
   .hashtags {
-    text-align: left;
+    text-align: start;
   }
 }
 .hashtags li {
   display: inline-block;
   font-style: italic;
-  margin-right: 0.5rem;
+  margin-inline-end: 0.5rem;
 }
 .hashtags li::before {
   content: "#";
@@ -510,7 +415,7 @@ sup {
 
 dl {
   display: block;
-  margin: 1rem 0;
+  margin-block: 1rem;
 }
 dl dt {
   display: block;
@@ -520,41 +425,36 @@ dl dt {
   dl dt {
     display: inline-block;
     width: 30%;
-    text-align: right;
+    text-align: end;
   }
 }
 dl dd {
   display: block;
-  margin-bottom: 1rem;
+  margin-block-end: 1rem;
 }
 @media (min-width: 600px) {
   dl dd {
     display: inline-block;
     width: 60%;
-    margin-left: 5%;
+    margin-inline-start: 5%;
   }
 }
 
 .social-links {
   display: block;
-  margin: 2rem 0 0;
+  margin-block: 2rem 0;
   text-align: center;
   font-size: 0.875rem;
 }
 @media (min-width: 1000px) {
   .social-links {
-    text-align: left;
+    text-align: start;
   }
 }
 .social-links li {
   display: inline-block;
-  margin-right: 0.5rem;
-  margin-bottom: 0.25rem;
-}
-@media (min-width: 800px) {
-  .social-links li {
-    margin-right: 1rem;
-  }
+  margin-inline-end: clamp(0.5rem, 1vw, 1rem);
+  margin-block-end: 0.25rem;
 }
 .social-links li a {
   position: relative;
@@ -562,13 +462,14 @@ dl dd {
   vertical-align: middle;
   background: hsla(0, 0%, 100%, 0.2);
   border-radius: 8px;
-  padding: 0.25rem 0.5rem 0.25rem 2rem;
+  padding-block: 0.25rem;
+  padding-inline: 2rem 0.5rem;
   letter-spacing: 0.5px;
 }
 .social-links li img {
   position: absolute;
-  top: 50%;
-  left: 0.5rem;
+  inset-block-start: 50%;
+  inset-inline-start: 0.5rem;
   transform: translateY(-50%);
   width: 21px;
   height: 21px;
@@ -577,7 +478,7 @@ dl dd {
 .footer {
   position: relative;
   text-align: center;
-  margin-bottom: 0;
+  margin-block-end: 0;
 }
 
 .footer a {
@@ -600,7 +501,7 @@ dl dd {
   height: 8px;
   border-radius: 50%;
   background: var(--red);
-  margin-right: 0.5rem;
+  margin-inline-end: 0.5rem;
   animation: pulse 2s ease-in-out infinite;
   will-change: transform, opacity;
 }
