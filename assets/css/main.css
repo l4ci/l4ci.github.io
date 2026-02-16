@@ -1,7 +1,33 @@
+/* ==========================================================================
+   volkerotto.net - Main Stylesheet
+   ========================================================================== */
+
+/**
+ * TABLE OF CONTENTS
+ *
+ * 1. CSS Reset
+ * 2. CSS Custom Properties
+ * 3. Base Styles
+ * 4. Animations
+ * 5. Layout & Structure
+ * 6. Decorative Elements
+ * 7. Sections & Content
+ * 8. Header
+ * 9. Typography & Lists
+ * 10. Footer
+ * 11. Utilities
+ * 12. Accessibility
+ */
+
+/* ==========================================================================
+   1. CSS RESET
+   ========================================================================== */
 /* CSS Reset: http://meyerweb.com/eric/tools/css/reset/ | v2.0 | 20110126 | License: none (public domain) */
 a,abbr,acronym,address,applet,article,aside,audio,b,big,blockquote,body,canvas,caption,center,cite,code,dd,del,details,dfn,div,dl,dt,em,embed,fieldset,figcaption,figure,footer,form,h1,h2,h3,h4,h5,h6,header,hgroup,html,i,iframe,img,ins,kbd,label,legend,li,mark,menu,nav,object,ol,output,p,pre,q,ruby,s,samp,section,small,span,strike,strong,sub,summary,sup,table,tbody,td,tfoot,th,thead,time,tr,tt,u,ul,var,video{margin:0;padding:0;border:0;font-size:100%;font:inherit;vertical-align:baseline}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:after,blockquote:before,q:after,q:before{content:'';content:none}table{border-collapse:collapse;border-spacing:0}
 
-/* Main.css: Real CSS starts here */
+/* ==========================================================================
+   2. CSS CUSTOM PROPERTIES
+   ========================================================================== */
 :root {
   /* Colors */
   --yellow: #fad722;
@@ -33,9 +59,9 @@ a,abbr,acronym,address,applet,article,aside,audio,b,big,blockquote,body,canvas,c
   --animation-spin-fast: 220s;
 }
 
-/**
- * BASE
- */
+/* ==========================================================================
+   3. BASE STYLES
+   ========================================================================== */
 *,
 *:before,
 *:after {
@@ -104,9 +130,9 @@ sup {
   white-space: nowrap;
 }
 
-/**
- * ANIMATIONS
- */
+/* ==========================================================================
+   4. ANIMATIONS
+   ========================================================================== */
 @keyframes spin {
   from {
     transform: rotate(0deg);
@@ -136,9 +162,10 @@ sup {
     transform: scale(1.1);
   }
 }
-/**
- * Structure
- */
+
+/* ==========================================================================
+   5. LAYOUT & STRUCTURE
+   ========================================================================== */
 .container {
   position: relative;
   margin-inline: auto;
@@ -161,6 +188,10 @@ sup {
 .px-3 {
   padding-block: clamp(2rem, 3vw, 3rem);
 }
+
+/* ==========================================================================
+   6. DECORATIVE ELEMENTS - Animated SVG Backgrounds
+   ========================================================================== */
 
 .lines-mask {
   position: absolute;
@@ -265,9 +296,9 @@ sup {
   color: var(--purple);
 }
 
-/**
- * SECTIONS
- */
+/* ==========================================================================
+   7. SECTIONS & CONTENT
+   ========================================================================== */
 .section {
   position: relative;
   contain: layout style;
@@ -320,9 +351,13 @@ sup {
 }
 @media (min-width: 1000px) {
   .section__label {
-    text-align: left;
+    text-align: start;
   }
 }
+
+/* ==========================================================================
+   8. HEADER
+   ========================================================================== */
 
 .header {
   position: relative;
@@ -394,6 +429,10 @@ sup {
 .header nav a {
   font-weight: bold;
 }
+
+/* ==========================================================================
+   9. TYPOGRAPHY & LISTS
+   ========================================================================== */
 
 .hashtags {
   margin-block: 2rem;
@@ -475,6 +514,10 @@ dl dd {
   height: 21px;
 }
 
+/* ==========================================================================
+   10. FOOTER
+   ========================================================================== */
+
 .footer {
   position: relative;
   text-align: center;
@@ -492,9 +535,11 @@ dl dd {
   opacity: 1;
 }
 
-/**
- * PULSE DOT - Animated indicator for current position
- */
+/* ==========================================================================
+   11. UTILITIES
+   ========================================================================== */
+
+/* Pulse Dot - Animated indicator for current position */
 .pulse-dot {
   display: inline-block;
   width: 8px;
@@ -506,9 +551,11 @@ dl dd {
   will-change: transform, opacity;
 }
 
-/**
- * ACCESSIBILITY - Reduced Motion
- */
+/* ==========================================================================
+   12. ACCESSIBILITY
+   ========================================================================== */
+
+/* Reduced Motion Support */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
