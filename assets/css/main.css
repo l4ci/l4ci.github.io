@@ -51,6 +51,12 @@ html {
   font-size: calc(15px + 0.390625vw);
 }
 
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 body {
   margin: 0 auto;
   line-height: 1.5;
@@ -210,6 +216,7 @@ sup {
 }
 .lines-mask svg path {
   transform-origin: 50% 50%;
+  will-change: transform;
 }
 .lines-mask .p1 {
   animation: spin infinite var(--animation-spin-slow) linear;
@@ -303,6 +310,7 @@ sup {
  */
 .section {
   position: relative;
+  contain: layout style;
 }
 @media (min-width: 800px) {
   .section {
@@ -594,4 +602,19 @@ dl dd {
   background: var(--red);
   margin-right: 0.5rem;
   animation: pulse 2s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+/**
+ * ACCESSIBILITY - Reduced Motion
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
