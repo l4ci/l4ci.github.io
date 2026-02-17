@@ -446,7 +446,7 @@ body[data-theme="dark"] .section__bg {
 /* Frosted Glass Container with Gradient Border - All Sections */
 .section .container {
   position: relative;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-radius: var(--border-radius);
