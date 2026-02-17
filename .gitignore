@@ -3,6 +3,8 @@
 codekit-config.json
 *.psd
 .DS_Store
+.claude
+todo.md
 
 # Node.js dependencies
 node_modules/

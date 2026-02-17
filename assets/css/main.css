@@ -374,15 +374,62 @@ body[data-theme="dark"] .lines-mask.bottom path:not(.p2) {
 body[data-theme="dark"] .section__bg {
   opacity: 0.9;
 }
+/* Custom combination: Soft pastels with adaptive opacity */
+
+/* Professional Focus - Option 3+4: Soft pastel with adaptive opacity */
 .section__bg--lightgrey {
-  background: linear-gradient(100deg, var(--purple), var(--blue));
+  background: linear-gradient(120deg,
+    rgba(151, 89, 238, 0.16),
+    rgba(89, 195, 255, 0.16));
 }
+
+/* Personal Life - Option 3+4: Soft pastel with adaptive opacity */
 .section__bg--blue {
   z-index: -2;
-  background: linear-gradient(100deg, var(--red), var(--yellow));
+  background: linear-gradient(120deg,
+    rgba(238, 89, 119, 0.16),
+    rgba(250, 215, 34, 0.16));
 }
+
+/* CV - Same linear gradient as others */
 .section__bg--yellow {
-  background: linear-gradient(100deg, var(--blue), var(--purple));
+  background: linear-gradient(120deg,
+    rgba(89, 195, 255, 0.16),
+    rgba(151, 89, 238, 0.16));
+}
+
+/* Dark mode - more saturated colors */
+@media (prefers-color-scheme: dark) {
+  body:not([data-theme="light"]) .section__bg--lightgrey {
+    background: linear-gradient(120deg,
+      rgba(151, 89, 238, 0.26),
+      rgba(89, 195, 255, 0.26));
+  }
+  body:not([data-theme="light"]) .section__bg--blue {
+    background: linear-gradient(120deg,
+      rgba(238, 89, 119, 0.26),
+      rgba(250, 215, 34, 0.26));
+  }
+  body:not([data-theme="light"]) .section__bg--yellow {
+    background: linear-gradient(120deg,
+      rgba(89, 195, 255, 0.26),
+      rgba(151, 89, 238, 0.26));
+  }
+}
+body[data-theme="dark"] .section__bg--lightgrey {
+  background: linear-gradient(120deg,
+    rgba(151, 89, 238, 0.26),
+    rgba(89, 195, 255, 0.26));
+}
+body[data-theme="dark"] .section__bg--blue {
+  background: linear-gradient(120deg,
+    rgba(238, 89, 119, 0.26),
+    rgba(250, 215, 34, 0.26));
+}
+body[data-theme="dark"] .section__bg--yellow {
+  background: linear-gradient(120deg,
+    rgba(89, 195, 255, 0.26),
+    rgba(151, 89, 238, 0.26));
 }
 
 .section__text {
@@ -499,6 +546,8 @@ body[data-theme="dark"] .header .header-text strong {
 .hashtags {
   margin-block: 2rem;
   text-align: center;
+  opacity: 0.5;
+  font-size: 0.875rem;
 }
 @media (min-width: 1000px) {
   .hashtags {
@@ -509,9 +558,14 @@ body[data-theme="dark"] .header .header-text strong {
   display: inline-block;
   font-style: italic;
   margin-inline-end: 0.5rem;
+  transition: opacity var(--transition-fast);
+}
+.hashtags li:hover {
+  opacity: 1;
 }
 .hashtags li::before {
   content: "#";
+  opacity: 0.6;
 }
 
 dl {
@@ -561,11 +615,20 @@ dl dd {
   position: relative;
   display: block;
   vertical-align: middle;
-  background: hsla(0, 0%, 100%, 0.2);
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-  padding-block: 0.25rem;
-  padding-inline: 2rem 0.5rem;
+  padding-block: 0.5rem;
+  padding-inline: 2.25rem 0.75rem;
   letter-spacing: 0.5px;
+  transition: all var(--transition-normal);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+.social-links li a:hover {
+  background: rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 .social-links li img {
   position: absolute;
@@ -574,6 +637,26 @@ dl dd {
   transform: translateY(-50%);
   width: 21px;
   height: 21px;
+}
+
+/* Dark mode adjustments for social links */
+@media (prefers-color-scheme: dark) {
+  body:not([data-theme="light"]) .social-links li a {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+  body:not([data-theme="light"]) .social-links li a:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.25);
+  }
+}
+body[data-theme="dark"] .social-links li a {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+body[data-theme="dark"] .social-links li a:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
 }
 
 /* ==========================================================================
@@ -619,22 +702,24 @@ dl dd {
   inset-block-end: 2rem;
   inset-inline-end: 2rem;
   z-index: 1000;
-  width: 3rem;
-  height: 3rem;
+  width: 2.5rem;
+  height: 2.5rem;
   border-radius: 50%;
-  border: var(--border-width) solid var(--black);
+  border: 1px solid rgba(0, 0, 0, 0.15);
   background: var(--white);
   cursor: pointer;
   transition: all var(--transition-normal);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  opacity: 0.85;
 }
 
 .theme-toggle:hover {
-  transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transform: scale(1.05);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  opacity: 1;
 }
 
 .theme-toggle:active {
@@ -642,7 +727,7 @@ dl dd {
 }
 
 .theme-toggle__icon {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   transition: opacity var(--transition-fast), transform var(--transition-normal);
   position: absolute;
 }
@@ -660,7 +745,7 @@ dl dd {
 /* Dark mode styles for toggle */
 @media (prefers-color-scheme: dark) {
   .theme-toggle {
-    border-color: var(--lightgrey);
+    border-color: rgba(255, 255, 255, 0.2);
     background: var(--black);
   }
 
@@ -677,7 +762,7 @@ dl dd {
 
 /* Override styles when user manually sets theme */
 body[data-theme="light"] .theme-toggle {
-  border-color: var(--black);
+  border-color: rgba(0, 0, 0, 0.15);
   background: var(--white);
 }
 
@@ -692,7 +777,7 @@ body[data-theme="light"] .theme-toggle__icon--moon {
 }
 
 body[data-theme="dark"] .theme-toggle {
-  border-color: var(--lightgrey);
+  border-color: rgba(255, 255, 255, 0.2);
   background: var(--black);
 }
 
