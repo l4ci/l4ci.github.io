@@ -1,4 +1,4 @@
-# llms.txt - AI Agent Information for l4ci.github.io
+# llms.txt - AI Agent Information for volkerotto.net
 
 > Personal portfolio and CV of Volker Otto
 > CTO, Software Architect & Tech Enthusiast
@@ -54,8 +54,8 @@ Professional:
 
 Personal:
 - GitHub: https://github.com/l4ci
-- Mastodon: https://mastodon.social/@hellovolker
-- Instagram: https://www.instagram.com/hellovolker/
+- Mastodon: https://mastodon.social/@l4ci
+- Instagram: https://www.instagram.com/chirpysnail/
 
 ## Site Technology
 
