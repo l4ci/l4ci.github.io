@@ -119,9 +119,21 @@ a {
   border-color: transparent;
   transition: var(--transition-fast);
 }
-a:hover, a:focus {
+a:hover {
   border-color: var(--yellow);
+}
+a:focus {
+  border-color: var(--yellow);
+  outline: 2px solid var(--yellow);
+  outline-offset: 2px;
+}
+a:focus:not(:focus-visible) {
   outline: none;
+}
+a:focus-visible {
+  outline: 2px solid var(--yellow);
+  outline-offset: 2px;
+  border-color: var(--yellow);
 }
 a:active {
   border-color: var(--blue);
@@ -565,7 +577,7 @@ body[data-theme="dark"] .header .header-text strong {
 .hashtags {
   margin-block: 2rem;
   text-align: center;
-  opacity: 0.5;
+  opacity: 0.6;
   font-size: 0.875rem;
 }
 @media (min-width: 1000px) {
@@ -824,5 +836,48 @@ body[data-theme="dark"] .theme-toggle__icon--moon {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* Skip to Main Content Link */
+.skip-to-content {
+  position: absolute;
+  top: -100px;
+  left: 0;
+  background: var(--yellow);
+  color: var(--black);
+  padding: 0.75rem 1.5rem;
+  text-decoration: none;
+  font-weight: bold;
+  z-index: 10000;
+  border: 2px solid var(--black);
+  border-bottom: 3px solid var(--black);
+}
+.skip-to-content:focus {
+  top: 1rem;
+  left: 1rem;
+  outline: 3px solid var(--black);
+  outline-offset: 2px;
+}
+
+/* Enhanced Button Focus States */
+button:focus-visible,
+.theme-toggle:focus-visible {
+  outline: 3px solid var(--yellow);
+  outline-offset: 3px;
+}
+
+/* Enhanced interaction states for hashtags */
+.hashtags li:focus-within {
+  opacity: 1;
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  a:focus-visible {
+    outline-width: 3px;
+  }
+  .theme-toggle:focus-visible {
+    outline-width: 4px;
   }
 }
