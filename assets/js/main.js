@@ -48,10 +48,9 @@ const greetings = [
     const currentYear = new Date().getFullYear();
     const yearsOfExperience = currentYear - startYear;
 
-    const experienceElement = document.getElementById("years-of-experience");
-    if (experienceElement) {
-        experienceElement.textContent = yearsOfExperience;
-    }
+    document.querySelectorAll("#years-of-experience, #years-of-experience-ref").forEach(el => {
+        el.textContent = yearsOfExperience;
+    });
 })();
 
 /**
