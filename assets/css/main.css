@@ -691,6 +691,163 @@ body[data-theme="dark"] .social-links li a:hover {
 }
 
 /* ==========================================================================
+   CLIENT LOGOS GRID
+   ========================================================================== */
+
+.client-logos {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  margin-block: 2rem 0;
+  padding: 0;
+}
+
+@media (min-width: 600px) {
+  .client-logos {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1000px) {
+  .client-logos {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.client-logos__item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius);
+  padding: clamp(1rem, 2vw, 1.5rem);
+  min-height: 80px;
+  transition: all var(--transition-normal);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.client-logos__item:hover {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.client-logos__item:focus-within {
+  outline: 2px solid var(--yellow);
+  outline-offset: 2px;
+  border-color: var(--yellow);
+}
+
+.client-logos__link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border: none;
+  padding: 0;
+}
+
+.client-logos__link:focus {
+  outline: none;
+}
+
+.client-logos__image {
+  max-width: 100%;
+  max-height: 60px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  filter: grayscale(100%) opacity(0.7);
+  transition: filter var(--transition-normal);
+}
+
+.client-logos__item:hover .client-logos__image,
+.client-logos__item:focus-within .client-logos__image {
+  filter: grayscale(0%) opacity(1);
+}
+
+/* Placeholder Styling */
+.client-logos__placeholder {
+  font-size: clamp(0.875rem, 1.5vw, 1rem);
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--black);
+  opacity: 0.6;
+  text-align: center;
+  transition: opacity var(--transition-normal), color var(--transition-normal);
+}
+
+.client-logos__item--placeholder:hover .client-logos__placeholder,
+.client-logos__item--placeholder:focus-within .client-logos__placeholder {
+  opacity: 1;
+  color: var(--purple);
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+  body:not([data-theme="light"]) .client-logos__item {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  body:not([data-theme="light"]) .client-logos__item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+  body:not([data-theme="light"]) .client-logos__image {
+    filter: grayscale(100%) opacity(0.6) brightness(1.2);
+  }
+  body:not([data-theme="light"]) .client-logos__item:hover .client-logos__image,
+  body:not([data-theme="light"]) .client-logos__item:focus-within .client-logos__image {
+    filter: grayscale(0%) opacity(0.95) brightness(1);
+  }
+  body:not([data-theme="light"]) .client-logos__placeholder {
+    color: var(--lightgrey);
+    opacity: 0.5;
+  }
+  body:not([data-theme="light"]) .client-logos__item--placeholder:hover .client-logos__placeholder,
+  body:not([data-theme="light"]) .client-logos__item--placeholder:focus-within .client-logos__placeholder {
+    opacity: 0.9;
+    color: var(--yellow);
+  }
+}
+
+body[data-theme="dark"] .client-logos__item {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+body[data-theme="dark"] .client-logos__item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+body[data-theme="dark"] .client-logos__image {
+  filter: grayscale(100%) opacity(0.6) brightness(1.2);
+}
+body[data-theme="dark"] .client-logos__item:hover .client-logos__image,
+body[data-theme="dark"] .client-logos__item:focus-within .client-logos__image {
+  filter: grayscale(0%) opacity(0.95) brightness(1);
+}
+body[data-theme="dark"] .client-logos__placeholder {
+  color: var(--lightgrey);
+  opacity: 0.5;
+}
+body[data-theme="dark"] .client-logos__item--placeholder:hover .client-logos__placeholder,
+body[data-theme="dark"] .client-logos__item--placeholder:focus-within .client-logos__placeholder {
+  opacity: 0.9;
+  color: var(--yellow);
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .client-logos__item,
+  .client-logos__image {
+    transition: none;
+  }
+}
+
+/* ==========================================================================
    10. FOOTER
    ========================================================================== */
 
