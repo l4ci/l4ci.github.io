@@ -117,6 +117,26 @@ const greetings = [
 
 
 /**
+ * Logo slider: clone items for seamless infinite scroll
+ * Duplicates all track children so translateX(-50%) loops smoothly
+ */
+(function initLogoSlider() {
+    const track = document.querySelector(".client-logos__track");
+    if (!track) return;
+
+    const items = Array.from(track.children);
+    items.forEach(item => {
+        const clone = item.cloneNode(true);
+        clone.setAttribute("aria-hidden", "true");
+        const links = clone.querySelectorAll("a");
+        links.forEach(link => link.setAttribute("tabindex", "-1"));
+        const imgs = clone.querySelectorAll("img");
+        imgs.forEach(img => img.removeAttribute("alt"));
+        track.appendChild(clone);
+    });
+})();
+
+/**
  * CV Tabs functionality
  * Handles tab switching with keyboard navigation and ARIA attributes
  */
