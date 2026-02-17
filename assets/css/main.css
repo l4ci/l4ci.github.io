@@ -432,15 +432,49 @@ body[data-theme="dark"] .section__bg {
 /* Clients & Brands - Yellow to Blue gradient */
 .section__bg--clients {
   background: linear-gradient(120deg,
-    rgba(250, 215, 34, 0.16),
-    rgba(89, 195, 255, 0.16));
+    rgba(250, 215, 34, 0.06),
+    rgba(89, 195, 255, 0.06));
 }
 
 /* CV - Red to Purple gradient */
 .section__bg--cv {
   background: linear-gradient(120deg,
-    rgba(238, 89, 89, 0.16),
-    rgba(151, 89, 238, 0.16));
+    rgba(238, 89, 89, 0.06),
+    rgba(151, 89, 238, 0.06));
+}
+
+/* Frosted Glass Container with Gradient Border */
+#clients-brands .container,
+#cv .container {
+  position: relative;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: var(--border-radius);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+}
+
+#clients-brands .container::before,
+#cv .container::before {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border-radius: inherit;
+  padding: 5px;
+  background: linear-gradient(120deg,
+    rgb(250, 215, 34),
+    rgb(89, 195, 255));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  z-index: -1;
+}
+
+#cv .container::before {
+  background: linear-gradient(120deg,
+    rgb(238, 89, 89),
+    rgb(151, 89, 238));
 }
 
 /* Dark mode - more saturated colors */
@@ -462,13 +496,19 @@ body[data-theme="dark"] .section__bg {
   }
   body:not([data-theme="light"]) .section__bg--clients {
     background: linear-gradient(120deg,
-      rgba(250, 215, 34, 0.32),
-      rgba(89, 195, 255, 0.32));
+      rgba(250, 215, 34, 0.08),
+      rgba(89, 195, 255, 0.08));
   }
   body:not([data-theme="light"]) .section__bg--cv {
     background: linear-gradient(120deg,
-      rgba(238, 89, 89, 0.32),
-      rgba(151, 89, 238, 0.32));
+      rgba(238, 89, 89, 0.08),
+      rgba(151, 89, 238, 0.08));
+  }
+
+  body:not([data-theme="light"]) #clients-brands .container,
+  body:not([data-theme="light"]) #cv .container {
+    background: rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   }
 }
 body[data-theme="dark"] .section__bg--lightgrey {
@@ -488,13 +528,19 @@ body[data-theme="dark"] .section__bg--yellow {
 }
 body[data-theme="dark"] .section__bg--clients {
   background: linear-gradient(120deg,
-    rgba(250, 215, 34, 0.32),
-    rgba(89, 195, 255, 0.32));
+    rgba(250, 215, 34, 0.08),
+    rgba(89, 195, 255, 0.08));
 }
 body[data-theme="dark"] .section__bg--cv {
   background: linear-gradient(120deg,
-    rgba(238, 89, 89, 0.32),
-    rgba(151, 89, 238, 0.32));
+    rgba(238, 89, 89, 0.08),
+    rgba(151, 89, 238, 0.08));
+}
+
+body[data-theme="dark"] #clients-brands .container,
+body[data-theme="dark"] #cv .container {
+  background: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 .section__text {
