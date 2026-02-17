@@ -44,11 +44,17 @@ a,abbr,acronym,address,applet,article,aside,audio,b,big,blockquote,body,canvas,c
   --border-width: 2px;
   --border-radius: 8px;
 
-  /* Typography */
-  --fs-hero: 2.25rem;
-  --fs-lead: 1.375rem;
-  --fs: 1rem;
-  --fs-tiny: 0.875rem;
+  /* Typography - fluid scale */
+  --fs-hero: clamp(1.75rem, 1.25rem + 1.5vw, 2.5rem);
+  --fs-lead: clamp(1.125rem, 1rem + 0.5vw, 1.5rem);
+  --fs: clamp(0.9375rem, 0.875rem + 0.25vw, 1.0625rem);
+  --fs-tiny: clamp(0.8125rem, 0.75rem + 0.2vw, 0.9375rem);
+
+  /* Line-heights */
+  --lh-tight: 1.2;
+  --lh-snug: 1.35;
+  --lh-normal: 1.6;
+  --lh-relaxed: 1.75;
 
   /* Animations & Transitions */
   --transition-fast: 0.1s ease;
@@ -85,7 +91,7 @@ html {
 
 body {
   margin-inline: auto;
-  line-height: 1.5;
+  line-height: var(--lh-normal);
   font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   color: var(--black);
   background: #fff;
@@ -513,19 +519,24 @@ body[data-theme="dark"] .section:not(.footer) .container {
   z-index: 1;
 }
 .section__text p {
-  font-size: clamp(var(--fs), 1.5vw + 0.5rem, var(--fs-lead));
+  font-size: var(--fs-lead);
+  line-height: var(--lh-relaxed);
 }
 
 .section__subline {
   font-weight: bold;
   font-size: var(--fs-lead);
+  line-height: var(--lh-snug);
   text-align: center;
 }
 
 .section__label {
   display: block;
   font-weight: bold;
-  padding: 1rem 0;
+  font-size: var(--fs-hero);
+  line-height: var(--lh-tight);
+  padding: 0;
+  margin-block-end: clamp(1rem, 2vw, 1.5rem);
   text-align: center;
 }
 @media (min-width: 1000px) {
@@ -578,13 +589,15 @@ body[data-theme="dark"] .header .header-text strong {
   -webkit-text-fill-color: transparent;
   background-clip: text;
   text-fill-color: transparent;
-  font-size: clamp(4rem, 5vw + 2rem, 6rem);
+  font-size: clamp(3rem, 5vw + 1.5rem, 6rem);
   font-weight: bold;
   font-style: italic;
+  line-height: var(--lh-tight);
   animation: gradient 5s ease infinite;
 }
 .header p {
   font-size: clamp(var(--fs-lead), 2vw + 0.5rem, var(--fs-hero));
+  line-height: var(--lh-snug);
 }
 .header p a {
   border-color: var(--yellow);
@@ -594,12 +607,12 @@ body[data-theme="dark"] .header .header-text strong {
 }
 .header nav {
   position: relative;
-  font-size: var(--fz);
+  font-size: var(--fs);
   line-height: 2;
   z-index: 1;
 }
 .header nav p {
-  font-size: var(--fz);
+  font-size: var(--fs);
 }
 .header nav li {
   display: block;
