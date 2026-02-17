@@ -250,6 +250,22 @@ sup {
   transform-origin: 50% 50%;
   will-change: transform;
 }
+/* Increase stroke width on smaller screens to keep lines visible */
+@media (max-width: 800px) {
+  .lines-mask svg path {
+    stroke-width: 6 !important;
+  }
+}
+@media (max-width: 600px) {
+  .lines-mask svg path {
+    stroke-width: 8 !important;
+  }
+}
+@media (max-width: 400px) {
+  .lines-mask svg path {
+    stroke-width: 10 !important;
+  }
+}
 .lines-mask .p1 {
   animation: spin infinite var(--animation-spin-slow) linear;
 }
@@ -317,24 +333,27 @@ body[data-theme="dark"] .lines-mask.second-right path:not(.p2) {
 }
 .lines-mask.bottom {
   top: auto;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: -8rem;
+  left: -10%;
+  transform: none;
   max-width: 100%;
 }
 @media (min-width: 800px) {
   .lines-mask.bottom {
-    bottom: -3rem;
+    bottom: -10rem;
+    left: -15%;
   }
 }
 @media (min-width: 1000px) {
   .lines-mask.bottom {
-    bottom: -4rem;
+    bottom: -12rem;
+    left: -20%;
   }
 }
 @media (min-width: 1200px) {
   .lines-mask.bottom {
-    bottom: -5rem;
+    bottom: -15rem;
+    left: -25%;
   }
 }
 @media (prefers-color-scheme: dark) {
@@ -379,57 +398,57 @@ body[data-theme="dark"] .section__bg {
 /* Professional Focus - Option 3+4: Soft pastel with adaptive opacity */
 .section__bg--lightgrey {
   background: linear-gradient(120deg,
-    rgba(151, 89, 238, 0.16),
-    rgba(89, 195, 255, 0.16));
+    rgba(151, 89, 238, 0.22),
+    rgba(89, 195, 255, 0.22));
 }
 
 /* Personal Life - Option 3+4: Soft pastel with adaptive opacity */
 .section__bg--blue {
   z-index: -2;
   background: linear-gradient(120deg,
-    rgba(238, 89, 119, 0.16),
-    rgba(250, 215, 34, 0.16));
+    rgba(238, 89, 119, 0.22),
+    rgba(250, 215, 34, 0.22));
 }
 
 /* CV - Same linear gradient as others */
 .section__bg--yellow {
   background: linear-gradient(120deg,
-    rgba(89, 195, 255, 0.16),
-    rgba(151, 89, 238, 0.16));
+    rgba(89, 195, 255, 0.22),
+    rgba(151, 89, 238, 0.22));
 }
 
 /* Dark mode - more saturated colors */
 @media (prefers-color-scheme: dark) {
   body:not([data-theme="light"]) .section__bg--lightgrey {
     background: linear-gradient(120deg,
-      rgba(151, 89, 238, 0.26),
-      rgba(89, 195, 255, 0.26));
+      rgba(151, 89, 238, 0.32),
+      rgba(89, 195, 255, 0.32));
   }
   body:not([data-theme="light"]) .section__bg--blue {
     background: linear-gradient(120deg,
-      rgba(238, 89, 119, 0.26),
-      rgba(250, 215, 34, 0.26));
+      rgba(238, 89, 119, 0.32),
+      rgba(250, 215, 34, 0.32));
   }
   body:not([data-theme="light"]) .section__bg--yellow {
     background: linear-gradient(120deg,
-      rgba(89, 195, 255, 0.26),
-      rgba(151, 89, 238, 0.26));
+      rgba(89, 195, 255, 0.32),
+      rgba(151, 89, 238, 0.32));
   }
 }
 body[data-theme="dark"] .section__bg--lightgrey {
   background: linear-gradient(120deg,
-    rgba(151, 89, 238, 0.26),
-    rgba(89, 195, 255, 0.26));
+    rgba(151, 89, 238, 0.32),
+    rgba(89, 195, 255, 0.32));
 }
 body[data-theme="dark"] .section__bg--blue {
   background: linear-gradient(120deg,
-    rgba(238, 89, 119, 0.26),
-    rgba(250, 215, 34, 0.26));
+    rgba(238, 89, 119, 0.32),
+    rgba(250, 215, 34, 0.32));
 }
 body[data-theme="dark"] .section__bg--yellow {
   background: linear-gradient(120deg,
-    rgba(89, 195, 255, 0.26),
-    rgba(151, 89, 238, 0.26));
+    rgba(89, 195, 255, 0.32),
+    rgba(151, 89, 238, 0.32));
 }
 
 .section__text {
@@ -692,6 +711,7 @@ body[data-theme="dark"] .social-links li a:hover {
   border-radius: 50%;
   background: var(--red);
   margin-inline-end: 0.5rem;
+  vertical-align: middle;
   animation: pulse 2s ease-in-out infinite;
   will-change: transform, opacity;
 }
