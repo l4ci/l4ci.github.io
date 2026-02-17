@@ -443,8 +443,8 @@ body[data-theme="dark"] .section__bg {
     rgba(151, 89, 238, 0.06));
 }
 
-/* Frosted Glass Container with Gradient Border - All Sections */
-.section .container {
+/* Frosted Glass Container with Gradient Border - All Sections (except Footer) */
+.section:not(.footer) .container {
   position: relative;
   background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(12px);
@@ -453,10 +453,10 @@ body[data-theme="dark"] .section__bg {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
 }
 
-.section .container::before {
+.section:not(.footer) .container::before {
   content: '';
   position: absolute;
-  inset: -5px;
+  inset: 0;
   border-radius: inherit;
   padding: 5px;
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -522,7 +522,7 @@ body[data-theme="dark"] .section__bg {
       rgba(151, 89, 238, 0.08));
   }
 
-  body:not([data-theme="light"]) .section .container {
+  body:not([data-theme="light"]) .section:not(.footer) .container {
     background: rgba(0, 0, 0, 0.2);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   }
@@ -553,7 +553,7 @@ body[data-theme="dark"] .section__bg--cv {
     rgba(151, 89, 238, 0.08));
 }
 
-body[data-theme="dark"] .section .container {
+body[data-theme="dark"] .section:not(.footer) .container {
   background: rgba(0, 0, 0, 0.2);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
