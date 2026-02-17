@@ -443,9 +443,8 @@ body[data-theme="dark"] .section__bg {
     rgba(151, 89, 238, 0.06));
 }
 
-/* Frosted Glass Container with Gradient Border */
-#clients-brands .container,
-#cv .container {
+/* Frosted Glass Container with Gradient Border - All Sections */
+.section .container {
   position: relative;
   background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(12px);
@@ -454,16 +453,12 @@ body[data-theme="dark"] .section__bg {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
 }
 
-#clients-brands .container::before,
-#cv .container::before {
+.section .container::before {
   content: '';
   position: absolute;
   inset: -5px;
   border-radius: inherit;
   padding: 5px;
-  background: linear-gradient(120deg,
-    rgb(250, 215, 34),
-    rgb(89, 195, 255));
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -471,6 +466,28 @@ body[data-theme="dark"] .section__bg {
   z-index: -1;
 }
 
+/* Professional Focus - Purple to Blue gradient */
+#professional-focus .container::before {
+  background: linear-gradient(120deg,
+    rgb(151, 89, 238),
+    rgb(89, 195, 255));
+}
+
+/* Clients & Brands - Yellow to Blue gradient */
+#clients-brands .container::before {
+  background: linear-gradient(120deg,
+    rgb(250, 215, 34),
+    rgb(89, 195, 255));
+}
+
+/* Personal Life - Red to Yellow gradient */
+#personal-life .container::before {
+  background: linear-gradient(120deg,
+    rgb(238, 89, 119),
+    rgb(250, 215, 34));
+}
+
+/* CV - Red to Purple gradient */
 #cv .container::before {
   background: linear-gradient(120deg,
     rgb(238, 89, 89),
@@ -505,8 +522,7 @@ body[data-theme="dark"] .section__bg {
       rgba(151, 89, 238, 0.08));
   }
 
-  body:not([data-theme="light"]) #clients-brands .container,
-  body:not([data-theme="light"]) #cv .container {
+  body:not([data-theme="light"]) .section .container {
     background: rgba(0, 0, 0, 0.2);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   }
@@ -537,8 +553,7 @@ body[data-theme="dark"] .section__bg--cv {
     rgba(151, 89, 238, 0.08));
 }
 
-body[data-theme="dark"] #clients-brands .container,
-body[data-theme="dark"] #cv .container {
+body[data-theme="dark"] .section .container {
   background: rgba(0, 0, 0, 0.2);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
