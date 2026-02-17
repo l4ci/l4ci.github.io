@@ -1,12 +1,12 @@
 source:       .
 destination:  ./_site
-layouts:      ./_layouts
+layouts_dir:  ./_layouts
 keep_files:   ['.git','.svn']
 exclude:      ['.editorconfig','*.sublime-project','*.sublime-workspace','README.md','CNAME']
 timezone:     Europe/Berlin
 future:       true
 limit_posts:  0
-markdown:     redcarpet
+markdown:     kramdown
 
 name:         "Volker Otto"
 title:        "👋 hello @ volkerotto.net"
