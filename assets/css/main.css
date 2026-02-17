@@ -881,3 +881,74 @@ button:focus-visible,
     outline-width: 4px;
   }
 }
+
+/* ==========================================================================
+   13. CV TABS
+   ========================================================================== */
+
+.cv-tabs {
+  display: flex;
+  gap: 2rem;
+  margin-block-end: 2rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  body:not([data-theme="light"]) .cv-tabs {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+  }
+}
+body[data-theme="dark"] .cv-tabs {
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+.cv-tab {
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  color: inherit;
+  cursor: pointer;
+  padding-block: 0.75rem;
+  padding-inline: 0;
+  position: relative;
+  opacity: 0.5;
+  transition: opacity var(--transition-fast);
+}
+
+.cv-tab:hover {
+  opacity: 0.75;
+}
+
+.cv-tab--active {
+  opacity: 1;
+}
+
+.cv-tab--active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--yellow);
+}
+
+.cv-tab:focus-visible {
+  outline: 2px solid var(--yellow);
+  outline-offset: 4px;
+  opacity: 1;
+}
+
+.cv-panel {
+  display: none;
+}
+
+.cv-panel--active {
+  display: block;
+}
+
+.cv-panel[hidden] {
+  display: none;
+}

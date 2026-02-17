@@ -163,9 +163,36 @@ desc: Volker Otto – CTO, softwarearchitect & tech enthusiast. Focusing on digi
     <h2 class="section__label fade-in-delay-1">
       🎓 CV
     </h2>
-    <div class="section__text fade-in-delay-2">
-      <h3 class="section__subline">Work experience</h3>
 
+    <!-- Tab Navigation -->
+    <div class="cv-tabs fade-in-delay-2" role="tablist" aria-label="CV sections">
+      <button
+        role="tab"
+        aria-selected="true"
+        aria-controls="work-experience-panel"
+        id="work-experience-tab"
+        class="cv-tab cv-tab--active"
+        tabindex="0">
+        Work experience
+      </button>
+      <button
+        role="tab"
+        aria-selected="false"
+        aria-controls="education-panel"
+        id="education-tab"
+        class="cv-tab"
+        tabindex="-1">
+        Education
+      </button>
+    </div>
+
+    <!-- Work Experience Panel -->
+    <div
+      class="section__text fade-in-delay-2 cv-panel cv-panel--active"
+      role="tabpanel"
+      id="work-experience-panel"
+      aria-labelledby="work-experience-tab"
+      tabindex="0">
       <dl>
         <dt><strong><span class="pulse-dot"></span> Since 2018</strong></dt>
         <dd><strong class="current">👨‍💼 CTO @ <a href="https://digital-masters.de">Digital Masters</a></strong></dd>
@@ -182,9 +209,16 @@ desc: Volker Otto – CTO, softwarearchitect & tech enthusiast. Focusing on digi
         <dt>2010 - 2013</dt>
         <dd>👨‍💻 Web Developer @ <a href="https://schokoladenseite.net/">Schokoladenseite.net</a></dd>
       </dl>
+    </div>
 
-      <h3 class="section__subline">Education</h3>
-
+    <!-- Education Panel -->
+    <div
+      class="section__text fade-in-delay-2 cv-panel"
+      role="tabpanel"
+      id="education-panel"
+      aria-labelledby="education-tab"
+      tabindex="0"
+      hidden>
       <dl>
         <dt>2010 - 2015</dt>
         <dd>👨‍🎓 Web & Mediainformatics (B.Sc) @ FH Dortmund</dd>

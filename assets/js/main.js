@@ -116,3 +116,90 @@ const greetings = [
     });
 })();
 
+
+/**
+ * CV Tabs functionality
+ * Handles tab switching with keyboard navigation and ARIA attributes
+ */
+(function initCVTabs() {
+    const tablist = document.querySelector('[role="tablist"]');
+    if (!tablist) return;
+
+    const tabs = Array.from(tablist.querySelectorAll('[role="tab"]'));
+    const panels = Array.from(document.querySelectorAll('[role="tabpanel"]'));
+
+    /**
+     * Switch to a specific tab
+     * @param {HTMLElement} newTab - The tab to activate
+     */
+    function switchTab(newTab) {
+        // Deactivate all tabs and hide all panels
+        tabs.forEach(tab => {
+            tab.setAttribute('aria-selected', 'false');
+            tab.classList.remove('cv-tab--active');
+            tab.tabIndex = -1;
+        });
+
+        panels.forEach(panel => {
+            panel.classList.remove('cv-panel--active');
+            panel.setAttribute('hidden', '');
+        });
+
+        // Activate new tab and show corresponding panel
+        newTab.setAttribute('aria-selected', 'true');
+        newTab.classList.add('cv-tab--active');
+        newTab.tabIndex = 0;
+
+        const panelId = newTab.getAttribute('aria-controls');
+        const panel = document.getElementById(panelId);
+        if (panel) {
+            panel.classList.add('cv-panel--active');
+            panel.removeAttribute('hidden');
+        }
+    }
+
+    // Click handler
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            switchTab(tab);
+        });
+    });
+
+    // Keyboard navigation (Arrow keys)
+    tablist.addEventListener('keydown', (e) => {
+        const currentTab = document.activeElement;
+        const currentIndex = tabs.indexOf(currentTab);
+
+        let nextIndex;
+
+        switch (e.key) {
+            case 'ArrowRight':
+            case 'ArrowDown':
+                e.preventDefault();
+                nextIndex = (currentIndex + 1) % tabs.length;
+                tabs[nextIndex].focus();
+                switchTab(tabs[nextIndex]);
+                break;
+
+            case 'ArrowLeft':
+            case 'ArrowUp':
+                e.preventDefault();
+                nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+                tabs[nextIndex].focus();
+                switchTab(tabs[nextIndex]);
+                break;
+
+            case 'Home':
+                e.preventDefault();
+                tabs[0].focus();
+                switchTab(tabs[0]);
+                break;
+
+            case 'End':
+                e.preventDefault();
+                tabs[tabs.length - 1].focus();
+                switchTab(tabs[tabs.length - 1]);
+                break;
+        }
+    });
+})();
