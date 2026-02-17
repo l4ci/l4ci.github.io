@@ -41,7 +41,6 @@ a,abbr,acronym,address,applet,article,aside,audio,b,big,blockquote,body,canvas,c
   --black-50: rgba(58, 58, 58, 0.5);
 
   /* Layout */
-  --border-width: 2px;
   --border-radius: 8px;
 
   /* Typography - fluid scale */
@@ -55,6 +54,12 @@ a,abbr,acronym,address,applet,article,aside,audio,b,big,blockquote,body,canvas,c
   --lh-snug: 1.35;
   --lh-normal: 1.6;
   --lh-relaxed: 1.75;
+
+  /* Spacing scale */
+  --space-sm: clamp(0.75rem, 0.5rem + 0.75vw, 1.25rem);
+  --space-md: clamp(1.25rem, 1rem + 1vw, 2rem);
+  --space-lg: clamp(2rem, 1.5rem + 2vw, 3.5rem);
+  --space-xl: clamp(3rem, 2rem + 3vw, 5rem);
 
   /* Animations & Transitions */
   --transition-fast: 0.1s ease;
@@ -229,7 +234,7 @@ sup {
   position: relative;
   margin-inline: auto;
   max-width: 60rem;
-  padding: clamp(2rem, 3vw + 1rem, 5rem);
+  padding: var(--space-xl) var(--space-lg);
   z-index: 1;
 }
 .container-big {
@@ -237,15 +242,15 @@ sup {
 }
 
 .px {
-  padding-block: clamp(0.75rem, 1.5vw, 1rem);
+  padding-block: var(--space-sm);
 }
 
 .px-2 {
-  padding-block: clamp(1.25rem, 2vw, 2rem);
+  padding-block: var(--space-md);
 }
 
 .px-3 {
-  padding-block: clamp(2rem, 3vw, 3rem);
+  padding-block: var(--space-lg);
 }
 
 /* ==========================================================================
@@ -382,17 +387,13 @@ body[data-theme="dark"] .lines-mask.second-right path:not(.p2) {
 body[data-theme="dark"] .lines-mask.bottom path:not(.p2) {
   stroke: var(--lightgrey);
 }
-.cl--purple {
-  color: var(--purple);
-}
-
 /* ==========================================================================
    7. SECTIONS & CONTENT
    ========================================================================== */
 .section {
   position: relative;
   contain: layout style;
-  margin-block: clamp(0rem, 5vw, 5rem);
+  margin-block: var(--space-xl);
 }
 
 .section__bg {
@@ -523,20 +524,13 @@ body[data-theme="dark"] .section:not(.footer) .container {
   line-height: var(--lh-relaxed);
 }
 
-.section__subline {
-  font-weight: bold;
-  font-size: var(--fs-lead);
-  line-height: var(--lh-snug);
-  text-align: center;
-}
-
 .section__label {
   display: block;
   font-weight: bold;
   font-size: var(--fs-hero);
   line-height: var(--lh-tight);
   padding: 0;
-  margin-block-end: clamp(1rem, 2vw, 1.5rem);
+  margin-block-end: var(--space-md);
   text-align: center;
 }
 @media (min-width: 1000px) {
@@ -633,10 +627,10 @@ body[data-theme="dark"] .header .header-text strong {
    ========================================================================== */
 
 .hashtags {
-  margin-block: 2rem;
+  margin-block: var(--space-md);
   text-align: center;
   opacity: 0.6;
-  font-size: 0.875rem;
+  font-size: var(--fs-tiny);
 }
 @media (min-width: 1000px) {
   .hashtags {
@@ -659,7 +653,7 @@ body[data-theme="dark"] .header .header-text strong {
 
 dl {
   display: block;
-  margin-block: 1rem;
+  margin-block: var(--space-sm);
 }
 dl dt {
   display: block;
@@ -674,7 +668,7 @@ dl dt {
 }
 dl dd {
   display: block;
-  margin-block-end: 1rem;
+  margin-block-end: var(--space-sm);
 }
 @media (min-width: 600px) {
   dl dd {
@@ -686,9 +680,9 @@ dl dd {
 
 .social-links {
   display: block;
-  margin-block: 2rem 0;
+  margin-block: var(--space-md) 0;
   text-align: center;
-  font-size: 0.875rem;
+  font-size: var(--fs-tiny);
 }
 @media (min-width: 1000px) {
   .social-links {
@@ -754,7 +748,7 @@ body[data-theme="dark"] .social-links li a:hover {
 
 .client-logos {
   overflow: hidden;
-  margin-block: 2rem 0;
+  margin-block: var(--space-lg) var(--space-md);
   padding: 0;
   -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
   mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
@@ -781,8 +775,8 @@ body[data-theme="dark"] .social-links li a:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: clamp(120px, 15vw, 180px);
-  height: clamp(60px, 8vw, 90px);
+  width: clamp(150px, 18vw, 220px);
+  height: clamp(80px, 10vw, 110px);
   background: #fff;
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: var(--border-radius);
@@ -830,24 +824,6 @@ body[data-theme="dark"] .social-links li a:hover {
   filter: grayscale(0%) opacity(1);
 }
 
-/* Placeholder Styling */
-.client-logos__placeholder {
-  font-size: clamp(0.75rem, 1.2vw, 0.875rem);
-  font-weight: 700;
-  letter-spacing: 1px;
-  color: var(--black);
-  opacity: 0.6;
-  text-align: center;
-  white-space: nowrap;
-  transition: opacity var(--transition-normal), color var(--transition-normal);
-}
-
-.client-logos__item--placeholder:hover .client-logos__placeholder,
-.client-logos__item--placeholder:focus-within .client-logos__placeholder {
-  opacity: 1;
-  color: var(--purple);
-}
-
 /* Dark Mode */
 @media (prefers-color-scheme: dark) {
   body:not([data-theme="light"]) .client-logos__item {
@@ -865,15 +841,6 @@ body[data-theme="dark"] .social-links li a:hover {
   body:not([data-theme="light"]) .client-logos__item:focus-within .client-logos__image {
     filter: grayscale(0%) opacity(0.95) brightness(1);
   }
-  body:not([data-theme="light"]) .client-logos__placeholder {
-    color: var(--lightgrey);
-    opacity: 0.5;
-  }
-  body:not([data-theme="light"]) .client-logos__item--placeholder:hover .client-logos__placeholder,
-  body:not([data-theme="light"]) .client-logos__item--placeholder:focus-within .client-logos__placeholder {
-    opacity: 0.9;
-    color: var(--yellow);
-  }
 }
 
 body[data-theme="dark"] .client-logos__item {
@@ -890,15 +857,6 @@ body[data-theme="dark"] .client-logos__image {
 body[data-theme="dark"] .client-logos__item:hover .client-logos__image,
 body[data-theme="dark"] .client-logos__item:focus-within .client-logos__image {
   filter: grayscale(0%) opacity(0.95) brightness(1);
-}
-body[data-theme="dark"] .client-logos__placeholder {
-  color: var(--lightgrey);
-  opacity: 0.5;
-}
-body[data-theme="dark"] .client-logos__item--placeholder:hover .client-logos__placeholder,
-body[data-theme="dark"] .client-logos__item--placeholder:focus-within .client-logos__placeholder {
-  opacity: 0.9;
-  color: var(--yellow);
 }
 
 /* Reduced Motion */
@@ -940,6 +898,7 @@ body[data-theme="dark"] .client-logos__item--placeholder:focus-within .client-lo
 /* Pulse Dot - Animated indicator for current position */
 .pulse-dot {
   display: inline-block;
+  margin-top: -3px;
   width: 8px;
   height: 8px;
   border-radius: 50%;
@@ -1119,9 +1078,15 @@ button:focus-visible,
   body:not([data-theme="light"]) .cv-tabs {
     border-bottom-color: rgba(255, 255, 255, 0.1);
   }
+  body:not([data-theme="light"]) .cv-tab--active::after {
+    background: var(--lightgrey);
+  }
 }
 body[data-theme="dark"] .cv-tabs {
   border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+body[data-theme="dark"] .cv-tab--active::after {
+  background: var(--lightgrey);
 }
 
 .cv-tab {
@@ -1154,7 +1119,7 @@ body[data-theme="dark"] .cv-tabs {
   left: 0;
   right: 0;
   height: 2px;
-  background: var(--yellow);
+  background: var(--black);
 }
 
 .cv-tab:focus-visible {
@@ -1169,8 +1134,4 @@ body[data-theme="dark"] .cv-tabs {
 
 .cv-panel--active {
   display: block;
-}
-
-.cv-panel[hidden] {
-  display: none;
 }
