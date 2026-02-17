@@ -391,7 +391,7 @@ body[data-theme="dark"] .lines-mask.bottom path:not(.p2) {
 
 .section__bg {
   position: absolute;
-  inset: 0.5rem;
+  inset: 0;
   z-index: -1;
   opacity: 0.85;
   transition: all var(--transition-normal);
@@ -405,157 +405,107 @@ body[data-theme="dark"] .lines-mask.bottom path:not(.p2) {
 body[data-theme="dark"] .section__bg {
   opacity: 0.9;
 }
-/* Custom combination: Soft pastels with adaptive opacity */
+/* Section gradient flow: each section flows into the next
+   Index:   Purple → Blue → Yellow → Pink → Purple
+   Imprint: Purple → Blue → Yellow → Pink */
 
-/* Professional Focus - Option 3+4: Soft pastel with adaptive opacity */
-.section__bg--lightgrey {
-  background: linear-gradient(120deg,
-    rgba(151, 89, 238, 0.22),
-    rgba(89, 195, 255, 0.22));
+/* 1. Professional Focus / Impressum: Purple → Blue */
+#professional-focus .section__bg,
+#impressum .section__bg {
+  background: linear-gradient(180deg,
+    rgba(151, 89, 238, 0.28),
+    rgba(89, 195, 255, 0.28));
 }
 
-/* Personal Life - Option 3+4: Soft pastel with adaptive opacity */
-.section__bg--blue {
+/* 2. Clients & Brands / Cookie Notice: Blue → Yellow */
+#clients-brands .section__bg,
+#cookie-notice .section__bg {
+  background: linear-gradient(180deg,
+    rgba(89, 195, 255, 0.28),
+    rgba(250, 215, 34, 0.28));
+}
+
+/* 3. Personal Life / Disclaimer: Yellow → Pink */
+#personal-life .section__bg,
+#disclaimer .section__bg {
   z-index: -2;
-  background: linear-gradient(120deg,
-    rgba(238, 89, 119, 0.22),
-    rgba(250, 215, 34, 0.22));
+  background: linear-gradient(180deg,
+    rgba(250, 215, 34, 0.28),
+    rgba(238, 89, 119, 0.28));
 }
 
-/* CV - Same linear gradient as others */
-.section__bg--yellow {
-  background: linear-gradient(120deg,
-    rgba(89, 195, 255, 0.22),
-    rgba(151, 89, 238, 0.22));
+/* 4. CV: Pink → Purple (closes the loop) */
+#cv .section__bg {
+  background: linear-gradient(180deg,
+    rgba(238, 89, 119, 0.28),
+    rgba(151, 89, 238, 0.28));
 }
 
-/* Clients & Brands - Yellow to Blue gradient */
-.section__bg--clients {
-  background: linear-gradient(120deg,
-    rgba(250, 215, 34, 0.06),
-    rgba(89, 195, 255, 0.06));
-}
-
-/* CV - Red to Purple gradient */
-.section__bg--cv {
-  background: linear-gradient(120deg,
-    rgba(238, 89, 89, 0.06),
-    rgba(151, 89, 238, 0.06));
-}
-
-/* Frosted Glass Container with Gradient Border - All Sections (except Footer) */
+/* Frosted Glass Container - All Sections (except Footer) */
 .section:not(.footer) .container {
   position: relative;
   background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-radius: var(--border-radius);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-}
-
-.section:not(.footer) .container::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  padding: 5px;
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask-composite: exclude;
-  z-index: -1;
-}
-
-/* Professional Focus - Purple to Blue gradient */
-#professional-focus .container::before {
-  background: linear-gradient(120deg,
-    rgb(151, 89, 238),
-    rgb(89, 195, 255));
-}
-
-/* Clients & Brands - Yellow to Blue gradient */
-#clients-brands .container::before {
-  background: linear-gradient(120deg,
-    rgb(250, 215, 34),
-    rgb(89, 195, 255));
-}
-
-/* Personal Life - Red to Yellow gradient */
-#personal-life .container::before {
-  background: linear-gradient(120deg,
-    rgb(238, 89, 119),
-    rgb(250, 215, 34));
-}
-
-/* CV - Red to Purple gradient */
-#cv .container::before {
-  background: linear-gradient(120deg,
-    rgb(238, 89, 89),
-    rgb(151, 89, 238));
 }
 
 /* Dark mode - more saturated colors */
 @media (prefers-color-scheme: dark) {
-  body:not([data-theme="light"]) .section__bg--lightgrey {
-    background: linear-gradient(120deg,
-      rgba(151, 89, 238, 0.32),
-      rgba(89, 195, 255, 0.32));
+  body:not([data-theme="light"]) #professional-focus .section__bg,
+  body:not([data-theme="light"]) #impressum .section__bg {
+    background: linear-gradient(180deg,
+      rgba(151, 89, 238, 0.4),
+      rgba(89, 195, 255, 0.4));
   }
-  body:not([data-theme="light"]) .section__bg--blue {
-    background: linear-gradient(120deg,
-      rgba(238, 89, 119, 0.32),
-      rgba(250, 215, 34, 0.32));
+  body:not([data-theme="light"]) #clients-brands .section__bg,
+  body:not([data-theme="light"]) #cookie-notice .section__bg {
+    background: linear-gradient(180deg,
+      rgba(89, 195, 255, 0.4),
+      rgba(250, 215, 34, 0.4));
   }
-  body:not([data-theme="light"]) .section__bg--yellow {
-    background: linear-gradient(120deg,
-      rgba(89, 195, 255, 0.32),
-      rgba(151, 89, 238, 0.32));
+  body:not([data-theme="light"]) #personal-life .section__bg,
+  body:not([data-theme="light"]) #disclaimer .section__bg {
+    background: linear-gradient(180deg,
+      rgba(250, 215, 34, 0.4),
+      rgba(238, 89, 119, 0.4));
   }
-  body:not([data-theme="light"]) .section__bg--clients {
-    background: linear-gradient(120deg,
-      rgba(250, 215, 34, 0.08),
-      rgba(89, 195, 255, 0.08));
-  }
-  body:not([data-theme="light"]) .section__bg--cv {
-    background: linear-gradient(120deg,
-      rgba(238, 89, 89, 0.08),
-      rgba(151, 89, 238, 0.08));
+  body:not([data-theme="light"]) #cv .section__bg {
+    background: linear-gradient(180deg,
+      rgba(238, 89, 119, 0.4),
+      rgba(151, 89, 238, 0.4));
   }
 
   body:not([data-theme="light"]) .section:not(.footer) .container {
     background: rgba(0, 0, 0, 0.2);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   }
 }
-body[data-theme="dark"] .section__bg--lightgrey {
-  background: linear-gradient(120deg,
-    rgba(151, 89, 238, 0.32),
-    rgba(89, 195, 255, 0.32));
+body[data-theme="dark"] #professional-focus .section__bg,
+body[data-theme="dark"] #impressum .section__bg {
+  background: linear-gradient(180deg,
+    rgba(151, 89, 238, 0.4),
+    rgba(89, 195, 255, 0.4));
 }
-body[data-theme="dark"] .section__bg--blue {
-  background: linear-gradient(120deg,
-    rgba(238, 89, 119, 0.32),
-    rgba(250, 215, 34, 0.32));
+body[data-theme="dark"] #clients-brands .section__bg,
+body[data-theme="dark"] #cookie-notice .section__bg {
+  background: linear-gradient(180deg,
+    rgba(89, 195, 255, 0.4),
+    rgba(250, 215, 34, 0.4));
 }
-body[data-theme="dark"] .section__bg--yellow {
-  background: linear-gradient(120deg,
-    rgba(89, 195, 255, 0.32),
-    rgba(151, 89, 238, 0.32));
+body[data-theme="dark"] #personal-life .section__bg,
+body[data-theme="dark"] #disclaimer .section__bg {
+  background: linear-gradient(180deg,
+    rgba(250, 215, 34, 0.4),
+    rgba(238, 89, 119, 0.4));
 }
-body[data-theme="dark"] .section__bg--clients {
-  background: linear-gradient(120deg,
-    rgba(250, 215, 34, 0.08),
-    rgba(89, 195, 255, 0.08));
-}
-body[data-theme="dark"] .section__bg--cv {
-  background: linear-gradient(120deg,
-    rgba(238, 89, 89, 0.08),
-    rgba(151, 89, 238, 0.08));
+body[data-theme="dark"] #cv .section__bg {
+  background: linear-gradient(180deg,
+    rgba(238, 89, 119, 0.4),
+    rgba(151, 89, 238, 0.4));
 }
 
 body[data-theme="dark"] .section:not(.footer) .container {
   background: rgba(0, 0, 0, 0.2);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 .section__text {
@@ -786,47 +736,51 @@ body[data-theme="dark"] .social-links li a:hover {
 }
 
 /* ==========================================================================
-   CLIENT LOGOS GRID
+   CLIENT LOGOS SLIDER
    ========================================================================== */
 
 .client-logos {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: clamp(1.5rem, 3vw, 2.5rem);
+  overflow: hidden;
   margin-block: 2rem 0;
   padding: 0;
+  -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
 }
 
-@media (min-width: 600px) {
-  .client-logos {
-    grid-template-columns: repeat(3, 1fr);
-  }
+.client-logos__track {
+  display: flex;
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  width: max-content;
+  animation: logo-scroll 45s linear infinite;
 }
 
-@media (min-width: 1000px) {
-  .client-logos {
-    grid-template-columns: repeat(4, 1fr);
-  }
+.client-logos__track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes logo-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
 .client-logos__item {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.6);
+  width: clamp(120px, 15vw, 180px);
+  height: clamp(60px, 8vw, 90px);
+  background: #fff;
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: var(--border-radius);
-  padding: clamp(1rem, 2vw, 1.5rem);
-  min-height: 80px;
+  padding: clamp(0.75rem, 1.5vw, 1.25rem);
+  overflow: hidden;
   transition: all var(--transition-normal);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .client-logos__item:hover {
-  background: rgba(255, 255, 255, 0.9);
+  background: #fff;
   border-color: rgba(0, 0, 0, 0.15);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .client-logos__item:focus-within {
@@ -851,7 +805,6 @@ body[data-theme="dark"] .social-links li a:hover {
 
 .client-logos__image {
   max-width: 100%;
-  max-height: 60px;
   width: auto;
   height: auto;
   object-fit: contain;
@@ -866,12 +819,13 @@ body[data-theme="dark"] .social-links li a:hover {
 
 /* Placeholder Styling */
 .client-logos__placeholder {
-  font-size: clamp(0.875rem, 1.5vw, 1rem);
+  font-size: clamp(0.75rem, 1.2vw, 0.875rem);
   font-weight: 700;
   letter-spacing: 1px;
   color: var(--black);
   opacity: 0.6;
   text-align: center;
+  white-space: nowrap;
   transition: opacity var(--transition-normal), color var(--transition-normal);
 }
 
@@ -936,6 +890,9 @@ body[data-theme="dark"] .client-logos__item--placeholder:focus-within .client-lo
 
 /* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
+  .client-logos__track {
+    animation-duration: 0s;
+  }
   .client-logos__item,
   .client-logos__image {
     transition: none;
