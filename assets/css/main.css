@@ -1,8 +1,35 @@
+/* ==========================================================================
+   volkerotto.net - Main Stylesheet
+   ========================================================================== */
+
+/**
+ * TABLE OF CONTENTS
+ *
+ * 1. CSS Reset
+ * 2. CSS Custom Properties
+ * 3. Base Styles
+ * 4. Animations
+ * 5. Layout & Structure
+ * 6. Decorative Elements
+ * 7. Sections & Content
+ * 8. Header
+ * 9. Typography & Lists
+ * 10. Footer
+ * 11. Utilities
+ * 12. Accessibility
+ */
+
+/* ==========================================================================
+   1. CSS RESET
+   ========================================================================== */
 /* CSS Reset: http://meyerweb.com/eric/tools/css/reset/ | v2.0 | 20110126 | License: none (public domain) */
 a,abbr,acronym,address,applet,article,aside,audio,b,big,blockquote,body,canvas,caption,center,cite,code,dd,del,details,dfn,div,dl,dt,em,embed,fieldset,figcaption,figure,footer,form,h1,h2,h3,h4,h5,h6,header,hgroup,html,i,iframe,img,ins,kbd,label,legend,li,mark,menu,nav,object,ol,output,p,pre,q,ruby,s,samp,section,small,span,strike,strong,sub,summary,sup,table,tbody,td,tfoot,th,thead,time,tr,tt,u,ul,var,video{margin:0;padding:0;border:0;font-size:100%;font:inherit;vertical-align:baseline}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:after,blockquote:before,q:after,q:before{content:'';content:none}table{border-collapse:collapse;border-spacing:0}
 
-/* Main.css: Real CSS starts here */
+/* ==========================================================================
+   2. CSS CUSTOM PROPERTIES
+   ========================================================================== */
 :root {
+  /* Colors */
   --yellow: #fad722;
   --blue: #59c3ff;
   --purple: #9759ee;
@@ -12,17 +39,40 @@ a,abbr,acronym,address,applet,article,aside,audio,b,big,blockquote,body,canvas,c
   --grey: #afafaf;
   --black: #3a3a3a;
   --black-50: rgba(58, 58, 58, 0.5);
-  --border-width: 2px;
+
+  /* Layout */
   --border-radius: 8px;
-  --fs-hero: 2.25rem;
-  --fs-lead: 1.375rem;
-  --fs: 1rem;
-  --fs-tiny: 0.875rem;
+
+  /* Typography - fluid scale */
+  --fs-hero: clamp(1.75rem, 1.25rem + 1.5vw, 2.5rem);
+  --fs-lead: clamp(1.125rem, 1rem + 0.5vw, 1.5rem);
+  --fs: clamp(0.9375rem, 0.875rem + 0.25vw, 1.0625rem);
+  --fs-tiny: clamp(0.8125rem, 0.75rem + 0.2vw, 0.9375rem);
+
+  /* Line-heights */
+  --lh-tight: 1.2;
+  --lh-snug: 1.35;
+  --lh-normal: 1.6;
+  --lh-relaxed: 1.75;
+
+  /* Spacing scale */
+  --space-sm: clamp(0.75rem, 0.5rem + 0.75vw, 1.25rem);
+  --space-md: clamp(1.25rem, 1rem + 1vw, 2rem);
+  --space-lg: clamp(2rem, 1.5rem + 2vw, 3.5rem);
+  --space-xl: clamp(3rem, 2rem + 3vw, 5rem);
+
+  /* Animations & Transitions */
+  --transition-fast: 0.1s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.4s ease;
+  --animation-spin-slow: 120s;
+  --animation-spin-medium: 80s;
+  --animation-spin-fast: 220s;
 }
 
-/**
- * BASE
- */
+/* ==========================================================================
+   3. BASE STYLES
+   ========================================================================== */
 *,
 *:before,
 *:after {
@@ -38,31 +88,39 @@ html {
   font-size: calc(15px + 0.390625vw);
 }
 
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 body {
-  margin: 0 auto;
-  line-height: 1.5;
+  margin-inline: auto;
+  line-height: var(--lh-normal);
   font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   color: var(--black);
+  background: #fff;
+  transition: background-color var(--transition-normal), color var(--transition-normal);
 }
-body.dark {
-  background: #111;
-  color: var(--lightgrey);
-}
+
+/* Dark mode - system preference */
 @media (prefers-color-scheme: dark) {
-  body {
+  body:not([data-theme="light"]) {
     background: #111;
     color: var(--lightgrey);
   }
 }
-body.light {
+
+/* Light mode - manual override */
+body[data-theme="light"] {
   background: #fff;
   color: var(--black);
 }
-@media (prefers-color-scheme: light) {
-  body {
-    background: #fff;
-    color: var(--black);
-  }
+
+/* Dark mode - manual override */
+body[data-theme="dark"] {
+  background: #111;
+  color: var(--lightgrey);
 }
 
 a {
@@ -70,11 +128,23 @@ a {
   color: inherit;
   border-bottom: 3px solid;
   border-color: transparent;
-  transition: 0.1s ease;
+  transition: var(--transition-fast);
 }
-a:hover, a:focus {
+a:hover {
   border-color: var(--yellow);
+}
+a:focus {
+  border-color: var(--yellow);
+  outline: 2px solid var(--yellow);
+  outline-offset: 2px;
+}
+a:focus:not(:focus-visible) {
   outline: none;
+}
+a:focus-visible {
+  outline: 2px solid var(--yellow);
+  outline-offset: 2px;
+  border-color: var(--yellow);
 }
 a:active {
   border-color: var(--blue);
@@ -97,9 +167,9 @@ sup {
   white-space: nowrap;
 }
 
-/**
- * ANIMATIONS
- */
+/* ==========================================================================
+   4. ANIMATIONS
+   ========================================================================== */
 @keyframes spin {
   from {
     transform: rotate(0deg);
@@ -119,71 +189,73 @@ sup {
     background-position: 0% 50%;
   }
 }
-/**
- * Structure
- */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.1);
+  }
+}
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Fade-in animation classes */
+.fade-in {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+.fade-in-delay-1 {
+  animation: fadeInUp 0.6s ease-out 0.1s forwards;
+  opacity: 0;
+}
+.fade-in-delay-2 {
+  animation: fadeInUp 0.6s ease-out 0.2s forwards;
+  opacity: 0;
+}
+.fade-in-delay-3 {
+  animation: fadeInUp 0.6s ease-out 0.3s forwards;
+  opacity: 0;
+}
+
+/* ==========================================================================
+   5. LAYOUT & STRUCTURE
+   ========================================================================== */
 .container {
   position: relative;
-  margin-left: auto;
-  margin-right: auto;
+  margin-inline: auto;
   max-width: 60rem;
-  padding: 2rem;
+  padding: var(--space-xl) var(--space-lg);
   z-index: 1;
-}
-@media (min-width: 800px) {
-  .container {
-    padding: 2.5rem;
-  }
-}
-@media (min-width: 1000px) {
-  .container {
-    padding: 3rem;
-  }
-}
-@media (min-width: 1200px) {
-  .container {
-    padding: 4rem;
-  }
-}
-@media (min-width: 1400px) {
-  .container {
-    padding: 5rem;
-  }
 }
 .container-big {
   max-width: 74rem;
 }
 
 .px {
-  padding-top: 0.75rem;
-  padding-bottom: 0.75rem;
+  padding-block: var(--space-sm);
 }
-@media (min-width: 1000px) {
-  .px {
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-  }
-}
+
 .px-2 {
-  padding-top: 1.25rem;
-  padding-bottom: 1.25rem;
+  padding-block: var(--space-md);
 }
-@media (min-width: 1000px) {
-  .px-2 {
-    padding-top: 2rem;
-    padding-bottom: 2rem;
-  }
-}
+
 .px-3 {
-  padding-top: 2rem;
-  padding-bottom: 2rem;
+  padding-block: var(--space-lg);
 }
-@media (min-width: 1000px) {
-  .px-3 {
-    padding-top: 3rem;
-    padding-bottom: 3rem;
-  }
-}
+
+/* ==========================================================================
+   6. DECORATIVE ELEMENTS - Animated SVG Backgrounds
+   ========================================================================== */
 
 .lines-mask {
   position: absolute;
@@ -199,18 +271,35 @@ sup {
 }
 .lines-mask svg path {
   transform-origin: 50% 50%;
+  will-change: transform;
+}
+/* Increase stroke width on smaller screens to keep lines visible */
+@media (max-width: 800px) {
+  .lines-mask svg path {
+    stroke-width: 6 !important;
+  }
+}
+@media (max-width: 600px) {
+  .lines-mask svg path {
+    stroke-width: 8 !important;
+  }
+}
+@media (max-width: 400px) {
+  .lines-mask svg path {
+    stroke-width: 10 !important;
+  }
 }
 .lines-mask .p1 {
-  animation: spin infinite 120s linear;
+  animation: spin infinite var(--animation-spin-slow) linear;
 }
 .lines-mask .p2 {
-  animation: spin infinite 220s linear;
+  animation: spin infinite var(--animation-spin-fast) linear;
 }
 .lines-mask .p3 {
-  animation: spin infinite 80s linear;
+  animation: spin infinite var(--animation-spin-medium) linear;
 }
 .lines-mask .p4 {
-  animation: spin infinite 80s linear reverse;
+  animation: spin infinite var(--animation-spin-medium) linear reverse;
 }
 .lines-mask.first-right {
   top: 0;
@@ -230,24 +319,24 @@ sup {
     top: -40%;
   }
 }
-.dark .lines-mask.first-right path:not(.p3) {
-  stroke: var(--lightgrey);
-}
 @media (prefers-color-scheme: dark) {
-  .lines-mask.first-right path:not(.p3) {
+  body:not([data-theme="light"]) .lines-mask.first-right path:not(.p3) {
     stroke: var(--lightgrey);
   }
+}
+body[data-theme="dark"] .lines-mask.first-right path:not(.p3) {
+  stroke: var(--lightgrey);
 }
 .lines-mask.first-left {
   top: 55vh;
 }
-.dark .lines-mask.first-left path:not(.p2) {
-  stroke: var(--lightgrey);
-}
 @media (prefers-color-scheme: dark) {
-  .lines-mask.first-left path:not(.p2) {
+  body:not([data-theme="light"]) .lines-mask.first-left path:not(.p2) {
     stroke: var(--lightgrey);
   }
+}
+body[data-theme="dark"] .lines-mask.first-left path:not(.p2) {
+  stroke: var(--lightgrey);
 }
 .lines-mask.second-right {
   top: 120vh;
@@ -257,101 +346,173 @@ sup {
     top: 150vh;
   }
 }
-.dark .lines-mask.second-right path:not(.p2) {
-  stroke: var(--lightgrey);
-}
 @media (prefers-color-scheme: dark) {
-  .lines-mask.second-right path:not(.p2) {
+  body:not([data-theme="light"]) .lines-mask.second-right path:not(.p2) {
     stroke: var(--lightgrey);
   }
 }
+body[data-theme="dark"] .lines-mask.second-right path:not(.p2) {
+  stroke: var(--lightgrey);
+}
 .lines-mask.bottom {
   top: auto;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: -8rem;
+  left: -10%;
+  transform: none;
   max-width: 100%;
 }
 @media (min-width: 800px) {
   .lines-mask.bottom {
-    bottom: -3rem;
+    bottom: -10rem;
+    left: -15%;
   }
 }
 @media (min-width: 1000px) {
   .lines-mask.bottom {
-    bottom: -4rem;
+    bottom: -12rem;
+    left: -20%;
   }
 }
 @media (min-width: 1200px) {
   .lines-mask.bottom {
-    bottom: -5rem;
+    bottom: -15rem;
+    left: -25%;
   }
 }
-.dark .lines-mask.bottom path:not(.p2) {
-  stroke: var(--lightgrey);
-}
 @media (prefers-color-scheme: dark) {
-  .lines-mask.bottom path:not(.p2) {
+  body:not([data-theme="light"]) .lines-mask.bottom path:not(.p2) {
     stroke: var(--lightgrey);
   }
 }
-.cl--purple {
-  color: var(--purple);
+body[data-theme="dark"] .lines-mask.bottom path:not(.p2) {
+  stroke: var(--lightgrey);
 }
-
-/**
- * SECTIONS
- */
+/* ==========================================================================
+   7. SECTIONS & CONTENT
+   ========================================================================== */
 .section {
   position: relative;
-}
-@media (min-width: 800px) {
-  .section {
-    margin-top: 3rem;
-    margin-bottom: 3rem;
-  }
-}
-@media (min-width: 1000px) {
-  .section {
-    margin-top: 4rem;
-    margin-bottom: 4rem;
-  }
-}
-@media (min-width: 1200px) {
-  .section {
-    margin-top: 5rem;
-    margin-bottom: 5rem;
-  }
+  contain: layout style;
+  margin-block: var(--space-xl);
 }
 
 .section__bg {
   position: absolute;
-  top: 0.5rem;
-  left: 0.5rem;
-  bottom: 0.5rem;
-  right: 0.5rem;
+  inset: 0;
   z-index: -1;
   opacity: 0.85;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
   border-radius: var(--border-radius);
 }
-body.dark .section__bg {
-  opacity: 0.9;
-}
 @media (prefers-color-scheme: dark) {
-  .section__bg {
+  body:not([data-theme="light"]) .section__bg {
     opacity: 0.9;
   }
 }
-.section__bg--lightgrey {
-  background: linear-gradient(100deg, var(--purple), var(--blue));
+body[data-theme="dark"] .section__bg {
+  opacity: 0.9;
 }
-.section__bg--blue {
+/* Section gradient flow: each section flows into the next
+   Index:   Purple → Blue → Yellow → Pink → Purple
+   Imprint: Purple → Blue → Yellow → Pink */
+
+/* 1. Professional Focus / Impressum: Purple → Blue */
+#professional-focus .section__bg,
+#impressum .section__bg {
+  background: linear-gradient(180deg,
+    rgba(151, 89, 238, 0.28),
+    rgba(89, 195, 255, 0.28));
+}
+
+/* 2. Clients & Brands / Cookie Notice: Blue → Yellow */
+#clients-brands .section__bg,
+#cookie-notice .section__bg {
+  background: linear-gradient(180deg,
+    rgba(89, 195, 255, 0.28),
+    rgba(250, 215, 34, 0.28));
+}
+
+/* 3. Personal Life / Disclaimer: Yellow → Pink */
+#personal-life .section__bg,
+#disclaimer .section__bg {
   z-index: -2;
-  background: linear-gradient(100deg, var(--red), var(--yellow));
+  background: linear-gradient(180deg,
+    rgba(250, 215, 34, 0.28),
+    rgba(238, 89, 119, 0.28));
 }
-.section__bg--yellow {
-  background: linear-gradient(100deg, var(--blue), var(--purple));
+
+/* 4. CV: Pink → Purple (closes the loop) */
+#cv .section__bg {
+  background: linear-gradient(180deg,
+    rgba(238, 89, 119, 0.28),
+    rgba(151, 89, 238, 0.28));
+}
+
+/* Frosted Glass Container - All Sections (except Footer) */
+.section:not(.footer) .container {
+  position: relative;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: var(--border-radius);
+}
+
+/* Dark mode - more saturated colors */
+@media (prefers-color-scheme: dark) {
+  body:not([data-theme="light"]) #professional-focus .section__bg,
+  body:not([data-theme="light"]) #impressum .section__bg {
+    background: linear-gradient(180deg,
+      rgba(151, 89, 238, 0.4),
+      rgba(89, 195, 255, 0.4));
+  }
+  body:not([data-theme="light"]) #clients-brands .section__bg,
+  body:not([data-theme="light"]) #cookie-notice .section__bg {
+    background: linear-gradient(180deg,
+      rgba(89, 195, 255, 0.4),
+      rgba(250, 215, 34, 0.4));
+  }
+  body:not([data-theme="light"]) #personal-life .section__bg,
+  body:not([data-theme="light"]) #disclaimer .section__bg {
+    background: linear-gradient(180deg,
+      rgba(250, 215, 34, 0.4),
+      rgba(238, 89, 119, 0.4));
+  }
+  body:not([data-theme="light"]) #cv .section__bg {
+    background: linear-gradient(180deg,
+      rgba(238, 89, 119, 0.4),
+      rgba(151, 89, 238, 0.4));
+  }
+
+  body:not([data-theme="light"]) .section:not(.footer) .container {
+    background: rgba(0, 0, 0, 0.2);
+  }
+}
+body[data-theme="dark"] #professional-focus .section__bg,
+body[data-theme="dark"] #impressum .section__bg {
+  background: linear-gradient(180deg,
+    rgba(151, 89, 238, 0.4),
+    rgba(89, 195, 255, 0.4));
+}
+body[data-theme="dark"] #clients-brands .section__bg,
+body[data-theme="dark"] #cookie-notice .section__bg {
+  background: linear-gradient(180deg,
+    rgba(89, 195, 255, 0.4),
+    rgba(250, 215, 34, 0.4));
+}
+body[data-theme="dark"] #personal-life .section__bg,
+body[data-theme="dark"] #disclaimer .section__bg {
+  background: linear-gradient(180deg,
+    rgba(250, 215, 34, 0.4),
+    rgba(238, 89, 119, 0.4));
+}
+body[data-theme="dark"] #cv .section__bg {
+  background: linear-gradient(180deg,
+    rgba(238, 89, 119, 0.4),
+    rgba(151, 89, 238, 0.4));
+}
+
+body[data-theme="dark"] .section:not(.footer) .container {
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .section__text {
@@ -359,40 +520,32 @@ body.dark .section__bg {
   z-index: 1;
 }
 .section__text p {
-  font-size: var(--fs);
-}
-@media (min-width: 800px) {
-  .section__text p {
-    font-size: var(--fs-lead);
-  }
-}
-
-.section__subline {
-  font-weight: bold;
   font-size: var(--fs-lead);
-  text-align: center;
+  line-height: var(--lh-relaxed);
 }
 
 .section__label {
   display: block;
   font-weight: bold;
-  padding: 1rem 0;
+  font-size: var(--fs-hero);
+  line-height: var(--lh-tight);
+  padding: 0;
+  margin-block-end: var(--space-md);
   text-align: center;
 }
 @media (min-width: 1000px) {
   .section__label {
-    text-align: left;
+    text-align: start;
   }
 }
 
+/* ==========================================================================
+   8. HEADER
+   ========================================================================== */
+
 .header {
   position: relative;
-  padding: 10vh 0 5vh;
-}
-@media (min-width: 1000px) {
-  .header {
-    padding: 20vh 0 5vh;
-  }
+  padding-block: clamp(10vh, 15vw, 20vh) 5vh;
 }
 .header .header-text {
   position: relative;
@@ -401,40 +554,26 @@ body.dark .section__bg {
 .header .header-text p {
   color: var(--black-50);
 }
-body.dark .header .header-text p {
-  color: var(--grey);
-}
+
 @media (prefers-color-scheme: dark) {
-  .header .header-text p {
+  body:not([data-theme="light"]) .header .header-text p {
     color: var(--grey);
   }
 }
-body.light .header .header-text p {
-  color: var(--black-50);
-}
-@media (prefers-color-scheme: light) {
-  .header .header-text p {
-    color: var(--black-50);
-  }
+body[data-theme="dark"] .header .header-text p {
+  color: var(--grey);
 }
 .header .header-text strong {
   color: var(--black);
 }
-body.dark .header .header-text strong {
-  color: var(--lightgrey);
-}
+
 @media (prefers-color-scheme: dark) {
-  .header .header-text strong {
+  body:not([data-theme="light"]) .header .header-text strong {
     color: var(--lightgrey);
   }
 }
-body.light .header .header-text strong {
-  color: var(--black);
-}
-@media (prefers-color-scheme: light) {
-  .header .header-text strong {
-    color: var(--black);
-  }
+body[data-theme="dark"] .header .header-text strong {
+  color: var(--lightgrey);
 }
 .header .headline {
   display: inline-block;
@@ -444,33 +583,15 @@ body.light .header .header-text strong {
   -webkit-text-fill-color: transparent;
   background-clip: text;
   text-fill-color: transparent;
-  font-size: 4rem;
+  font-size: clamp(3rem, 5vw + 1.5rem, 6rem);
   font-weight: bold;
   font-style: italic;
+  line-height: var(--lh-tight);
   animation: gradient 5s ease infinite;
 }
-@media (min-width: 800px) {
-  .header .headline {
-    font-size: 4.5rem;
-  }
-}
-@media (min-width: 1000px) {
-  .header .headline {
-    font-size: 5rem;
-  }
-}
-@media (min-width: 1200px) {
-  .header .headline {
-    font-size: 6rem;
-  }
-}
 .header p {
-  font-size: var(--fs-lead);
-}
-@media (min-width: 1000px) {
-  .header p {
-    font-size: var(--fs-hero);
-  }
+  font-size: clamp(var(--fs-lead), 2vw + 0.5rem, var(--fs-hero));
+  line-height: var(--lh-snug);
 }
 .header p a {
   border-color: var(--yellow);
@@ -480,12 +601,12 @@ body.light .header .header-text strong {
 }
 .header nav {
   position: relative;
-  font-size: var(--fz);
+  font-size: var(--fs);
   line-height: 2;
   z-index: 1;
 }
 .header nav p {
-  font-size: var(--fz);
+  font-size: var(--fs);
 }
 .header nav li {
   display: block;
@@ -494,39 +615,45 @@ body.light .header .header-text strong {
 @media (min-width: 500px) {
   .header nav li {
     display: inline-block;
-    margin-right: 0.5rem;
-  }
-}
-@media (min-width: 1000px) {
-  .header nav li {
-    margin-right: 1rem;
+    margin-inline-end: clamp(0.5rem, 1vw, 1rem);
   }
 }
 .header nav a {
   font-weight: bold;
 }
 
+/* ==========================================================================
+   9. TYPOGRAPHY & LISTS
+   ========================================================================== */
+
 .hashtags {
-  margin: 2rem 0;
+  margin-block: var(--space-md);
   text-align: center;
+  opacity: 0.6;
+  font-size: var(--fs-tiny);
 }
 @media (min-width: 1000px) {
   .hashtags {
-    text-align: left;
+    text-align: start;
   }
 }
 .hashtags li {
   display: inline-block;
   font-style: italic;
-  margin-right: 0.5rem;
+  margin-inline-end: 0.5rem;
+  transition: opacity var(--transition-fast);
+}
+.hashtags li:hover {
+  opacity: 1;
 }
 .hashtags li::before {
   content: "#";
+  opacity: 0.6;
 }
 
 dl {
   display: block;
-  margin: 1rem 0;
+  margin-block: var(--space-sm);
 }
 dl dt {
   display: block;
@@ -536,64 +663,203 @@ dl dt {
   dl dt {
     display: inline-block;
     width: 30%;
-    text-align: right;
+    text-align: end;
   }
 }
 dl dd {
   display: block;
-  margin-bottom: 1rem;
+  margin-block-end: var(--space-sm);
 }
 @media (min-width: 600px) {
   dl dd {
     display: inline-block;
     width: 60%;
-    margin-left: 5%;
+    margin-inline-start: 5%;
   }
 }
 
 .social-links {
   display: block;
-  margin: 2rem 0 0;
+  margin-block: var(--space-md) 0;
   text-align: center;
-  font-size: 0.875rem;
+  font-size: var(--fs-tiny);
 }
 @media (min-width: 1000px) {
   .social-links {
-    text-align: left;
+    text-align: start;
   }
 }
 .social-links li {
   display: inline-block;
-  margin-right: 0.5rem;
-  margin-bottom: 0.25rem;
-}
-@media (min-width: 800px) {
-  .social-links li {
-    margin-right: 1rem;
-  }
+  margin-inline-end: clamp(0.5rem, 1vw, 1rem);
+  margin-block-end: 0.25rem;
 }
 .social-links li a {
   position: relative;
   display: block;
   vertical-align: middle;
-  background: hsla(0, 0%, 100%, 0.2);
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-  padding: 0.25rem 0.5rem 0.25rem 2rem;
+  padding-block: 0.5rem;
+  padding-inline: 2.25rem 0.75rem;
   letter-spacing: 0.5px;
+  transition: all var(--transition-normal);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+.social-links li a:hover {
+  background: rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 .social-links li img {
   position: absolute;
-  top: 50%;
-  left: 0.5rem;
+  inset-block-start: 50%;
+  inset-inline-start: 0.5rem;
   transform: translateY(-50%);
   width: 21px;
   height: 21px;
 }
 
+/* Dark mode adjustments for social links */
+@media (prefers-color-scheme: dark) {
+  body:not([data-theme="light"]) .social-links li a {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+  body:not([data-theme="light"]) .social-links li a:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.25);
+  }
+}
+body[data-theme="dark"] .social-links li a {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+body[data-theme="dark"] .social-links li a:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* ==========================================================================
+   CLIENT LOGOS SLIDER
+   ========================================================================== */
+
+.client-logos {
+  overflow: hidden;
+  margin-block: var(--space-lg) var(--space-md);
+  padding: 0;
+  -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+}
+
+.client-logos__track {
+  display: flex;
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  width: max-content;
+  animation: logo-scroll 45s linear infinite;
+}
+
+.client-logos__track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes logo-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.client-logos__item {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(150px, 18vw, 220px);
+  height: clamp(80px, 10vw, 110px);
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius);
+  padding: clamp(0.75rem, 1.5vw, 1.25rem);
+  overflow: hidden;
+  transition: all var(--transition-normal);
+}
+
+.client-logos__item:hover {
+  background: #fff;
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+.client-logos__item:focus-within {
+  outline: 2px solid var(--yellow);
+  outline-offset: 2px;
+  border-color: var(--yellow);
+}
+
+.client-logos__link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border: none;
+  padding: 0;
+}
+
+.client-logos__link:focus {
+  outline: none;
+}
+
+.client-logos__image {
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  filter: grayscale(0%) opacity(1);
+  transition: filter var(--transition-normal);
+}
+
+.client-logos__item:hover .client-logos__image,
+.client-logos__item:focus-within .client-logos__image {
+  filter: grayscale(100%) opacity(0.7);
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+  body:not([data-theme="light"]) .client-logos__item {
+    opacity: 0.75;
+  }
+  body:not([data-theme="light"]) .client-logos__item:hover {
+    opacity: 0.5;
+  }
+}
+
+body[data-theme="dark"] .client-logos__item {
+  opacity: 0.75;
+}
+body[data-theme="dark"] .client-logos__item:hover {
+  opacity: 0.5;
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .client-logos__track {
+    animation-duration: 0s;
+  }
+  .client-logos__item,
+  .client-logos__image {
+    transition: none;
+  }
+}
+
+/* ==========================================================================
+   10. FOOTER
+   ========================================================================== */
+
 .footer {
   position: relative;
   text-align: center;
-  margin-bottom: 0;
+  margin-block-end: 0;
 }
 
 .footer a {
@@ -605,4 +871,249 @@ dl dd {
 
 .footer a:hover, .footer a:focus, .footer a:active {
   opacity: 1;
+}
+
+/* ==========================================================================
+   11. UTILITIES
+   ========================================================================== */
+
+/* Pulse Dot - Animated indicator for current position */
+.pulse-dot {
+  display: inline-block;
+  margin-top: -3px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--red);
+  margin-inline-end: 0.5rem;
+  vertical-align: middle;
+  animation: pulse 2s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+  position: fixed;
+  inset-block-end: 2rem;
+  inset-inline-end: 2rem;
+  z-index: 1000;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  background: var(--white);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  opacity: 0.85;
+}
+
+.theme-toggle:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  opacity: 1;
+}
+
+.theme-toggle:active {
+  transform: scale(0.95);
+}
+
+.theme-toggle__icon {
+  font-size: 1.25rem;
+  transition: opacity var(--transition-fast), transform var(--transition-normal);
+  position: absolute;
+}
+
+.theme-toggle__icon--sun {
+  opacity: 0;
+  transform: rotate(-90deg) scale(0);
+}
+
+.theme-toggle__icon--moon {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+/* Dark mode styles for toggle */
+@media (prefers-color-scheme: dark) {
+  .theme-toggle {
+    border-color: rgba(255, 255, 255, 0.2);
+    background: var(--black);
+  }
+
+  .theme-toggle__icon--sun {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+
+  .theme-toggle__icon--moon {
+    opacity: 0;
+    transform: rotate(90deg) scale(0);
+  }
+}
+
+/* Override styles when user manually sets theme */
+body[data-theme="light"] .theme-toggle {
+  border-color: rgba(0, 0, 0, 0.15);
+  background: var(--white);
+}
+
+body[data-theme="light"] .theme-toggle__icon--sun {
+  opacity: 0;
+  transform: rotate(-90deg) scale(0);
+}
+
+body[data-theme="light"] .theme-toggle__icon--moon {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+body[data-theme="dark"] .theme-toggle {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: var(--black);
+}
+
+body[data-theme="dark"] .theme-toggle__icon--sun {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+body[data-theme="dark"] .theme-toggle__icon--moon {
+  opacity: 0;
+  transform: rotate(90deg) scale(0);
+}
+
+/* ==========================================================================
+   12. ACCESSIBILITY
+   ========================================================================== */
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Skip to Main Content Link */
+.skip-to-content {
+  position: absolute;
+  top: -100px;
+  left: 0;
+  background: var(--yellow);
+  color: var(--black);
+  padding: 0.75rem 1.5rem;
+  text-decoration: none;
+  font-weight: bold;
+  z-index: 10000;
+  border: 2px solid var(--black);
+  border-bottom: 3px solid var(--black);
+}
+.skip-to-content:focus {
+  top: 1rem;
+  left: 1rem;
+  outline: 3px solid var(--black);
+  outline-offset: 2px;
+}
+
+/* Enhanced Button Focus States */
+button:focus-visible,
+.theme-toggle:focus-visible {
+  outline: 3px solid var(--yellow);
+  outline-offset: 3px;
+}
+
+/* Enhanced interaction states for hashtags */
+.hashtags li:focus-within {
+  opacity: 1;
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  a:focus-visible {
+    outline-width: 3px;
+  }
+  .theme-toggle:focus-visible {
+    outline-width: 4px;
+  }
+}
+
+/* ==========================================================================
+   13. CV TABS
+   ========================================================================== */
+
+.cv-tabs {
+  display: flex;
+  gap: 2rem;
+  margin-block-end: 2rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  body:not([data-theme="light"]) .cv-tabs {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+  }
+  body:not([data-theme="light"]) .cv-tab--active::after {
+    background: var(--lightgrey);
+  }
+}
+body[data-theme="dark"] .cv-tabs {
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+body[data-theme="dark"] .cv-tab--active::after {
+  background: var(--lightgrey);
+}
+
+.cv-tab {
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  color: inherit;
+  cursor: pointer;
+  padding-block: 0.75rem;
+  padding-inline: 0;
+  position: relative;
+  opacity: 0.5;
+  transition: opacity var(--transition-fast);
+}
+
+.cv-tab:hover {
+  opacity: 0.75;
+}
+
+.cv-tab--active {
+  opacity: 1;
+}
+
+.cv-tab--active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--black);
+}
+
+.cv-tab:focus-visible {
+  outline: 2px solid var(--yellow);
+  outline-offset: 4px;
+  opacity: 1;
+}
+
+.cv-panel {
+  display: none;
+}
+
+.cv-panel--active {
+  display: block;
 }

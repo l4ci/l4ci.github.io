@@ -2,10 +2,18 @@
 # The humans responsible & technology colophon
 
 # TEAM
-    Volker Otto -- Web Architect -- @hellovolker
+    Volker Otto -- CTO & Software Architect -- @hellovolker
+    Location: Hamburg, Germany
 
 
 # TECHNOLOGY COLOPHON
 
-    CSS3, HTML5, SASS, JS
-    Github, Jekyll
+    Standards: HTML5, CSS3, Semantic Web
+    Components: Jekyll, Liquid Templates, GitHub Pages
+    Tools: Ruby 3.3, Git, LiveReload
+    Fonts: System Fonts (Native)
+
+# SITE
+    Language: English / Deutsch
+    Doctype: HTML5
+    IDE: Visual Studio Code + Claude Code

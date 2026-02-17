@@ -7,19 +7,20 @@ desc: Volker Otto – CTO, softwarearchitect & tech enthusiast. Focusing on digi
 <header class="header">
   <div class="container container-big">
     <div class="header-text">
-      <h1 class="headline" id="hello">hello</h1>
-      <p>My name is <strong>Volker Otto</strong> and as a <strong>web industry professional</strong> with over
-        <script>document.write(new Date().getFullYear() - 2008)</script> years of experience, I’m currently serving as
+      <h1 class="headline fade-in" id="hello">hello</h1>
+      <p class="fade-in-delay-1">My name is <strong>Volker Otto</strong> and as a <strong>web industry professional</strong> with over
+        <span id="years-of-experience">18</span> years of experience, I'm currently serving as
         the <strong class="no-br"><a href="https://digital-masters.de">CTO @ Digital Masters</a></strong>, where I lead
         the development of cutting-edge <strong>e-commerce</strong> and <strong>platform solutions</strong> for our
         clients.
       </p>
     </div>
 
-    <nav class="px-2">
+    <nav class="px-2 fade-in-delay-2" role="navigation" aria-label="Page sections">
       <p class="px">Continue reading about my …</p>
       <ul>
         <li>💪 <a href="#professional-focus">Professional Focus</a></li>
+        <li>🤝 <a href="#clients-brands">Clients & Brands</a></li>
         <li>👨‍👩‍👧 <a href="#personal-life">Personal Life</a></li>
         <li>🎓 <a href="#cv">CV</a></li>
       </ul>
@@ -91,13 +92,14 @@ desc: Volker Otto – CTO, softwarearchitect & tech enthusiast. Focusing on digi
   </svg>
 </div>
 
+<main id="main-content">
 <section class="section" id="professional-focus">
   <div class="container">
-    <h2 class="section__label">
+    <h2 class="section__label fade-in-delay-1">
       💪 Professional Focus
     </h2>
 
-    <div class="section__text">
+    <div class="section__text fade-in-delay-2">
       <p>My focus is always on ensuring <strong>scalability</strong>, streamlining <strong>digital processes</strong>
         and taking a <strong>customer-centric</strong> approach. I am also committed to <strong>driving growth</strong>
         and <strong>continuous improvement</strong> within our agency, as we strive to make our mark in the industry.
@@ -106,33 +108,152 @@ desc: Volker Otto – CTO, softwarearchitect & tech enthusiast. Focusing on digi
 
     <ul class="hashtags">
       <li>management</li>
-      <li>teamlead</li>
+      <li>ai</li>
       <li>ux</li>
-      <li>ui</li>
       <li>digital</li>
       <li>process</li>
-      <li>technology</li>
       <li>performance</li>
       <li>digitalnative</li>
     </ul>
 
-    <nav class="social-links">
+    <nav class="social-links" aria-label="Professional contact links">
       <ul>
-        <li><a href="https://www.linkedin.com/in/hellovolker/"><img src="https://volkerotto.net/assets/img/linkedin.png" alt="" loading="lazy"> LinkedIn</a></li>
-        <li><a href="mailto:volker.otto@digital-masters.de"><img src="https://volkerotto.net/assets/img/email.png" alt="" loading="lazy"> E-Mail</a></li>
+        <li><a href="https://www.linkedin.com/in/hellovolker/"><img src="/assets/img/linkedin.png" alt="LinkedIn icon" loading="lazy"> LinkedIn</a></li>
+        <li><a href="mailto:volker.otto@digital-masters.de"><img src="/assets/img/email.png" alt="Email icon" loading="lazy"> E-Mail</a></li>
       </ul>
     </nav>
-    <div class="section__bg section__bg--lightgrey"></div>
+    <div class="section__bg"></div>
+  </div>
+</section>
+
+<section class="section" id="clients-brands">
+  <div class="container">
+    <h2 class="section__label fade-in-delay-1">
+      🤝 Clients & Brands
+    </h2>
+
+    <div class="section__text fade-in-delay-2">
+      <p>Over <span id="years-of-experience-ref">18</span> years, I've had the privilege of collaborating with
+        <strong>diverse brands</strong> across multiple industries—from <strong>automotive</strong> and
+        <strong>publishing</strong> to <strong>finance</strong> and <strong>e-commerce</strong>. Each
+        partnership has been an opportunity to deliver <strong>innovative solutions</strong> that drive
+        <strong>measurable results</strong> and create lasting impact.
+      </p>
+    </div>
+
+    <div class="client-logos fade-in-delay-3" aria-label="Client and brand logos">
+      <div class="client-logos__track">
+
+        <div class="client-logos__item">
+          <a href="https://www.yamaha.com" class="client-logos__link" target="_blank" rel="noopener noreferrer" aria-label="Visit Yamaha website">
+            <img src="/assets/img/clients/yamaha.webp" alt="Yamaha logo" class="client-logos__image" loading="lazy">
+          </a>
+        </div>
+
+        <div class="client-logos__item">
+          <a href="https://shop.spiegel.de" class="client-logos__link" target="_blank" rel="noopener noreferrer" aria-label="Visit Spiegel shop website">
+            <img src="/assets/img/clients/der-spiegel.png" alt="Der Spiegel logo" class="client-logos__image" loading="lazy">
+          </a>
+        </div>
+
+        <div class="client-logos__item">
+          <a href="https://tech-europe.org" class="client-logos__link" target="_blank" rel="noopener noreferrer" aria-label="Visit Handelsblatt website">
+            <img src="/assets/img/clients/tech-by-handelsblatt.png" alt="Handelsblatt Tech logo" class="client-logos__image" loading="lazy">
+          </a>
+        </div>
+
+        <div class="client-logos__item">
+          <a href="https://www.panini.de" class="client-logos__link" target="_blank" rel="noopener noreferrer" aria-label="Visit Panini website">
+            <img src="/assets/img/clients/panini.svg" alt="Panini logo" class="client-logos__image" loading="lazy">
+          </a>
+        </div>
+
+        <div class="client-logos__item">
+          <a href="https://www.webgo.de" class="client-logos__link" target="_blank" rel="noopener noreferrer" aria-label="Visit Webgo website">
+            <img src="/assets/img/clients/webgo.webp" alt="Webgo logo" class="client-logos__image" loading="lazy">
+          </a>
+        </div>
+
+        <div class="client-logos__item">
+          <a href="https://www.kita-awo-hamburg.de" class="client-logos__link" target="_blank" rel="noopener noreferrer" aria-label="Visit AWO Hamburg website">
+            <img src="/assets/img/clients/awo.webp" alt="AWO logo" class="client-logos__image" loading="lazy">
+          </a>
+        </div>
+
+        <div class="client-logos__item">
+          <a href="https://about.lyreco.de" class="client-logos__link" target="_blank" rel="noopener noreferrer" aria-label="Visit Lyreco website">
+            <img src="/assets/img/clients/lyreco.png" alt="Lyreco logo" class="client-logos__image" loading="lazy">
+          </a>
+        </div>
+
+        <div class="client-logos__item">
+          <a href="https://www.fidlock.com" class="client-logos__link" target="_blank" rel="noopener noreferrer" aria-label="Visit Fidlock website">
+            <img src="/assets/img/clients/fidlock.webp" alt="Fidlock logo" class="client-logos__image" loading="lazy">
+          </a>
+        </div>
+
+        <div class="client-logos__item">
+          <a href="https://www.prowin.de" class="client-logos__link" target="_blank" rel="noopener noreferrer" aria-label="Visit Prowin website">
+            <img src="/assets/img/clients/prowin.svg" alt="Prowin logo" class="client-logos__image" loading="lazy">
+          </a>
+        </div>
+
+        <div class="client-logos__item">
+          <a href="https://www.crif.com" class="client-logos__link" target="_blank" rel="noopener noreferrer" aria-label="Visit CRIF website">
+            <img src="/assets/img/clients/crif.webp" alt="CRIF logo" class="client-logos__image" loading="lazy">
+          </a>
+        </div>
+
+        <div class="client-logos__item">
+          <a href="https://www.bree.com" class="client-logos__link" target="_blank" rel="noopener noreferrer" aria-label="Visit Bree website">
+            <img src="/assets/img/clients/bree.avif" alt="Bree logo" class="client-logos__image" loading="lazy">
+          </a>
+        </div>
+
+        <div class="client-logos__item">
+          <a href="https://www.lavolta.de" class="client-logos__link" target="_blank" rel="noopener noreferrer" aria-label="Visit Lavolta website">
+            <img src="/assets/img/clients/lavolta.avif" alt="Lavolta logo" class="client-logos__image" loading="lazy">
+          </a>
+        </div>
+
+        <div class="client-logos__item">
+          <a href="https://www.bestar-steel.com" class="client-logos__link" target="_blank" rel="noopener noreferrer" aria-label="Visit Bestar Steel website">
+            <img src="/assets/img/clients/bestar.png" alt="Bestar Steel logo" class="client-logos__image" loading="lazy">
+          </a>
+        </div>
+
+        <div class="client-logos__item">
+          <a href="https://www.carnival-maritime.com/" class="client-logos__link" target="_blank" rel="noopener noreferrer" aria-label="Visit Carnival Maritime website">
+            <img src="/assets/img/clients/carnival-maritim.webp" alt="Carnival Maritime logo" class="client-logos__image" loading="lazy">
+          </a>
+        </div>
+
+        <div class="client-logos__item">
+          <a href="https://my-egret.com/de/" class="client-logos__link" target="_blank" rel="noopener noreferrer" aria-label="Visit Egret website">
+            <img src="/assets/img/clients/egret.svg" alt="Egret logo" class="client-logos__image" loading="lazy">
+          </a>
+        </div>
+
+        <div class="client-logos__item">
+          <a href="https://ohl.de/" class="client-logos__link" target="_blank" rel="noopener noreferrer" aria-label="Visit OHL website">
+            <img src="/assets/img/clients/ohl.webp" alt="OHL logo" class="client-logos__image" loading="lazy">
+          </a>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="section__bg"></div>
   </div>
 </section>
 
 <section class="section" id="personal-life">
   <div class="container">
-    <h2 class="section__label">
+    <h2 class="section__label fade-in-delay-1">
       👨‍👩‍👧 Personal Life
     </h2>
 
-    <div class="section__text">
+    <div class="section__text fade-in-delay-2">
 
       <p>Happily married and proud dad to our wonderful daughter and son. We live in the charming town of
         <strong>Norderstedt</strong>, which is located close to Hamburg in 🇩🇪. Spending quality time with my loved
@@ -143,70 +264,105 @@ desc: Volker Otto – CTO, softwarearchitect & tech enthusiast. Focusing on digi
     <ul class="hashtags">
       <li>husband</li>
       <li>father</li>
-      <li>hamburg</li>
-      <li>gaming</li>
+      <li>geek</li>
+      <li>gamer</li>
     </ul>
 
-    <nav class="social-links">
+    <nav class="social-links" aria-label="Personal social media links">
       <ul>
-        <li><a href="https://mastodon.social/@l4ci" rel="me"><img src="https://volkerotto.net/assets/img/mastodon.png" alt="@l4ci@mastodon.social" loading="lazy"> Mastodon</a></li>
-        <li><a href="https://www.instagram.com/chirpysnail/"><img src="https://volkerotto.net/assets/img/instagram.png" alt="" loading="lazy"> Instagram</a></li>
-        <li><a href="https://steamcommunity.com/id/l4ci/"><img src="https://volkerotto.net/assets/img/steam.png" alt="" loading="lazy"> Steam</a></li>
-        <li><a href="https://www.chess.com/member/l4ci"><img src="https://volkerotto.net/assets/img/chess.png" alt="" loading="lazy"> Chess</a></li>
+        <li><a href="https://mastodon.social/@l4ci" rel="me"><img src="/assets/img/mastodon.png" alt="Mastodon icon" loading="lazy"> Mastodon</a></li>
+        <li><a href="https://www.instagram.com/chirpysnail/"><img src="/assets/img/instagram.png" alt="Instagram icon" loading="lazy"> Instagram</a></li>
+        <li><a href="https://steamcommunity.com/id/l4ci/"><img src="/assets/img/steam.png" alt="Steam icon" loading="lazy"> Steam</a></li>
+        <li><a href="https://www.chess.com/member/l4ci"><img src="/assets/img/chess.png" alt="Chess.com icon" loading="lazy"> Chess</a></li>
       </ul>
     </nav>
-    <div class="section__bg section__bg--blue"></div>
+    <div class="section__bg"></div>
   </div>
 </section>
 
 <section class="section" id="cv">
   <div class="container">
-    <h2 class="section__label">
+    <h2 class="section__label fade-in-delay-1">
       🎓 CV
     </h2>
-    <div class="section__text">
-      <h3 class="section__subline">Work experience</h3>
 
+    <!-- Tab Navigation -->
+    <div class="cv-tabs fade-in-delay-2" role="tablist" aria-label="CV sections">
+      <button
+        role="tab"
+        aria-selected="true"
+        aria-controls="work-experience-panel"
+        id="work-experience-tab"
+        class="cv-tab cv-tab--active"
+        tabindex="0">
+        Work experience
+      </button>
+      <button
+        role="tab"
+        aria-selected="false"
+        aria-controls="education-panel"
+        id="education-tab"
+        class="cv-tab"
+        tabindex="-1">
+        Education
+      </button>
+    </div>
+
+    <!-- Work Experience Panel -->
+    <div
+      class="section__text fade-in-delay-2 cv-panel cv-panel--active"
+      role="tabpanel"
+      id="work-experience-panel"
+      aria-labelledby="work-experience-tab"
+      tabindex="0">
       <dl>
         <dt><strong><span class="pulse-dot"></span> Since 2018</strong></dt>
-        <dd><strong class="current">CTO @ <a href="https://digital-masters.de">Digital Masters</a></strong></dd>
+        <dd><strong class="current">👨‍💼 CTO @ <a href="https://digital-masters.de">Digital Masters</a></strong></dd>
 
         <dt>2017 - 2018</dt>
-        <dd>Lead Web Business Architect @ <a href="https://digital-masters.de">Digital Masters</a></dd>
+        <dd>💼 Lead Web Business Architect @ <a href="https://digital-masters.de">Digital Masters</a></dd>
 
         <dt>2013 - 2017</dt>
-        <dd>Senior Frontend Developer @ <a href="https://schokoladenseite.net/">Schokoladenseite.net</a></dd>
+        <dd>🎨 Senior Frontend Developer @ <a href="https://schokoladenseite.net/">Schokoladenseite.net</a></dd>
 
         <dt>2012 - 2018</dt>
-        <dd>Web Architect @ Freelance</dd>
+        <dd>👷‍♂️ Web Architect @ Freelance</dd>
 
         <dt>2010 - 2013</dt>
-        <dd>Web Developer @ <a href="https://schokoladenseite.net/">Schokoladenseite.net</a></dd>
-      </dl>
-
-      <h3 class="section__subline">Education</h3>
-
-      <dl>
-        <dt>2010 - 2015</dt>
-        <dd>Web & Mediainformatics (B.Sc) @ FH Dortmund</dd>
-
-        <dt>2009 - 2010</dt>
-        <dd>Business informatics @ HTWG Konstanz</dd>
-
-        <dt>1996 - 2009</dt>
-        <dd>High school A-Level @ Wieland Gymnasium, Biberach</dd>
-
-        <dt>1992 - 1996</dt>
-        <dd>Elementary School @ Gaisental Grundschule, Biberach</dd>
-
-        <dt>1990 - 1992</dt>
-        <dd>Kindergarden @ Fünf Linden, Biberach</dd>
-
-        <dt>1989</dt>
-        <dd>I was born.</dd>
+        <dd>👨‍💻 Web Developer @ <a href="https://schokoladenseite.net/">Schokoladenseite.net</a></dd>
       </dl>
     </div>
-    <div class="section__bg section__bg--yellow"></div>
+
+    <!-- Education Panel -->
+    <div
+      class="section__text fade-in-delay-2 cv-panel"
+      role="tabpanel"
+      id="education-panel"
+      aria-labelledby="education-tab"
+      tabindex="0"
+      hidden>
+      <dl>
+        <dt>2010 - 2015</dt>
+        <dd>👨‍🎓 Web & Mediainformatics (B.Sc) @ FH Dortmund</dd>
+
+        <dt>2009 - 2010</dt>
+        <dd>🏫 Business informatics @ HTWG Konstanz</dd>
+
+        <dt>1996 - 2009</dt>
+        <dd>🚌 High school A-Level @ Wieland Gymnasium, Biberach</dd>
+
+        <dt>1992 - 1996</dt>
+        <dd>✏️ Elementary School @ Gaisental Grundschule, Biberach</dd>
+
+        <dt>1990 - 1992</dt>
+        <dd>👶 Kindergarden @ Fünf Linden, Biberach</dd>
+
+        <dt>1989</dt>
+        <dd>🍼 I was born.</dd>
+      </dl>
+    </div>
+    <div class="section__bg"></div>
 
   </div>
 </section>
+</main>

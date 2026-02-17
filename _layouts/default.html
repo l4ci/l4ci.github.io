@@ -2,6 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <title>
       {% if page.title %}
         {{ site.title }} – {{ page.title }}
@@ -9,24 +11,28 @@
         {{ site.title }}
       {% endif %}
     </title>
+
     <meta name="description" content="{{ page.desc | default: site.desc }}">
     <meta name="author" content="Volker Otto">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#9759ee" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#9759ee" media="(prefers-color-scheme: dark)">
 
-    
+    <!-- Open Graph / Social Media -->
     <meta property="og:title" content="{{ page.ogtitle | default: page.title }}">
     {% if page.desc %}
     <meta property="og:description" content="{{ page.desc }}">
     {% endif %}
     <meta property="og:url" content="{{ site.url }}{{ page.url | remove:'index.html'}}">
     <meta property="og:type" content="website">
-  
+
+    <!-- Robots -->
     {% if page.noindex or layout.noindex or site.noindex %}
       <meta name="robots" content="noindex, nofollow">
     {% else %}
       <meta name="robots" content="index, follow">
     {% endif %}
 
+    <!-- Structured Data -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -46,12 +52,28 @@
     }
     </script>
 
+    <!-- Resource Hints -->
+    <link rel="preconnect" href="https://volkerotto.net" crossorigin>
+    <link rel="dns-prefetch" href="https://volkerotto.net">
+
+    <!-- Canonical URL -->
     <link rel="canonical" href="{{ site.url }}{{ page.url | remove:'index.html'}}">
-    
+
+    <!-- Favicon -->
     <link rel="shortcut icon" href="{{ site.url }}/favicon.ico">
+
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="{{ site.url }}/assets/css/main.css">
-    
-    <script defer async src="{{ site.url }}/assets/js/main.js"></script>
+    <style>
+      /* Font Display Swap for Inter font */
+      @font-face {
+        font-family: 'Inter';
+        font-display: swap;
+      }
+    </style>
+
+    <!-- Scripts -->
+    <script defer src="{{ site.url }}/assets/js/main.js"></script>
 </head>
 <!--
 
@@ -61,14 +83,21 @@
   - Volker
   -->
 <body>
+  <a href="#main-content" class="skip-to-content">Skip to main content</a>
+
+  <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark/light mode" title="Toggle theme">
+    <span class="theme-toggle__icon theme-toggle__icon--sun">☀️</span>
+    <span class="theme-toggle__icon theme-toggle__icon--moon">🌙</span>
+  </button>
+
   {{ content }}
 
   <footer class="footer section">
     <div class="container">
       <p><strong><em>👋 Thanks for stopping by!</em></strong></p>
-      <p>Copyright &copy; 2018 - <script>document.write(new Date().getFullYear())</script> – All rights reserved.
+      <p>Copyright &copy; 2018 - <span id="copyright-year">2026</span> – All rights reserved.
       </p>
-      <p><a href="https://volkerotto.net/imprint/" title="Show the legal summary">Imprint</a> <a href="https://pagespeed.web.dev/analysis/https-volkerotto-net/07e67euoih" title="Checkout the PageSpeed Insights Score" target="_blank">⚡</a> <a href="https://www.accessibilitychecker.org/audit/?website=https%3A%2F%2Fvolkerotto.net%2F&flag=ge#" title="Checkout the WCAG Accessibility Ranking" target="_blank">♿</a></p>
+      <p><a href="/imprint/" title="Show the legal summary">Imprint</a></p>
     </div>
     <div class="lines-mask bottom">
       <svg viewBox="0 -500 1034 792" fill="none" xmlns="http://www.w3.org/2000/svg">

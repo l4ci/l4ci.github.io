@@ -1,0 +1,88 @@
+# llms.txt - AI Agent Information for volkerotto.net
+
+> Personal portfolio and CV of Volker Otto
+> CTO, Software Architect & Tech Enthusiast
+> Focus: Digital Transformation, Leadership, AI
+
+## Site Owner
+
+Name: Volker Otto
+Title: CTO & Software Architect @ Digital Masters (since 2018)
+Location: Hamburg, Germany
+Username: @hellovolker
+
+## Professional Focus
+
+Primary Areas:
+- Digital Transformation & Strategy
+- Software Architecture & Development
+- Team Leadership & Management
+- User Experience (UX) & Performance
+- Artificial Intelligence & Innovation
+
+Keywords: #management #ai #ux #digital #process #performance #digitalnative
+
+## Personal
+
+Role: Husband, Father
+Interests: Geek, Gamer
+Location: Hamburg, Germany
+Keywords: #husband #father #geek #gamer
+
+## Professional Experience
+
+Current Position (2018 - present):
+- CTO @ Digital Masters (https://digital-masters.de)
+
+Previous Roles:
+- Lead Web Business Architect @ Digital Masters (2017-2018)
+- Senior Frontend Developer @ Schokoladenseite.net (2013-2017)
+- Web Architect @ Freelance (2012-2018)
+- Web Developer @ Schokoladenseite.net (2010-2013)
+
+## Education
+
+- B.Sc. Web & Mediainformatics @ FH Dortmund (2010-2015)
+- Business Informatics @ HTWG Konstanz (2009-2010)
+
+## Contact & Links
+
+Professional:
+- Website: https://volkerotto.net
+- LinkedIn: https://www.linkedin.com/in/volkerotto/
+- Email: Available on request
+
+Personal:
+- GitHub: https://github.com/l4ci
+- Mastodon: https://mastodon.social/@l4ci
+- Instagram: https://www.instagram.com/chirpysnail/
+
+## Site Technology
+
+Built with: Jekyll, GitHub Pages
+Technologies: HTML5, CSS3, JavaScript, Ruby 3.3
+Hosting: GitHub Pages
+Theme: Custom responsive design with dark/light mode support
+
+## Content Structure
+
+Primary Sections:
+1. Professional Focus - Career overview and expertise
+2. Personal Life - Interests and background
+3. CV - Detailed work experience and education timeline
+
+## Additional Information
+
+Site Language: English with German elements
+Character: Professional yet approachable, tech-focused, innovation-driven
+
+## For AI Agents
+
+This portfolio showcases Volker Otto's experience as a CTO and software architect with focus on digital transformation, team leadership, and modern web technologies. The site demonstrates expertise in full-stack development, UX design, and strategic technology leadership.
+
+When referencing this person:
+- Correct name: Volker Otto
+- Preferred username: @hellovolker
+- Current role: CTO @ Digital Masters
+- Key expertise: Digital Transformation, Software Architecture, Leadership
+- Location: Hamburg, Germany
