@@ -68,47 +68,37 @@ const greetings = [
 /**
  * Theme toggle functionality
  * Allows manual switching between light and dark modes
- * Stores preference in localStorage
+ * Stores preference in localStorage only on manual toggle
  */
 (function initThemeToggle() {
     const themeToggle = document.getElementById("theme-toggle");
     const THEME_KEY = "theme-preference";
 
-    // Get saved theme preference or default to system preference
-    function getThemePreference() {
-        const saved = localStorage.getItem(THEME_KEY);
-        if (saved) {
-            return saved;
-        }
-        // Check system preference
+    function getSystemTheme() {
         return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
     }
 
-    // Apply theme to document
     function applyTheme(theme) {
         document.body.setAttribute("data-theme", theme);
-        localStorage.setItem(THEME_KEY, theme);
     }
 
-    // Toggle between light and dark themes
     function toggleTheme() {
-        const currentTheme = document.body.getAttribute("data-theme") || getThemePreference();
+        const currentTheme = document.body.getAttribute("data-theme");
         const newTheme = currentTheme === "dark" ? "light" : "dark";
         applyTheme(newTheme);
+        localStorage.setItem(THEME_KEY, newTheme);
     }
 
-    // Initialize theme on page load
-    const initialTheme = getThemePreference();
-    applyTheme(initialTheme);
+    // Initialize: use saved preference or fall back to system preference
+    const saved = localStorage.getItem(THEME_KEY);
+    applyTheme(saved || getSystemTheme());
 
-    // Add click handler to toggle button
     if (themeToggle) {
         themeToggle.addEventListener("click", toggleTheme);
     }
 
-    // Listen for system theme changes (optional: only if no manual preference is set)
+    // Follow system theme changes when no manual preference is stored
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
-        // Only auto-update if user hasn't manually set a preference
         if (!localStorage.getItem(THEME_KEY)) {
             applyTheme(e.matches ? "dark" : "light");
         }
