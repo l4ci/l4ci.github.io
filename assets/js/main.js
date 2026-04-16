@@ -5,6 +5,26 @@ const GREETING_CHANGE_INTERVAL = 3456; // Time between greeting changes (ms)
 const GREETING_FADE_DURATION = 456; // Fade animation duration (ms)
 const GREETING_TRANSITION = "opacity 0.4s ease";
 
+/**
+ * Fade-in observer: triggers CSS animations when elements enter the viewport
+ * Elements start hidden (opacity: 0) and animate in once via .is-visible class
+ */
+(function initFadeInObserver() {
+    const els = document.querySelectorAll(".section .fade-in, .section .fade-in-delay-1, .section .fade-in-delay-2, .section .fade-in-delay-3");
+    if (!els.length) return;
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add("is-visible");
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.15 });
+
+    els.forEach(el => observer.observe(el));
+})();
+
 // Available greetings in different languages
 const greetings = [
     "Hallo", "Hello", "Bonjour", "Hola", "Ciao", "Hej", "Namaste", "Zdravím", "Ahoj",
