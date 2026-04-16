@@ -6,12 +6,27 @@ const DELETE_SPEED = 60;
 const PAUSE_AFTER_TYPE = 2000;
 const PAUSE_AFTER_DELETE = 400;
 
+/** Central configuration for DOM selectors and storage keys */
+const DOMConfig = {
+    selectors: {
+        fadeIn: ".section .fade-in, .section .fade-in-delay-1, .section .fade-in-delay-2, .section .fade-in-delay-3",
+        typewriter: "#hello",
+        yearsOfExperience: "#years-of-experience, #years-of-experience-ref",
+        copyrightYear: "#copyright-year",
+        themeToggle: "#theme-toggle",
+        logoTrack: ".client-logos__track"
+    },
+    keys: {
+        theme: "theme-preference"
+    }
+};
+
 /**
  * Fade-in observer: triggers CSS animations when elements enter the viewport
  * Elements start hidden (opacity: 0) and animate in once via .is-visible class
  */
-(function initFadeInObserver() {
-    const els = document.querySelectorAll(".section .fade-in, .section .fade-in-delay-1, .section .fade-in-delay-2, .section .fade-in-delay-3");
+(function initFadeInObserver(config = DOMConfig) {
+    const els = document.querySelectorAll(config.selectors.fadeIn);
     if (!els.length) return;
 
     const observer = new IntersectionObserver((entries) => {
@@ -36,8 +51,8 @@ const greetings = [
  * Typewriter effect for the greeting heading
  * Types out a greeting, pauses, deletes it, then types the next one
  */
-(function initTypewriter() {
-    const el = document.getElementById("hello");
+(function initTypewriter(config = DOMConfig) {
+    const el = document.querySelector(config.selectors.typewriter);
     if (!el) return;
 
     let index = Math.floor(Math.random() * greetings.length);
@@ -69,12 +84,12 @@ const greetings = [
  * Calculate and display years of experience
  * Based on start year 2008
  */
-(function updateYearsOfExperience() {
+(function updateYearsOfExperience(config = DOMConfig) {
     const startYear = 2008;
     const currentYear = new Date().getFullYear();
     const yearsOfExperience = currentYear - startYear;
 
-    document.querySelectorAll("#years-of-experience, #years-of-experience-ref").forEach(el => {
+    document.querySelectorAll(config.selectors.yearsOfExperience).forEach(el => {
         el.textContent = yearsOfExperience;
     });
 })();
@@ -82,9 +97,9 @@ const greetings = [
 /**
  * Update copyright year in footer
  */
-(function updateCopyrightYear() {
+(function updateCopyrightYear(config = DOMConfig) {
     const currentYear = new Date().getFullYear();
-    const copyrightYearElement = document.getElementById("copyright-year");
+    const copyrightYearElement = document.querySelector(config.selectors.copyrightYear);
 
     if (copyrightYearElement) {
         copyrightYearElement.textContent = currentYear;
@@ -96,9 +111,9 @@ const greetings = [
  * Allows manual switching between light and dark modes
  * Stores preference in localStorage only on manual toggle
  */
-(function initThemeToggle() {
-    const themeToggle = document.getElementById("theme-toggle");
-    const THEME_KEY = "theme-preference";
+(function initThemeToggle(config = DOMConfig) {
+    const themeToggle = document.querySelector(config.selectors.themeToggle);
+    const THEME_KEY = config.keys.theme;
 
     function getSystemTheme() {
         return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
@@ -136,8 +151,8 @@ const greetings = [
  * Logo slider: clone items for seamless infinite scroll
  * Duplicates all track children so translateX(-50%) loops smoothly
  */
-(function initLogoSlider() {
-    const track = document.querySelector(".client-logos__track");
+(function initLogoSlider(config = DOMConfig) {
+    const track = document.querySelector(config.selectors.logoTrack);
     if (!track) return;
 
     const items = Array.from(track.children);

@@ -40,6 +40,22 @@ a,abbr,acronym,address,applet,article,aside,audio,b,big,blockquote,body,canvas,c
   --black: #3a3a3a;
   --black-50: rgba(58, 58, 58, 0.5);
 
+  /* Semantic tokens */
+  --text-primary: var(--black);
+  --text-secondary: var(--black-50);
+  --text-muted: var(--grey);
+  --line-color: var(--lightgrey);
+  --border-subtle: rgba(0, 0, 0, 0.1);
+  --border-underline: rgba(58, 58, 58, 0.15);
+  --bg-button: rgba(0, 0, 0, 0.05);
+  --bg-button-border: rgba(0, 0, 0, 0.1);
+  --bg-button-hover: rgba(0, 0, 0, 0.08);
+  --bg-button-border-hover: rgba(0, 0, 0, 0.2);
+  --bg-button-shadow: rgba(0, 0, 0, 0.05);
+  --bg-button-shadow-hover: rgba(0, 0, 0, 0.1);
+  --timeline-dot: var(--lightgrey);
+  --toggle-color: var(--black);
+
   /* Layout */
   --border-radius: 8px;
 
@@ -107,17 +123,28 @@ body {
 body[data-theme="dark"] {
   background: #111;
   color: var(--lightgrey);
+  --text-primary: var(--lightgrey);
+  --text-secondary: var(--grey);
+  --text-muted: var(--grey);
+  --line-color: var(--lightgrey);
+  --border-subtle: rgba(255, 255, 255, 0.1);
+  --border-underline: rgba(255, 255, 255, 0.15);
+  --bg-button: rgba(255, 255, 255, 0.08);
+  --bg-button-border: rgba(255, 255, 255, 0.15);
+  --bg-button-hover: rgba(255, 255, 255, 0.12);
+  --bg-button-border-hover: rgba(255, 255, 255, 0.25);
+  --bg-button-shadow: transparent;
+  --bg-button-shadow-hover: transparent;
+  --timeline-dot: #444;
+  --toggle-color: var(--lightgrey);
 }
 
 a {
   text-decoration: none;
   color: inherit;
-  border-bottom: 0.1em solid rgba(58, 58, 58, 0.15);
+  border-bottom: 0.1em solid var(--border-underline);
   padding-bottom: 0.05em;
   transition: var(--transition-fast);
-}
-body[data-theme="dark"] a {
-  border-bottom-color: rgba(255, 255, 255, 0.15);
 }
 a:hover {
   border-image: linear-gradient(to right, var(--purple), var(--red), var(--yellow)) 1;
@@ -296,6 +323,15 @@ sup {
 .lines-mask .p4 {
   animation: spin infinite var(--animation-spin-medium) linear reverse;
 }
+/* Shared dark-mode stroke override for non-gradient paths */
+.lines-mask.first-right path:not(.p3),
+.lines-mask.first-left path:not(.p2),
+.lines-mask.second-right path:not(.p2),
+.lines-mask.bottom path:not(.p2) {
+  stroke: var(--line-color);
+}
+
+/* -- first-right variant -- */
 .lines-mask.first-right {
   top: 0;
 }
@@ -314,15 +350,13 @@ sup {
     top: -40%;
   }
 }
-body[data-theme="dark"] .lines-mask.first-right path:not(.p3) {
-  stroke: var(--lightgrey);
-}
+
+/* -- first-left variant -- */
 .lines-mask.first-left {
   top: 55vh;
 }
-body[data-theme="dark"] .lines-mask.first-left path:not(.p2) {
-  stroke: var(--lightgrey);
-}
+
+/* -- second-right variant -- */
 .lines-mask.second-right {
   top: 120vh;
 }
@@ -331,9 +365,8 @@ body[data-theme="dark"] .lines-mask.first-left path:not(.p2) {
     top: 150vh;
   }
 }
-body[data-theme="dark"] .lines-mask.second-right path:not(.p2) {
-  stroke: var(--lightgrey);
-}
+
+/* -- bottom variant -- */
 .lines-mask.bottom {
   top: auto;
   bottom: -8rem;
@@ -358,9 +391,6 @@ body[data-theme="dark"] .lines-mask.second-right path:not(.p2) {
     bottom: -15rem;
     left: -25%;
   }
-}
-body[data-theme="dark"] .lines-mask.bottom path:not(.p2) {
-  stroke: var(--lightgrey);
 }
 /* ==========================================================================
    7. SECTIONS & CONTENT
@@ -408,18 +438,10 @@ body[data-theme="dark"] .lines-mask.bottom path:not(.p2) {
   z-index: 1;
 }
 .header .header-text p {
-  color: var(--black-50);
-}
-
-body[data-theme="dark"] .header .header-text p {
-  color: var(--grey);
+  color: var(--text-secondary);
 }
 .header .header-text strong {
-  color: var(--black);
-}
-
-body[data-theme="dark"] .header .header-text strong {
-  color: var(--lightgrey);
+  color: var(--text-primary);
 }
 .header .headline {
   display: inline-block;
@@ -557,20 +579,20 @@ dl dd {
   position: relative;
   display: block;
   vertical-align: middle;
-  background: rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: var(--bg-button);
+  border: 1px solid var(--bg-button-border);
   border-radius: 8px;
   padding-block: 0.5rem;
   padding-inline: 2.25rem 0.75rem;
   letter-spacing: 0.5px;
   transition: all var(--transition-normal);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 2px var(--bg-button-shadow);
 }
 .social-links li a:hover {
-  background: rgba(0, 0, 0, 0.08);
-  border-color: rgba(0, 0, 0, 0.2);
+  background: var(--bg-button-hover);
+  border-color: var(--bg-button-border-hover);
   transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px var(--bg-button-shadow-hover);
 }
 .social-links li img {
   position: absolute;
@@ -579,16 +601,6 @@ dl dd {
   transform: translateY(-50%);
   width: 21px;
   height: 21px;
-}
-
-/* Dark mode adjustments for social links */
-body[data-theme="dark"] .social-links li a {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.15);
-}
-body[data-theme="dark"] .social-links li a:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.25);
 }
 
 /* ==========================================================================
@@ -682,11 +694,8 @@ body[data-theme="dark"] .social-links li a:hover {
   text-align: center;
   margin-block-end: 0;
   font-size: var(--fs-tiny);
-  color: var(--black-50);
+  color: var(--text-secondary);
   line-height: 1.8;
-}
-body[data-theme="dark"] .footer {
-  color: var(--grey);
 }
 
 .footer__wave {
@@ -733,10 +742,7 @@ body[data-theme="dark"] .footer {
   opacity: 0.35;
   transition: opacity var(--transition-normal);
   line-height: 1;
-  color: var(--black);
-}
-body[data-theme="dark"] .theme-toggle {
-  color: var(--lightgrey);
+  color: var(--toggle-color);
 }
 
 .theme-toggle:hover {
@@ -832,20 +838,14 @@ button:focus-visible,
   font-weight: 600;
   font-style: italic;
   font-size: var(--fs);
-  color: var(--black-50);
+  color: var(--text-secondary);
   margin-block-end: var(--space-sm);
-}
-body[data-theme="dark"] .cv-subtitle {
-  color: var(--grey);
 }
 
 .cv-timeline {
-  border-left: 2px solid rgba(0, 0, 0, 0.1);
+  border-left: 2px solid var(--border-subtle);
   padding-left: 1.25rem;
   margin-left: 0.25rem;
-}
-body[data-theme="dark"] .cv-timeline {
-  border-left-color: rgba(255, 255, 255, 0.1);
 }
 
 .cv-timeline dt {
@@ -868,10 +868,7 @@ body[data-theme="dark"] .cv-timeline {
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background: var(--lightgrey);
-}
-body[data-theme="dark"] .cv-timeline dt::before {
-  background: #444;
+  background: var(--timeline-dot);
 }
 
 /* Current position: red pulsing dot on the timeline */
@@ -879,7 +876,4 @@ body[data-theme="dark"] .cv-timeline dt::before {
   background: var(--red);
   animation: pulse 2s ease-in-out infinite;
   will-change: transform, opacity;
-}
-body[data-theme="dark"] .cv-timeline .cv-current::before {
-  background: var(--red);
 }
