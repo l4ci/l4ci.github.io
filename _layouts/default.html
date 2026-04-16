@@ -74,18 +74,16 @@
   <a href="#main-content" class="skip-to-content">Skip to main content</a>
 
   <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark/light mode" title="Toggle theme">
-    <span class="theme-toggle__icon theme-toggle__icon--sun">☀️</span>
-    <span class="theme-toggle__icon theme-toggle__icon--moon">🌙</span>
+    <span class="theme-toggle__icon theme-toggle__icon--sun" aria-hidden="true">◑</span>
+    <span class="theme-toggle__icon theme-toggle__icon--moon" aria-hidden="true">◐</span>
   </button>
 
   {{ content }}
 
   <footer class="footer section">
     <div class="container">
-      <p><strong><em>👋 Thanks for stopping by!</em></strong></p>
-      <p>Copyright &copy; 2018 - <span id="copyright-year">2026</span> – All rights reserved.
-      </p>
-      <p><a href="/imprint/" title="Show the legal summary">Imprint</a></p>
+      <p class="footer__wave">👋</p>
+      <p>&copy; 2018–<span id="copyright-year">2026</span> Volker Otto · <a href="/imprint/" title="Show the legal summary">Imprint</a></p>
     </div>
     <div class="lines-mask bottom">
       <svg viewBox="0 -500 1034 792" fill="none" xmlns="http://www.w3.org/2000/svg">

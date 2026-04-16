@@ -19,3 +19,4 @@ Gemfile.lock
 vendor/
 .jekyll-cache/
 .sass-cache/
+.superpowers/

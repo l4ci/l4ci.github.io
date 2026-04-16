@@ -1,9 +1,10 @@
 "use strict";
 
-// Constants for timing and animations
-const GREETING_CHANGE_INTERVAL = 3456; // Time between greeting changes (ms)
-const GREETING_FADE_DURATION = 456; // Fade animation duration (ms)
-const GREETING_TRANSITION = "opacity 0.4s ease";
+// Typewriter timing (ms)
+const TYPE_SPEED = 100;
+const DELETE_SPEED = 60;
+const PAUSE_AFTER_TYPE = 2000;
+const PAUSE_AFTER_DELETE = 400;
 
 /**
  * Fade-in observer: triggers CSS animations when elements enter the viewport
@@ -32,31 +33,36 @@ const greetings = [
 ];
 
 /**
- * Changes the page title and heading with a random greeting from different languages
- * Continuously cycles through greetings with a fade animation
+ * Typewriter effect for the greeting heading
+ * Types out a greeting, pauses, deletes it, then types the next one
  */
-(function changeTitle() {
-    const greet = greetings[Math.floor(Math.random() * greetings.length)];
-    document.title = document.title.replace(/^.*?(?=@)/, "👋 " + greet + ' ');
+(function initTypewriter() {
+    const el = document.getElementById("hello");
+    if (!el) return;
 
-    const helloHeading = document.getElementById("hello");
-    if (helloHeading) {
-        // Set initial greeting without fade on first load
-        if (!helloHeading.dataset.initialized) {
-            helloHeading.textContent = greet;
-            helloHeading.dataset.initialized = "true";
+    let index = Math.floor(Math.random() * greetings.length);
+
+    function typeGreeting(text, charIndex) {
+        if (charIndex <= text.length) {
+            el.textContent = text.slice(0, charIndex);
+            document.title = document.title.replace(/^.*?(?=@)/, "👋 " + text.slice(0, charIndex) + " ");
+            setTimeout(() => typeGreeting(text, charIndex + 1), TYPE_SPEED);
         } else {
-            // Fade animation for subsequent changes
-            helloHeading.style.transition = GREETING_TRANSITION;
-            helloHeading.style.opacity = 0;
-            setTimeout(() => {
-                helloHeading.textContent = greet;
-                helloHeading.style.opacity = 1;
-            }, GREETING_FADE_DURATION);
+            setTimeout(() => deleteGreeting(text, text.length), PAUSE_AFTER_TYPE);
         }
     }
 
-    setTimeout(changeTitle, GREETING_CHANGE_INTERVAL);
+    function deleteGreeting(text, charIndex) {
+        if (charIndex >= 0) {
+            el.textContent = text.slice(0, charIndex);
+            setTimeout(() => deleteGreeting(text, charIndex - 1), DELETE_SPEED);
+        } else {
+            index = (index + 1) % greetings.length;
+            setTimeout(() => typeGreeting(greetings[index], 0), PAUSE_AFTER_DELETE);
+        }
+    }
+
+    typeGreeting(greetings[index], 0);
 })();
 
 /**
@@ -143,92 +149,5 @@ const greetings = [
         const imgs = clone.querySelectorAll("img");
         imgs.forEach(img => img.removeAttribute("alt"));
         track.appendChild(clone);
-    });
-})();
-
-/**
- * CV Tabs functionality
- * Handles tab switching with keyboard navigation and ARIA attributes
- */
-(function initCVTabs() {
-    const tablist = document.querySelector('[role="tablist"]');
-    if (!tablist) return;
-
-    const tabs = Array.from(tablist.querySelectorAll('[role="tab"]'));
-    const panels = Array.from(document.querySelectorAll('[role="tabpanel"]'));
-
-    /**
-     * Switch to a specific tab
-     * @param {HTMLElement} newTab - The tab to activate
-     */
-    function switchTab(newTab) {
-        // Deactivate all tabs and hide all panels
-        tabs.forEach(tab => {
-            tab.setAttribute('aria-selected', 'false');
-            tab.classList.remove('cv-tab--active');
-            tab.tabIndex = -1;
-        });
-
-        panels.forEach(panel => {
-            panel.classList.remove('cv-panel--active');
-            panel.setAttribute('hidden', '');
-        });
-
-        // Activate new tab and show corresponding panel
-        newTab.setAttribute('aria-selected', 'true');
-        newTab.classList.add('cv-tab--active');
-        newTab.tabIndex = 0;
-
-        const panelId = newTab.getAttribute('aria-controls');
-        const panel = document.getElementById(panelId);
-        if (panel) {
-            panel.classList.add('cv-panel--active');
-            panel.removeAttribute('hidden');
-        }
-    }
-
-    // Click handler
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            switchTab(tab);
-        });
-    });
-
-    // Keyboard navigation (Arrow keys)
-    tablist.addEventListener('keydown', (e) => {
-        const currentTab = document.activeElement;
-        const currentIndex = tabs.indexOf(currentTab);
-
-        let nextIndex;
-
-        switch (e.key) {
-            case 'ArrowRight':
-            case 'ArrowDown':
-                e.preventDefault();
-                nextIndex = (currentIndex + 1) % tabs.length;
-                tabs[nextIndex].focus();
-                switchTab(tabs[nextIndex]);
-                break;
-
-            case 'ArrowLeft':
-            case 'ArrowUp':
-                e.preventDefault();
-                nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
-                tabs[nextIndex].focus();
-                switchTab(tabs[nextIndex]);
-                break;
-
-            case 'Home':
-                e.preventDefault();
-                tabs[0].focus();
-                switchTab(tabs[0]);
-                break;
-
-            case 'End':
-                e.preventDefault();
-                tabs[tabs.length - 1].focus();
-                switchTab(tabs[tabs.length - 1]);
-                break;
-        }
     });
 })();
