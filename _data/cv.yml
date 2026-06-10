@@ -1,0 +1,59 @@
+# CV Entries. Rendered by _includes/cv-timeline.html (HTML) and llms.txt.
+# period  -> free display string, shown as-is
+# current -> highlights the entry (cv-current class, bold)
+# llms    -> false keeps an entry out of llms.txt
+work:
+  - period: Since 2018
+    current: true
+    emoji: 👨‍💼
+    title: CTO
+    org: Digital Masters
+    url: https://digital-masters.de
+  - period: 2017 - 2018
+    emoji: 💼
+    title: Lead Web Business Architect
+    org: Digital Masters
+    url: https://digital-masters.de
+  - period: 2013 - 2017
+    emoji: 🎨
+    title: Senior Frontend Developer
+    org: Schokoladenseite.net
+    url: https://schokoladenseite.net/
+  - period: 2012 - 2018
+    emoji: 👷‍♂️
+    title: Web Architect
+    org: Freelance
+  - period: 2010 - 2013
+    emoji: 👨‍💻
+    title: Web Developer
+    org: Schokoladenseite.net
+    url: https://schokoladenseite.net/
+
+education:
+  - period: 2010 - 2015
+    emoji: 👨‍🎓
+    title: Web & Mediainformatics (B.Sc)
+    org: FH Dortmund
+  - period: 2009 - 2010
+    emoji: 🏫
+    title: Business informatics
+    org: HTWG Konstanz
+  - period: 1996 - 2009
+    emoji: 🚌
+    title: High school A-Level
+    org: Wieland Gymnasium, Biberach
+    llms: false
+  - period: 1992 - 1996
+    emoji: ✏️
+    title: Elementary School
+    org: Gaisental Grundschule, Biberach
+    llms: false
+  - period: 1990 - 1992
+    emoji: 👶
+    title: Kindergarden
+    org: Fünf Linden, Biberach
+    llms: false
+  - period: "1989"
+    emoji: 🍼
+    title: I was born.
+    llms: false

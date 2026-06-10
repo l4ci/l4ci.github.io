@@ -1,0 +1,11 @@
+<div class="client-logos fade-in-delay-3" aria-label="Client and brand logos">
+  <div class="client-logos__track">
+    {%- for client in site.data.clients %}
+    <div class="client-logos__item">
+      <a href="{{ client.url }}" class="client-logos__link" target="_blank" rel="noopener noreferrer" aria-label="Visit {{ client.site | default: client.name }} website">
+        <img src="/assets/img/clients/{{ client.img }}" alt="{{ client.name }} logo" class="client-logos__image" width="180" height="90" loading="lazy">
+      </a>
+    </div>
+    {%- endfor %}
+  </div>
+</div>

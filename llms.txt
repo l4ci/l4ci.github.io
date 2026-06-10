@@ -1,3 +1,7 @@
+---
+layout: null
+permalink: /llms.txt
+---
 # llms.txt - AI Agent Information for volkerotto.net
 
 > Personal portfolio and CV of Volker Otto
@@ -20,42 +24,49 @@ Primary Areas:
 - User Experience (UX) & Performance
 - Artificial Intelligence & Innovation
 
-Keywords: #management #ai #ux #digital #process #performance #digitalnative
+Keywords: #{{ site.data.hashtags.professional | join: " #" }}
 
 ## Personal
 
 Role: Husband, Father
 Interests: Geek, Gamer
 Location: Hamburg, Germany
-Keywords: #husband #father #geek #gamer
+Keywords: #{{ site.data.hashtags.personal | join: " #" }}
 
 ## Professional Experience
 
-Current Position (2018 - present):
-- CTO @ Digital Masters (https://digital-masters.de)
+Current Position:
+{%- for entry in site.data.cv.work %}{% if entry.current %}
+- {{ entry.title }} @ {{ entry.org }} ({{ entry.period }}){% if entry.url %} — {{ entry.url }}{% endif %}
+{%- endif %}{% endfor %}
 
 Previous Roles:
-- Lead Web Business Architect @ Digital Masters (2017-2018)
-- Senior Frontend Developer @ Schokoladenseite.net (2013-2017)
-- Web Architect @ Freelance (2012-2018)
-- Web Developer @ Schokoladenseite.net (2010-2013)
+{%- for entry in site.data.cv.work %}{% unless entry.current %}
+- {{ entry.title }} @ {{ entry.org }} ({{ entry.period }})
+{%- endunless %}{% endfor %}
 
 ## Education
+{% for entry in site.data.cv.education %}{% unless entry.llms == false %}
+- {{ entry.title }} @ {{ entry.org }} ({{ entry.period }})
+{%- endunless %}{% endfor %}
 
-- B.Sc. Web & Mediainformatics @ FH Dortmund (2010-2015)
-- Business Informatics @ HTWG Konstanz (2009-2010)
+## Clients & Brands
+
+{{ site.data.clients | map: "name" | join: ", " }}
 
 ## Contact & Links
 
 Professional:
-- Website: https://volkerotto.net
-- LinkedIn: https://www.linkedin.com/in/volkerotto/
+- Website: {{ site.url }}
+{%- for link in site.data.social.professional.links %}{% if link.external != false %}
+- {{ link.label }}: {{ link.url }}
+{%- endif %}{% endfor %}
 - Email: Available on request
 
 Personal:
-- GitHub: https://github.com/l4ci
-- Mastodon: https://mastodon.social/@l4ci
-- Instagram: https://www.instagram.com/chirpysnail/
+{%- for link in site.data.social.personal.links %}
+- {{ link.label }}: {{ link.url }}
+{%- endfor %}
 
 ## Site Technology
 

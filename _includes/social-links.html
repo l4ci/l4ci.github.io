@@ -1,0 +1,8 @@
+{%- assign group = site.data.social[include.group] -%}
+<nav class="social-links" aria-label="{{ group.label }}">
+  <ul>
+    {%- for link in group.links %}
+    <li><a href="{{ link.url }}"{% if link.external != false %} target="_blank" rel="{{ link.rel | default: 'noopener noreferrer' }}"{% endif %} aria-label="{{ link.aria }}"><img src="/assets/img/{{ link.icon }}" alt="" width="21" height="21" loading="lazy"> {{ link.label }}</a></li>
+    {%- endfor %}
+  </ul>
+</nav>

@@ -27,7 +27,7 @@ const DOMConfig = {
  */
 (function initFadeInObserver(config = DOMConfig) {
     const els = document.querySelectorAll(config.selectors.fadeIn);
-    if (!els.length) return;
+    if (!els.length) {return;}
 
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -41,19 +41,17 @@ const DOMConfig = {
     els.forEach(el => observer.observe(el));
 })();
 
-// Available greetings in different languages
-const greetings = [
-    "Hallo", "Hello", "Bonjour", "Hola", "Ciao", "Hej", "Namaste", "Zdravím", "Ahoj",
-    "こんにちは", "안녕하세요", "你好", "Moin", "Hi", "Hey", "Salü"
-];
-
 /**
  * Typewriter effect for the greeting heading
  * Types out a greeting, pauses, deletes it, then types the next one
+ * Greetings come from _data/greetings.yml via the data-greetings attribute
  */
 (function initTypewriter(config = DOMConfig) {
     const el = document.querySelector(config.selectors.typewriter);
-    if (!el) return;
+    if (!el) {return;}
+
+    const greetings = JSON.parse(el.dataset.greetings || "[]");
+    if (!greetings.length) {return;}
 
     let index = Math.floor(Math.random() * greetings.length);
 
@@ -153,7 +151,7 @@ const greetings = [
  */
 (function initLogoSlider(config = DOMConfig) {
     const track = document.querySelector(config.selectors.logoTrack);
-    if (!track) return;
+    if (!track) {return;}
 
     const items = Array.from(track.children);
     items.forEach(item => {

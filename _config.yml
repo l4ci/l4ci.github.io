@@ -2,7 +2,7 @@ source:       .
 destination:  ./_site
 layouts_dir:  ./_layouts
 keep_files:   ['.git','.svn']
-exclude:      ['.editorconfig','*.sublime-project','*.sublime-workspace','README.md','CNAME']
+exclude:      ['.editorconfig','*.sublime-project','*.sublime-workspace','README.md','CNAME','CONTEXT.md','tasks','vendor','node_modules','package-lock.json']
 timezone:     Europe/Berlin
 future:       true
 limit_posts:  0

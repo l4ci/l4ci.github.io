@@ -1,0 +1,58 @@
+# Clients shown in the logo slider. Rendered by _includes/client-logos.html.
+# name  -> alt text ("{name} logo")
+# site  -> overrides the name in the link's aria-label ("Visit {site} website")
+# img   -> filename under /assets/img/clients/
+- name: Yamaha
+  url: https://www.yamaha.com
+  img: yamaha.webp
+- name: Der Spiegel
+  site: Spiegel shop
+  url: https://shop.spiegel.de
+  img: der-spiegel.png
+- name: Handelsblatt Tech
+  site: Handelsblatt
+  url: https://tech-europe.org
+  img: tech-by-handelsblatt.png
+- name: Panini
+  url: https://www.panini.de
+  img: panini.svg
+- name: Sparkasse Südholstein
+  url: https://www.sparkasse-suedholstein.de
+  img: sparkasse_suedholstein.svg
+- name: Webgo
+  url: https://www.webgo.de
+  img: webgo.webp
+- name: AWO
+  site: AWO Hamburg
+  url: https://www.kita-awo-hamburg.de
+  img: awo.webp
+- name: Lyreco
+  url: https://about.lyreco.de
+  img: lyreco.png
+- name: Fidlock
+  url: https://www.fidlock.com
+  img: fidlock.webp
+- name: Prowin
+  url: https://www.prowin.de
+  img: prowin.svg
+- name: CRIF
+  url: https://www.crif.com
+  img: crif.webp
+- name: Bree
+  url: https://www.bree.com
+  img: bree.avif
+- name: Lavolta
+  url: https://www.lavolta.de
+  img: lavolta.avif
+- name: Bestar Steel
+  url: https://www.bestar-steel.com
+  img: bestar.png
+- name: Carnival Maritime
+  url: https://www.carnival-maritime.com/
+  img: carnival-maritim.webp
+- name: Egret
+  url: https://my-egret.com/de/
+  img: egret.svg
+- name: OHL
+  url: https://ohl.de/
+  img: ohl.webp

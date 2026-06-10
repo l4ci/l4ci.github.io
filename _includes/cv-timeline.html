@@ -1,0 +1,6 @@
+<dl class="cv-timeline">
+  {%- for entry in include.entries %}
+  <dt{% if entry.current %} class="cv-current"{% endif %}>{% if entry.current %}<strong>{{ entry.period }}</strong>{% else %}{{ entry.period }}{% endif %}</dt>
+  <dd>{% if entry.current %}<strong>{% endif %}{{ entry.emoji }} {{ entry.title }}{% if entry.org %} @ {% if entry.url %}<a href="{{ entry.url }}" target="_blank" rel="noopener noreferrer">{{ entry.org }}</a>{% else %}{{ entry.org }}{% endif %}{% endif %}{% if entry.current %}</strong>{% endif %}</dd>
+  {%- endfor %}
+</dl>

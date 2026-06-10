@@ -1,0 +1,40 @@
+# Social Link Groups. Rendered by _includes/social-links.html.
+# external: false -> no target="_blank"/rel (e.g. mailto)
+# rel             -> overrides the default "noopener noreferrer"
+professional:
+  label: Professional contact links
+  links:
+    - label: LinkedIn
+      url: https://www.linkedin.com/in/hellovolker/
+      icon: linkedin.png
+      aria: LinkedIn profile
+    - label: GitHub
+      url: https://github.com/l4ci
+      icon: github.svg
+      aria: GitHub profile
+    - label: E-Mail
+      url: mailto:volker.otto@digital-masters.de
+      icon: email.png
+      aria: Send email
+      external: false
+
+personal:
+  label: Personal social media links
+  links:
+    - label: Mastodon
+      url: https://mastodon.social/@l4ci
+      icon: mastodon.png
+      aria: Mastodon profile
+      rel: me noopener noreferrer
+    - label: Instagram
+      url: https://www.instagram.com/chirpysnail/
+      icon: instagram.png
+      aria: Instagram profile
+    - label: Steam
+      url: https://steamcommunity.com/id/l4ci/
+      icon: steam.png
+      aria: Steam profile
+    - label: Chess
+      url: https://www.chess.com/member/l4ci
+      icon: chess.png
+      aria: Chess.com profile
