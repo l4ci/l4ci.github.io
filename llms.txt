@@ -12,7 +12,8 @@ permalink: /llms.txt
 
 Name: Volker Otto
 Title: CTO & Software Architect @ Digital Masters (since 2018)
-Location: Hamburg, Germany
+Background: Joined Digital Masters as its fifth employee and helped grow it to more than a hundred people
+Location: Norderstedt (near Hamburg), Germany
 Username: @hellovolker
 
 ## Professional Focus
@@ -23,14 +24,15 @@ Primary Areas:
 - Team Leadership & Management
 - User Experience (UX) & Performance
 - Artificial Intelligence & Innovation
+- Agentic Workflows & Multi-Agent Pipelines (human-in-the-loop)
 
 Keywords: #{{ site.data.hashtags.professional | join: " #" }}
 
 ## Personal
 
 Role: Husband, Father
-Interests: Geek, Gamer
-Location: Hamburg, Germany
+Interests: Geek, Gamer, Piano, Chess
+Location: Norderstedt (near Hamburg), Germany
 Keywords: #{{ site.data.hashtags.personal | join: " #" }}
 
 ## Professional Experience

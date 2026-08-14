@@ -32,11 +32,11 @@ work:
 education:
   - period: 2010 - 2015
     emoji: 👨‍🎓
-    title: Web & Mediainformatics (B.Sc)
+    title: Web & Media Informatics (B.Sc.)
     org: FH Dortmund
   - period: 2009 - 2010
     emoji: 🏫
-    title: Business informatics
+    title: Business Informatics
     org: HTWG Konstanz
   - period: 1996 - 2009
     emoji: 🚌
@@ -50,7 +50,7 @@ education:
     llms: false
   - period: 1990 - 1992
     emoji: 👶
-    title: Kindergarden
+    title: Kindergarten
     org: Fünf Linden, Biberach
     llms: false
   - period: "1989"

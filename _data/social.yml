@@ -13,7 +13,7 @@ professional:
       icon: github.svg
       aria: GitHub profile
     - label: E-Mail
-      url: mailto:volker.otto@digital-masters.de
+      url: mailto:hello@volkerotto.net
       icon: email.png
       aria: Send email
       external: false
