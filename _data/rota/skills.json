@@ -69,7 +69,7 @@
     "the approved design stored as a note on issue #42 (file backend `.rota/designs/<ID>.md`)",
     "nothing in code"
    ],
-   "reviewed": false,
+   "reviewed": true,
    "source": "usage/brainstorm.md#one-example-end-to-end",
    "source_url": "/rota/docs/usage/brainstorm/#one-example-end-to-end",
    "steps": [
@@ -347,7 +347,7 @@
     "a proof row for the reproducer",
     "a PR on the issue backend; on the file backend B01 is marked complete instead"
    ],
-   "reviewed": false,
+   "reviewed": true,
    "source": "walkthroughs/brownfield-existing-project.md",
    "source_url": "/rota/docs/walkthroughs/brownfield-existing-project/",
    "steps": [
@@ -394,7 +394,7 @@
     "one `refactor`-labelled issue per candidate",
     "no code changes unless you pass --fix"
    ],
-   "reviewed": false,
+   "reviewed": true,
    "source": "walkthroughs/brownfield-existing-project.md",
    "source_url": "/rota/docs/walkthroughs/brownfield-existing-project/",
    "steps": [
@@ -456,7 +456,7 @@
     "nothing in the tree (read-only, no commits)",
     "spec and quality verdicts recorded against the reviewed sha"
    ],
-   "reviewed": false,
+   "reviewed": true,
    "source": "walkthroughs/quickstart-manual-mode.md#step-4-ship",
    "source_url": "/rota/docs/walkthroughs/quickstart-manual-mode/#step-4-ship",
    "steps": [
@@ -516,7 +516,7 @@
     "main carries the fix as one revertable unit",
     "status.json entry cleared"
    ],
-   "reviewed": false,
+   "reviewed": true,
    "source": "walkthroughs/quickstart-manual-mode.md#step-4-ship",
    "source_url": "/rota/docs/walkthroughs/quickstart-manual-mode/#step-4-ship",
    "steps": [
@@ -570,7 +570,7 @@
     "doc pages under docs.path, only after you approve",
     "a docs: commit that marks the next after-work baseline"
    ],
-   "reviewed": false,
+   "reviewed": true,
    "source": null,
    "steps": [
     {
@@ -624,7 +624,7 @@
     "proof rows for the items on the branch",
     "a qa verdict that /rota-ship routes on"
    ],
-   "reviewed": false,
+   "reviewed": true,
    "source": "usage/qa.md#invocation",
    "source_url": "/rota/docs/usage/qa/#invocation",
    "steps": [
@@ -689,7 +689,7 @@
     "one new bullet under its topic in .rota/KNOWLEDGE.md, date-stamped",
     "the rota-knowledge topic index in AGENTS.md refreshed"
    ],
-   "reviewed": false,
+   "reviewed": true,
    "source": "walkthroughs/brownfield-existing-project.md#step-8-a-real-debug-cycle",
    "source_url": "/rota/docs/walkthroughs/brownfield-existing-project/#step-8-a-real-debug-cycle",
    "steps": [
@@ -749,7 +749,7 @@
    "changes": [
     "a four-part entry (rule, why, forbids, permits) in .rota/DECISIONS.md"
    ],
-   "reviewed": false,
+   "reviewed": true,
    "source": "usage/decisions.md#capturing-a-decision",
    "source_url": "/rota/docs/usage/decisions/#capturing-a-decision",
    "steps": [
@@ -812,7 +812,7 @@
     "`.rota/handoff/<branch>.md` (gitignored, one per branch, overwritten on re-pause)",
     "the chosen wip commit or stash"
    ],
-   "reviewed": false,
+   "reviewed": true,
    "source": "usage/pausing-and-resuming.md",
    "source_url": "/rota/docs/usage/pausing-and-resuming/",
    "steps": [
@@ -871,7 +871,7 @@
     "an orchestrator lease and slot rows in the round state",
     "worker PRs that you review, gate and merge"
    ],
-   "reviewed": false,
+   "reviewed": true,
    "source": "walkthroughs/round-cycle.md#2-run-the-round",
    "source_url": "/rota/docs/walkthroughs/round-cycle/#2-run-the-round",
    "steps": [
@@ -919,7 +919,7 @@
     "a `decision` comment per answer, citing the maintainer",
     "the answer applied (relay, re-recorded verdict, issue edit or follow-up)"
    ],
-   "reviewed": false,
+   "reviewed": true,
    "source": null,
    "steps": [
     {
@@ -968,7 +968,7 @@
     "confirmed keys written to the rota config",
     "nothing is written for keys you decline"
    ],
-   "reviewed": false,
+   "reviewed": true,
    "source": null,
    "steps": [
     {
@@ -1014,7 +1014,7 @@
     "an issue filed on the rota repo",
     "the local record in .rota/bugreports.jsonl marked `filed`, with the issue URL"
    ],
-   "reviewed": false,
+   "reviewed": true,
    "source": null,
    "steps": [
     {
@@ -1060,7 +1060,7 @@
     "an annotated git tag, pushed after your yes",
     "a published GitHub or GitLab release"
    ],
-   "reviewed": false,
+   "reviewed": true,
    "source": "walkthroughs/round-cycle.md#4-release",
    "source_url": "/rota/docs/walkthroughs/round-cycle/#4-release",
    "steps": [
