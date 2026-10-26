@@ -12,7 +12,6 @@ Public user guide for rota, a dev workflow for Claude Code and Codex: skills plu
 
 ### 🚀 Getting started
 
-- [Cheat sheet](/rota/docs/cheatsheet/): one-line summary of every `/rota-*` skill (rapid scan)
 - [Install](/rota/docs/install/): Homebrew, the install script, release binaries, the Claude Code plugin, upgrading, uninstalling
 - [Getting started](/rota/docs/getting-started/): install and run your first cycle
 - [How it works](/rota/docs/how-it-works/): the two ways to use rota (orchestrator, workers, gate), plus how each skill connects to the artifacts it touches
@@ -26,7 +25,7 @@ Public user guide for rota, a dev workflow for Claude Code and Codex: skills plu
 
 ### 🔄 Rounds
 
-- [Your first round](/rota/docs/first-round/): install, skills, herdr or tmux, launching the orchestrator, a first round and wind-down, step by step
+- [Your first round](/rota/docs/first-round/): herdr or tmux, launching the orchestrator, a first round and wind-down, step by step
 - [A round cycle](/rota/docs/walkthroughs/round-cycle/): shape the slate, run a round, wind down, release
 - [Parallel rounds](/rota/docs/usage/parallel-rounds/): an orchestrator, standing workers in worktrees, the merge gate, solo mode
 - [Unattended rounds](/rota/docs/usage/unattended-rounds/): hooks, statusline, keepalive, usage limits, the orchestrator switch
@@ -34,7 +33,6 @@ Public user guide for rota, a dev workflow for Claude Code and Codex: skills plu
 - [Codex workers](/rota/docs/usage/codex-workers/): run Codex as a worker in a round
 - [OpenCode workers](/rota/docs/usage/opencode-workers/): run OpenCode, and any model it can reach, as a worker in a round
 - [Orchestrator harnesses](/rota/docs/usage/orchestrator-harnesses/): run the orchestrator in Claude Code, Codex, Hermes or opencode
-- [rota or a bare session](/rota/docs/usage/rota-vs-plain-session/): a row-by-row comparison with a plain Claude Code session that runs its own subagents
 - [Skills in Codex](/rota/docs/usage/codex-skills/): install and call the skills from Codex
 
 ### 🧰 Skills
@@ -103,7 +101,6 @@ Public user guide for rota, a dev workflow for Claude Code and Codex: skills plu
 ### 📖 Reference
 
 - [Architecture](/rota/docs/reference/architecture/): how the CLI, the skills and `.rota/` fit together
-- [Slash commands](/rota/docs/reference/slash-commands/): every `/rota-*` command, alphabetical
 - [The `.rota/` folder](/rota/docs/reference/rota-folder/): files and directories created by `rota init`
 - [`rota` verb reference](/rota/docs/reference/cli-helpers/): every `rota` verb, with conventions and exit codes
 - [Configuration options](/rota/docs/reference/config-options/): every config key and option label, set via `rota config set`
@@ -116,6 +113,21 @@ Public user guide for rota, a dev workflow for Claude Code and Codex: skills plu
 - [Release signing](https://github.com/l4ci/rota/blob/main/docs/contributing/release-signing.md): generating or rotating the minisign key, the Actions secret, verifying by hand
 - [Market review, October 2026](https://github.com/l4ci/rota/blob/main/docs/contributing/market-review-2026-10.md): what comparable orchestrators' users ask for, where rota stands, and the ranked gaps behind issues #574 to #587
 - [Plain orchestrator comparison, October 2026](https://github.com/l4ci/rota/blob/main/docs/contributing/plain-orchestrator-comparison-2026-10.md): what a bare Claude Code session would do to run a team against what rounds do, and the six gaps behind issues #897 to #902. The [re-judged user version](/rota/docs/usage/rota-vs-plain-session/) is the current one
+
+### ⚖ Compare
+
+- [How rota compares](/rota/docs/compare/): one page per tool, with the version checked
+- [rota vs GSD](/rota/docs/compare/gsd/): spec-driven phases from discuss to ship
+- [rota vs Superpowers](/rota/docs/compare/superpowers/): a skills methodology for many harnesses
+- [rota vs OpenSpec](/rota/docs/compare/openspec/): living specs and delta change folders
+- [rota vs ralph](/rota/docs/compare/ralph/): a fresh-context loop over a `prd.json`
+- [rota vs Conductor](/rota/docs/compare/conductor/): a Mac app for agents in workspaces
+- [rota vs Orca](/rota/docs/compare/orca/): a desktop app for fleets of agents
+- [rota vs Vibe Kanban](/rota/docs/compare/vibe-kanban/): a kanban board that runs agents
+- [rota vs Claude Squad](/rota/docs/compare/claude-squad/): a TUI for agents in tmux sessions
+- [rota vs Gas Town](/rota/docs/compare/gastown/): a Mayor, polecats and a merge queue
+- [rota vs Octo](/rota/docs/compare/octo/): several AI providers on one question
+- [rota or a bare session](/rota/docs/usage/rota-vs-plain-session/): a row-by-row comparison with a plain Claude Code session that runs its own subagents
 
 ### Other
 

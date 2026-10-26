@@ -22,7 +22,7 @@ Both ways share a memory in `.rota/`: knowledge, decisions and handoff notes.
 
 ## The detailed map
 
-The diagram below shows how every skill connects to the artifacts it reads or writes, and which skills nudge or consult each other.
+Every skill, the artifacts it reads or writes, and which skills nudge or consult each other:
 
 ```mermaid
 flowchart LR
@@ -84,29 +84,7 @@ flowchart LR
   ORCH -.unattended.-> KEEP["rota hook / keepalive / limit"]
 ```
 
-Almost everything Claude reads or mutates lives under `.rota/` in your project; with `issues.source` set to `github` or `gitlab` the backlog lives on the GitHub/GitLab tracker instead. Git is the source of truth; `status.json` is just a cache, and `/rota-work` with no argument reconciles drift between the two.
-
-## The seven lanes
-
-<!-- generated:skills:lanes begin -->
-<!-- edit docs/skills/*.md and run python3 scripts/skills-docs.py -->
-
-**Capture.** [`/rota-capture`](/rota/docs/skills/rota-capture/): Record bugs, features and tasks in the backlog without starting work
-
-**Plan.** [`/rota-brainstorm`](/rota/docs/skills/rota-brainstorm/): Negotiate the design of one Major item before planning it; [`/rota-spike`](/rota/docs/skills/rota-spike/): Try one risky idea on a throwaway branch and keep only the finding; [`/rota-plan`](/rota/docs/skills/rota-plan/): Write a signed-off implementation plan with verifiable tasks; [`/rota-vision`](/rota/docs/skills/rota-vision/): Turn an idea into milestones with dependencies and ready/blocked status
-
-**Execute.** [`/rota-work`](/rota/docs/skills/rota-work/): Build the next item in small commits, one verified task at a time; [`/rota-debug`](/rota/docs/skills/rota-debug/): Find the root cause of one bug, fix it atomically and prove it; [`/rota-refactor`](/rota/docs/skills/rota-refactor/): Review the architecture and file refactor issues; --map drafts the map
-
-**Ship.** [`/rota-review`](/rota/docs/skills/rota-review/): Review a branch against its spec and conventions before it leaves; [`/rota-ship`](/rota/docs/skills/rota-ship/): Review, then open the PR or merge, linking items by ID; [`/rota-docs`](/rota/docs/skills/rota-docs/): Scaffold, update or reorganize the public docs; [`/rota-qa`](/rota/docs/skills/rota-qa/): Run product-level QA against the built artifact and score it
-
-**Persist.** [`/rota-learn`](/rota/docs/skills/rota-learn/): Save the session's durable lessons to KNOWLEDGE.md; [`/rota-decide`](/rota/docs/skills/rota-decide/): Record a hard-boundary decision with explicit forbids and permits; [`/rota-pause`](/rota/docs/skills/rota-pause/): Stop cleanly and leave a handoff note for the next session
-
-**Rounds.** [`/rota-orchestrate`](/rota/docs/skills/rota-orchestrate/): Run a parallel round: pick the slate, watch workers, merge their PRs; [`/rota-answer`](/rota/docs/skills/rota-answer/): Answer every decision a round is waiting on, one question at a time
-
-**Maintenance.** [`/rota-init`](/rota/docs/skills/rota-init/): Suggest config values from the repo and write the ones you confirm; [`/rota-bugreport`](/rota/docs/skills/rota-bugreport/): File rota's own mistakes upstream, after your explicit yes; [`/rota-release`](/rota/docs/skills/rota-release/): Cut a release: checklist, version bump, notes, tag, publish
-<!-- generated:skills:lanes end -->
-
-**Verbs.** `rota init` sets up `.rota/` once at the project root (`rota setup` adds a config walkthrough; bare `rota` runs it in an uninitialized project and launches the orchestrator in an initialized one). `rota config set` edits config (never hand-edit JSON). `rota update` checks for newer rota releases and prints the exact upgrade command. `rota skills` installs and refreshes the skills from the binary. `rota doctor` checks git, the forge, accounts and installed skills. `/rota-release` cuts your project's own releases: version bump, categorized notes, tag, push, GitHub/GitLab release.
+Almost everything Claude reads or mutates lives under `.rota/` in your project; with `issues.source` set to `github` or `gitlab` the backlog lives on the GitHub/GitLab tracker instead. Git is the source of truth; `status.json` is a cache, and `/rota-work` with no argument reconciles drift between the two.
 
 ## How skills chain
 
@@ -188,5 +166,5 @@ The context is filling up or you have to leave mid-item.
 3. [`/rota-work`](/rota/docs/skills/rota-work/): Next session, with no argument, it reads the handoff and picks up.
 <!-- generated:skills:chains end -->
 
-Every skill has its own page with examples and flags: [skills](/rota/docs/skills/). For two worked examples that carry one concrete project end-to-end, see the [walkthroughs](/rota/docs/walkthroughs/).
+Every skill has its own page with examples and flags: [skills](/rota/docs/skills/).
 {% endraw %}

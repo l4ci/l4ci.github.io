@@ -10,8 +10,7 @@ A [round](/rota/docs/usage/parallel-rounds/) can run OpenAI's Codex CLI as a wor
 is a visible session in a herdr tab, the same as a Claude one: it takes one issue, works in its own
 worktree, and opens a PR. The orchestrator, the gate and the merge policy don't change.
 
-This page is about Codex as a worker in a round. To use the rota skills from inside Codex, see
-[using the skills in Codex](/rota/docs/usage/codex-skills/).
+To use the rota skills from inside Codex, see [using the skills in Codex](/rota/docs/usage/codex-skills/).
 
 ## Start one
 
@@ -37,8 +36,8 @@ A `best-of:2` issue gets one Claude and one Codex attempt when both `round.tiers
 
 ## Codex home and login
 
-Codex workers use your default Codex account, the way Claude workers use your configured accounts (or the
-default config dir when none are configured). A slot's own worktree is separation enough, and several Codex
+Codex workers use your default Codex account, as Claude workers use your configured accounts (or the
+default config dir when none are configured). Each slot's own worktree separates them, and several Codex
 processes sharing one home is ordinary Codex use. rota sets no `CODEX_HOME`, so Codex reads `~/.codex`, or the
 `$CODEX_HOME` you already export. Sessions and history land there like any other Codex session.
 
@@ -49,7 +48,7 @@ When it fails you get exit 5 and the plain command:
 codex login
 ```
 
-Log in once. There is no per-slot login.
+Log in once. Slots need no login of their own.
 
 rota writes nothing to `config.toml` or `auth.json` in the Codex home. The two dialogs that would stall an
 unattended pane are answered on the launch line instead: `-c 'projects."<worktree>".trust_level="trusted"'`
@@ -57,9 +56,8 @@ trusts the slot's worktree, and `-c check_for_update_on_startup=false` turns off
 `assign` also checks herdr's Codex integration in that home and installs it when it is missing; that install is
 herdr's own and happens once.
 
-Each slot keeps a small state directory at `<git-common-dir>/rota/codex/<slot>` holding its prompt key (see
-below). Codex never reads it. It sits beside the round lease, not in the worktree, so it never dirties
-`git status`. Per-slot homes that earlier versions created in the same place are left alone; rota just no
+Each slot keeps a state directory at `<git-common-dir>/rota/codex/<slot>` holding its prompt key (see
+below). Codex never reads it. It sits beside the round lease, not in the worktree, so `git status` stays clean. Per-slot homes that earlier versions created in the same place are left alone; rota just no
 longer points Codex at them.
 
 ### Several Codex accounts
@@ -83,7 +81,7 @@ pane gets that account's `CODEX_HOME`, and login is checked in each home you con
 CODEX_HOME=/home/me/.codex-team codex login
 ```
 
-There is no usage meter for Codex, so the pick balances slots, not headroom. A per-slot home exists only if
+Codex has no usage meter, so the pick balances slots, not headroom. A per-slot home exists only if
 you configure it as an account.
 
 ## Model tiers
@@ -101,15 +99,14 @@ Codex's own default model, and the launch command drops `--model`; one empty tie
 
 The launch command is `round.commands.codex`. Its default is `codex --model {model}
 --dangerously-bypass-approvals-and-sandbox --dangerously-bypass-hook-trust --no-daemon --no-alt-screen`.
-The bypass flags are there because nobody answers prompts in a worker pane: scope, not prompting,
+The bypass flags are there because nobody answers prompts in a worker pane. Scope, not prompting,
 bounds the worker. A custom command receives the tier's model only through a `{model}` placeholder.
 It must keep `--dangerously-bypass-hook-trust`: without it Codex skips the prompt check below, so
 dispatch refuses it (exit 5). See [round keys](/rota/docs/usage/configuration/#round-keys).
 
 ## What a Codex worker accepts
 
-A Codex worker only takes text that rota signed. Whether a model refuses unsigned pane text depends on
-the model: one Codex model answered `ROTA-BLOCKED` to an unsigned instruction, the default one followed it
+A Codex worker only takes text that rota signed. Models differ on unsigned pane text: one Codex model answered `ROTA-BLOCKED` to an unsigned instruction, the default one followed it
 ([#3](https://github.com/l4ci/rota/issues/3)). So for Codex the check doesn't rely on the model:
 
 - On each task dispatch rota writes a fresh key to `rota-prompt.key` (mode 0600) in the slot's state
@@ -124,10 +121,9 @@ the model: one Codex model answered `ROTA-BLOCKED` to an unsigned instruction, t
   ([maintainer answers](/rota/docs/usage/parallel-rounds/#maintainer-answers-typed-into-a-pane)). Anyone who can type in
   the pane can use that prefix; it is the one unsigned path left.
 
-The check is a guard against text typed into the pane, not against local processes. The key is not
+The check guards against text typed into the pane, not against local processes. The key is not
 secret from the worker or from other processes of the same user, so anything that can read the slot's
-key file can sign. What happens when the hook runs past its 30 s timeout is unknown: Codex's behaviour
-there is untested.
+key file can sign. Codex's behaviour when the hook runs past its 30 s timeout is untested.
 
 To give a Codex worker anything else, send it through `rota worker dispatch --relay` or the assignment
 brief.
@@ -140,7 +136,7 @@ The same one-shot run reviews code. With `round.harnesses` set, a `size:Major` o
 
 ## Limits
 
-- **herdr only.** No tmux, no solo mode, no Codex subagents.
+- **herdr only.** Codex workers do not run under tmux or in solo mode, and there are no Codex subagents.
 - **No usage meter.** The headroom meter covers only the `claude` entries of `round.accounts`, and a Codex slot is skipped
   by them. The `codex` entries spread slots but cannot measure headroom. `rota limit watch` reads only the
   limit message in the pane (the wording, something like `You've hit your usage limit ... try again at 3:42 PM`, is recalled, not captured from a real Codex run), then parks the slot. It

@@ -18,8 +18,6 @@ flowchart LR
   WIND -.most rounds stop here.-> SLATE
 ```
 
-Each stage below names the decision you make and the artifact it leaves.
-
 | Stage | Decision | Artifact |
 |---|---|---|
 | 1. Shape the slate | Slate size and order; which items need design or a plan | design note, plan note, acceptance on each issue |
@@ -78,7 +76,7 @@ Two issues that edit the same file or name the same `## Touches` entry clash. Re
 
 ## 2. Run the round
 
-Start the orchestrator from the host pane (see [first round](/rota/docs/first-round/#12--launch-the-orchestrator)):
+Start the orchestrator from the host pane (see [first round](/rota/docs/first-round/#10--launch-the-orchestrator)):
 
 ```bash
 rota orchestrate
@@ -199,13 +197,6 @@ If a check on the list fails, fix it and rerun; nothing has been tagged yet. A t
 
 - The round only touched docs, tests or internals no user sees.
 - The base is red. Wind-down would have reported it; fix that first.
-
-## The cycle at a glance
-
-1. `rota round candidates`, then `/rota-brainstorm` and `/rota-plan` for the Major items, acceptance for the thin ones.
-2. `rota orchestrate`, assign, `rota round wait`, `/rota-review`, bounce or fix, `rota worker train`.
-3. `rota round wind-down`, `rota reap`, `/rota-learn`.
-4. `/rota-release`, when the merged work earns one.
 
 ## See also
 

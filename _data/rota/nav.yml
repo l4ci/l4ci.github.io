@@ -5,9 +5,6 @@
       desc: ""
 - group: Getting started
   items:
-    - title: Cheat sheet
-      url: /rota/docs/cheatsheet/
-      desc: "one-line summary of every `/rota-*` skill (rapid scan)"
     - title: Install
       url: /rota/docs/install/
       desc: "Homebrew, the install script, release binaries, the Claude Code plugin, upgrading, uninstalling"
@@ -35,7 +32,7 @@
   items:
     - title: Your first round
       url: /rota/docs/first-round/
-      desc: "install, skills, herdr or tmux, launching the orchestrator, a first round and wind-down, step by step"
+      desc: "herdr or tmux, launching the orchestrator, a first round and wind-down, step by step"
     - title: A round cycle
       url: /rota/docs/walkthroughs/round-cycle/
       desc: "shape the slate, run a round, wind down, release"
@@ -57,9 +54,6 @@
     - title: Orchestrator harnesses
       url: /rota/docs/usage/orchestrator-harnesses/
       desc: "run the orchestrator in Claude Code, Codex, Hermes or opencode"
-    - title: rota or a bare session
-      url: /rota/docs/usage/rota-vs-plain-session/
-      desc: "a row-by-row comparison with a plain Claude Code session that runs its own subagents"
     - title: Skills in Codex
       url: /rota/docs/usage/codex-skills/
       desc: "install and call the skills from Codex"
@@ -203,9 +197,6 @@
     - title: Architecture
       url: /rota/docs/reference/architecture/
       desc: "how the CLI, the skills and `.rota/` fit together"
-    - title: Slash commands
-      url: /rota/docs/reference/slash-commands/
-      desc: "every `/rota-*` command, alphabetical"
     - title: "The `.rota/` folder"
       url: /rota/docs/reference/rota-folder/
       desc: "files and directories created by `rota init`"
@@ -221,6 +212,44 @@
     - title: Project check
       url: /rota/docs/reference/preflight/
       desc: "what `rota init check` verifies, plus exit-code meanings"
+- group: Compare
+  items:
+    - title: How rota compares
+      url: /rota/docs/compare/
+      desc: "one page per tool, with the version checked"
+    - title: rota vs GSD
+      url: /rota/docs/compare/gsd/
+      desc: "spec-driven phases from discuss to ship"
+    - title: rota vs Superpowers
+      url: /rota/docs/compare/superpowers/
+      desc: "a skills methodology for many harnesses"
+    - title: rota vs OpenSpec
+      url: /rota/docs/compare/openspec/
+      desc: "living specs and delta change folders"
+    - title: rota vs ralph
+      url: /rota/docs/compare/ralph/
+      desc: "a fresh-context loop over a `prd.json`"
+    - title: rota vs Conductor
+      url: /rota/docs/compare/conductor/
+      desc: "a Mac app for agents in workspaces"
+    - title: rota vs Orca
+      url: /rota/docs/compare/orca/
+      desc: "a desktop app for fleets of agents"
+    - title: rota vs Vibe Kanban
+      url: /rota/docs/compare/vibe-kanban/
+      desc: "a kanban board that runs agents"
+    - title: rota vs Claude Squad
+      url: /rota/docs/compare/claude-squad/
+      desc: "a TUI for agents in tmux sessions"
+    - title: rota vs Gas Town
+      url: /rota/docs/compare/gastown/
+      desc: "a Mayor, polecats and a merge queue"
+    - title: rota vs Octo
+      url: /rota/docs/compare/octo/
+      desc: "several AI providers on one question"
+    - title: rota or a bare session
+      url: /rota/docs/usage/rota-vs-plain-session/
+      desc: "a row-by-row comparison with a plain Claude Code session that runs its own subagents"
 - group: Other
   items:
     - title: FAQ

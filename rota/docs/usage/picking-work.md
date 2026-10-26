@@ -1,16 +1,14 @@
 ---
 layout: rota/doc
 title: "Picking work"
-description: "Two flows help you orient and pick what to do next. /rota-work (no argument) reconciles git state, surfaces any /rota-pause handoff note for active streams…"
+description: "/rota-work (no argument) reconciles git state, surfaces any /rota-pause handoff note for active streams, presents the backlog (.rota/BACKLOG.md, or the…"
 permalink: /rota/docs/usage/picking-work/
 source: docs/usage/picking-work.md
 ---
 {% raw %}
-Two flows help you orient and pick what to do next. `/rota-work` (no argument) reconciles git state, surfaces any [`/rota-pause`](/rota/docs/usage/pausing-and-resuming/) handoff note for active streams, presents the backlog (`.rota/BACKLOG.md`, or the tracker's issues on the [issue backend](/rota/docs/usage/issue-backend/)), and suggests work. `/rota-work --preview <ID>` lets you peek at the orchestrator's plan before code lands.
+`/rota-work` (no argument) reconciles git state, surfaces any [`/rota-pause`](/rota/docs/usage/pausing-and-resuming/) handoff note for active streams, presents the backlog (`.rota/BACKLOG.md`, or the tracker's issues on the [issue backend](/rota/docs/usage/issue-backend/)), and suggests work. `/rota-work --preview <ID>` lets you peek at the orchestrator's plan before code lands.
 
 ## /rota-work (no argument)
-
-Reconciles the backlog against actual git state, then suggests what to pick up.
 
 Before presenting results it:
 

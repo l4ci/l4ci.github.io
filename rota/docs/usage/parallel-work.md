@@ -53,19 +53,16 @@ already in progress, so the two sessions claim different work.
 # → creates .claude/worktrees/feat/f03-export-csv
 ```
 
-Both streams run independently. See [running work](/rota/docs/usage/running-work/) for the
-full `/rota-work` lifecycle.
+See [running work](/rota/docs/usage/running-work/) for the full `/rota-work` lifecycle.
 
 ## How status.json stays consistent
 
 Both sessions write to the same `.rota/status.json` in the main worktree,
 but each owns different entries (one per active branch), so they don't
 conflict under normal operation. `/rota-work` (no argument) in a third terminal sees both
-streams as "In Progress" and skips those items when suggesting new work. If
-you run `/rota-work` (no argument) while `/rota-work` is mid-update, the last writer wins; the
-next `/rota-work` (no argument) run reconciles drift by validating status against actual
-git state. For more on how `/rota-work` (no argument) reads and updates status, see
-[picking work](/rota/docs/usage/picking-work/).
+streams as "In Progress" and skips those items. If it runs while another `/rota-work` is
+mid-update, the last writer wins; the next run reconciles drift by validating status
+against actual git state. See [picking work](/rota/docs/usage/picking-work/).
 
 ## Caveats
 
