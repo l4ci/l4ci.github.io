@@ -2,8 +2,8 @@
 layout: rota/doc
 title: "Knowledge index"
 description: "One line per topic: - Name — what is in it. An agent reads this file, then only the topic files it needs."
-permalink: /rota/docs/examples/knowledge-repo/INDEX/
-source: docs/examples/knowledge-repo/INDEX.md
+permalink: /rota/docs/examples/knowledge-repo/
+source: docs/examples/knowledge-repo/README.md
 ---
 {% raw %}
 One line per topic: `- [Name](topics/<slug>.md) — what is in it`. An agent reads this file, then only the topic files it needs.
