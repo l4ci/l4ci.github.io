@@ -37,7 +37,7 @@ One page per `/rota-*` skill: when to use it, when another skill fits better, wh
 
 ## Persist
 
-- [`/rota-learn`](/rota/docs/skills/rota-learn/): Save the session's durable lessons to KNOWLEDGE.md. Flags: `--strict`, `--retro [<session-id|path>]`, `--term <name>`, `--promote | --deprecate | --amend <topic> "<title>"`.
+- [`/rota-learn`](/rota/docs/skills/rota-learn/): Save the session's durable lessons to KNOWLEDGE.md. Flags: `--strict`, `--retro [<session-id|path>]`, `--external-review`, `--term <name>`, `--promote | --deprecate | --amend <topic> "<title>"`.
 - [`/rota-decide`](/rota/docs/skills/rota-decide/): Record a hard-boundary decision with explicit forbids and permits. Manual only. Flags: `--from-learning <topic>`, `--from-spike <name>`, `--supersede <topic> "<title>"`, `--retire <topic> "<title>"`.
 - [`/rota-pause`](/rota/docs/skills/rota-pause/): Stop cleanly and leave a handoff note for the next session. Flags: `--report`.
 

@@ -708,6 +708,10 @@
     "flag": "--retro [<session-id|path>]"
    },
    {
+    "does": "propose splits for oversized external topics and fold stray files, asking before each split",
+    "flag": "--external-review"
+   },
+   {
     "does": "write a Glossary entry",
     "flag": "--term <name>"
    },
