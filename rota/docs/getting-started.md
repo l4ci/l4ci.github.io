@@ -31,7 +31,7 @@ Commit `.rota/` and the files setup wrote (`AGENTS.md`, `CLAUDE.md`, `.claude/ag
 
 ## 🔁 Your first cycle
 
-One item, with you driving each step. The [quickstart walkthrough](/rota/docs/walkthroughs/quickstart-manual-mode/) shows the full output.
+One item, with you driving each step.
 
 1. **Capture it.** Describe the work in plain words:
 
@@ -62,6 +62,6 @@ For an item too big to one-shot, run `/rota-plan` between capture and work. [Ski
 ## ➡ Next
 
 - [Your first round](/rota/docs/first-round/): several issues in parallel, an orchestrator, workers and the merge gate.
-- [Walkthroughs](/rota/docs/walkthroughs/quickstart-manual-mode/): the quickstart above, plus greenfield, brownfield and round-cycle examples in the same folder.
+- [Examples](https://volkerotto.net/rota/examples/): the skill chains with sample transcripts, from one small bug to a whole project. The [walkthroughs](/rota/docs/walkthroughs/) show what a greenfield or brownfield project holds on disk.
 - [How it works](/rota/docs/how-it-works/): the roles and how the skills connect.
 {% endraw %}

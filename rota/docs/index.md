@@ -18,10 +18,8 @@ Public user guide for rota, a dev workflow for Claude Code and Codex, with OpenC
 
 ### Walkthroughs
 
-- [Quickstart: one item in manual mode](/rota/docs/walkthroughs/quickstart-manual-mode/). One small bug taken through `/rota-capture`, `/rota-plan`, `/rota-work` and `/rota-ship`, with the proof and review gates marked. The shortest one.
-- [A round cycle: shape the slate, run the round, release](/rota/docs/walkthroughs/round-cycle/). The loop between releases: `/rota-brainstorm` and `/rota-plan`, an orchestrated round, wind-down, `/rota-learn`, `/rota-release`.
-- [Greenfield: from a brief to a shipped milestone](/rota/docs/walkthroughs/greenfield-from-brief/). Empty repo plus a one-page brief, taken end-to-end through `/rota-vision`, `/rota-plan`, `/rota-work`, `/rota-debug`, `/rota-ship`, `/rota-learn`.
-- [Brownfield: dropping rota into an existing project](/rota/docs/walkthroughs/brownfield-existing-project/). Established codebase with open issues and a mental bug list, walked through `rota init`, `/rota-capture`, then a P0 cycle plus a debug cycle.
+- [Greenfield: what a project holds after a brief](/rota/docs/walkthroughs/greenfield-from-brief/). The files `/rota-vision`, `/rota-plan`, `/rota-capture` and `/rota-learn` leave behind in a new project, with the plan, milestones and knowledge entries shown in full.
+- [Brownfield: what rota adds to an existing project](/rota/docs/walkthroughs/brownfield-existing-project/). The project map, config choices, backlog, decision and knowledge entry that appear when rota joins a codebase with history.
 
 ### 🔄 Rounds
 

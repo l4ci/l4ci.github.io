@@ -1,15 +1,14 @@
 ---
 layout: rota/doc
 title: "Walkthroughs"
-description: "End-to-end examples that follow one scenario from the first command to the last."
+description: "Guides to what a project holds on disk after rota has been used on it. The command-by-command transcripts live on the Examples page, one per situation. For…"
 permalink: /rota/docs/walkthroughs/
 source: docs/walkthroughs/README.md
 ---
 {% raw %}
-End-to-end examples that follow one scenario from the first command to the last.
+Guides to what a project holds on disk after rota has been used on it. The command-by-command transcripts live on the [Examples page](https://volkerotto.net/rota/examples/), one per situation. For one small item, see [getting started](/rota/docs/getting-started/).
 
-- [A round cycle: shape the slate, run the round, release](/rota/docs/walkthroughs/round-cycle/). The loop between releases: `/rota-brainstorm` and `/rota-plan`, an orchestrated round, wind-down, `/rota-learn`, `/rota-release`.
-- [Quickstart: one item in manual mode](/rota/docs/walkthroughs/quickstart-manual-mode/). One small bug through `/rota-capture`, `/rota-plan`, `/rota-work` and `/rota-ship`, with the proof and review gates marked.
-- [Greenfield: from a brief to a shipped milestone](/rota/docs/walkthroughs/greenfield-from-brief/). Empty repo plus a one-page brief, through `/rota-vision`, `/rota-plan`, `/rota-work`, `/rota-debug`, `/rota-ship`, `/rota-learn`.
-- [Brownfield: dropping rota into an existing project](/rota/docs/walkthroughs/brownfield-existing-project/). An established codebase with open issues, through `rota init`, `/rota-capture`, a P0 cycle and a debug cycle.
+- [Greenfield: what a project holds after a brief](/rota/docs/walkthroughs/greenfield-from-brief/). Empty repo plus a one-page brief: the milestones, slice plan, backlog and knowledge entries that `/rota-vision`, `/rota-plan`, `/rota-capture` and `/rota-learn` write.
+- [Brownfield: what rota adds to an existing project](/rota/docs/walkthroughs/brownfield-existing-project/). An established codebase with open issues: the project map, config choices, backlog, decision and knowledge entry.
+- [A round cycle: shape the slate, run the round, release](/rota/docs/walkthroughs/round-cycle/). The decisions you make between releases: slate, bounces, wind-down, release.
 {% endraw %}

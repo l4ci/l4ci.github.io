@@ -16,18 +16,12 @@
       desc: "the two ways to use rota (orchestrator, workers, gate), plus how each skill connects to the artifacts it touches"
 - group: Walkthroughs
   items:
-    - title: "Quickstart: one item in manual mode"
-      url: /rota/docs/walkthroughs/quickstart-manual-mode/
-      desc: "One small bug taken through `/rota-capture`, `/rota-plan`, `/rota-work` and `/rota-ship`, with the proof and review gates marked. The shortest one."
-    - title: "A round cycle: shape the slate, run the round, release"
-      url: /rota/docs/walkthroughs/round-cycle/
-      desc: "The loop between releases: `/rota-brainstorm` and `/rota-plan`, an orchestrated round, wind-down, `/rota-learn`, `/rota-release`."
-    - title: "Greenfield: from a brief to a shipped milestone"
+    - title: "Greenfield: what a project holds after a brief"
       url: /rota/docs/walkthroughs/greenfield-from-brief/
-      desc: "Empty repo plus a one-page brief, taken end-to-end through `/rota-vision`, `/rota-plan`, `/rota-work`, `/rota-debug`, `/rota-ship`, `/rota-learn`."
-    - title: "Brownfield: dropping rota into an existing project"
+      desc: "The files `/rota-vision`, `/rota-plan`, `/rota-capture` and `/rota-learn` leave behind in a new project, with the plan, milestones and knowledge entries shown in full."
+    - title: "Brownfield: what rota adds to an existing project"
       url: /rota/docs/walkthroughs/brownfield-existing-project/
-      desc: "Established codebase with open issues and a mental bug list, walked through `rota init`, `/rota-capture`, then a P0 cycle plus a debug cycle."
+      desc: "The project map, config choices, backlog, decision and knowledge entry that appear when rota joins a codebase with history."
 - group: Rounds
   items:
     - title: Your first round

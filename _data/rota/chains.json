@@ -17,8 +17,8 @@
    }
   ],
   "title": "Fix a small bug or add a small feature",
-  "walkthrough": "walkthroughs/quickstart-manual-mode.md",
-  "walkthrough_url": "/rota/docs/walkthroughs/quickstart-manual-mode/",
+  "walkthrough": "getting-started.md",
+  "walkthrough_url": "/rota/docs/getting-started/",
   "when": "One clear item, small enough to build in one sitting."
  },
  {
@@ -360,6 +360,98 @@
   "walkthrough": "walkthroughs/greenfield-from-brief.md",
   "walkthrough_url": "/rota/docs/walkthroughs/greenfield-from-brief/",
   "when": "An empty repo and an idea of where it should go."
+ },
+ {
+  "id": "existing-project",
+  "steps": [
+   {
+    "skill": "rota-init",
+    "why": "Suggest config values from the repo, confirmed one by one."
+   },
+   {
+    "example": {
+     "changes": [
+      "one `.rota/map/<name>.md` per subsystem, stamped with `last_mapped_commit`",
+      "the always-on `## Project Map` block in `AGENTS.md`",
+      "no issues filed, no code changed"
+     ],
+     "reviewed": false,
+     "source": "walkthroughs/brownfield-existing-project.md#step-2-scaffold-the-project-map",
+     "source_url": "/rota/docs/walkthroughs/brownfield-existing-project/#step-2-scaffold-the-project-map",
+     "steps": [
+      {
+       "you": "/rota-refactor --map"
+      },
+      {
+       "agent": "Mapped 6 subsystems. Files to write:\n  .rota/map/api.md           new\n  .rota/map/dashboard.md     new\n  .rota/map/alerts.md        new\n  .rota/map/integrations.md  new\n  .rota/map/storage.md       new\n  .rota/map/shared.md        new\nWrite the new files? (all / pick / none)\n"
+      },
+      {
+       "you": "all"
+      },
+      {
+       "agent": "Wrote 6 files, skipped 0. Ran rota map index and rota map stats.\n"
+      }
+     ]
+    },
+    "skill": "rota-refactor",
+    "why": "With --map, draft the project map so later cycles skip re-exploring the code."
+   },
+   {
+    "example": {
+     "changes": [
+      "four new rows in `.rota/BACKLOG.md`, with detail files for the long ones",
+      "nothing else; capture records and stops"
+     ],
+     "reviewed": false,
+     "source": "walkthroughs/brownfield-existing-project.md#step-4-rota-capture-for-the-mental-backlog",
+     "source_url": "/rota/docs/walkthroughs/brownfield-existing-project/#step-4-rota-capture-for-the-mental-backlog",
+     "steps": [
+      {
+       "you": "/rota-capture \"alert rule editor crashes on empty title; we should add a /health endpoint for k8s; dedup window is hardcoded at 5 min, should be per-rule; DST off-by-one on dashboard 24h filter\""
+      },
+      {
+       "agent": "[B06] alert rule editor crash on empty title  Bug, P1, Major\n[F01] /health endpoint for k8s probes         Feature, Minor\n[F02] per-rule dedup window                   Feature, Major\n[B07] DST off-by-one on dashboard 24h filter  Bug, P1, Major\nF02 is Major: consider /rota-brainstorm F02 before /rota-plan.\n"
+      }
+     ]
+    },
+    "skill": "rota-capture",
+    "why": "Brain-dump the bugs and ideas you have been carrying around."
+   },
+   {
+    "example": {
+     "changes": [
+      "a feature branch with one commit per task",
+      "a proof row per check",
+      "B05 marked in progress in .rota/status.json until it lands"
+     ],
+     "reviewed": false,
+     "source": "walkthroughs/brownfield-existing-project.md#step-7-the-p0-cycle",
+     "source_url": "/rota/docs/walkthroughs/brownfield-existing-project/#step-7-the-p0-cycle",
+     "steps": [
+      {
+       "you": "/rota-work B05"
+      },
+      {
+       "agent": "Read .rota/map/integrations.md. KNOWLEDGE.md has nothing under Security yet.\nBranch rota/B05-secrets-in-url-form created. 4 tasks.\nT1  render secrets via <input type=\"password\">\n    rota proof record B05 -- npm test -- integration-form   PASS\nT2  reject secrets in the URL query on the POST endpoint\n...\n"
+      }
+     ]
+    },
+    "skill": "rota-work",
+    "why": "Take the P0 first. The map and knowledge tell the worker where to look."
+   },
+   {
+    "skill": "rota-debug",
+    "why": "When a fix will not stay fixed, find the cause before changing code."
+   },
+   {
+    "skill": "rota-learn",
+    "why": "Keep the gotcha so the next cycle in that area starts with it."
+   }
+  ],
+  "title": "Bring rota into an existing project",
+  "walkthrough": "walkthroughs/brownfield-existing-project.md",
+  "walkthrough_url": "/rota/docs/walkthroughs/brownfield-existing-project/",
+  "when": "A repo with history and a backlog that lives in your head, with no rota yet."
  },
  {
   "featured": true,

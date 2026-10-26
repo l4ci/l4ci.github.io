@@ -11,9 +11,9 @@
     "a new row under `## Bugs` in `.rota/BACKLOG.md`",
     "nothing else; capture records and stops"
    ],
-   "reviewed": true,
-   "source": "walkthroughs/quickstart-manual-mode.md#step-1-capture",
-   "source_url": "/rota/docs/walkthroughs/quickstart-manual-mode/#step-1-capture",
+   "reviewed": false,
+   "source": "getting-started.md",
+   "source_url": "/rota/docs/getting-started/",
    "steps": [
     {
      "you": "/rota-capture the list command shows every row when I ask for zero"
@@ -181,9 +181,8 @@
    "changes": [
     "the plan written to `.rota/plans/B03.md` (issue backend: a note on the issue)"
    ],
-   "reviewed": true,
-   "source": "walkthroughs/quickstart-manual-mode.md#step-2-plan-optional",
-   "source_url": "/rota/docs/walkthroughs/quickstart-manual-mode/#step-2-plan-optional",
+   "reviewed": false,
+   "source": null,
    "steps": [
     {
      "you": "/rota-plan B03"
@@ -232,7 +231,7 @@
     "`.rota/MILESTONES.md` and `.rota/milestones/M01.md` ... `M03.md`",
     "the always-on `## Project Vision` block in `AGENTS.md`"
    ],
-   "reviewed": true,
+   "reviewed": false,
    "source": "walkthroughs/greenfield-from-brief.md#step-2-rota-vision",
    "source_url": "/rota/docs/walkthroughs/greenfield-from-brief/#step-2-rota-vision",
    "steps": [
@@ -286,9 +285,9 @@
     "a proof row per check",
     "B03 marked in progress in .rota/status.json until it lands"
    ],
-   "reviewed": true,
-   "source": "walkthroughs/quickstart-manual-mode.md#step-3-work",
-   "source_url": "/rota/docs/walkthroughs/quickstart-manual-mode/#step-3-work",
+   "reviewed": false,
+   "source": "getting-started.md",
+   "source_url": "/rota/docs/getting-started/",
    "steps": [
     {
      "you": "/rota-work B03"
@@ -347,7 +346,7 @@
     "a proof row for the reproducer",
     "a PR on the issue backend; on the file backend B01 is marked complete instead"
    ],
-   "reviewed": true,
+   "reviewed": false,
    "source": "walkthroughs/brownfield-existing-project.md",
    "source_url": "/rota/docs/walkthroughs/brownfield-existing-project/",
    "steps": [
@@ -456,9 +455,8 @@
     "nothing in the tree (read-only, no commits)",
     "spec and quality verdicts recorded against the reviewed sha"
    ],
-   "reviewed": true,
-   "source": "walkthroughs/quickstart-manual-mode.md#step-4-ship",
-   "source_url": "/rota/docs/walkthroughs/quickstart-manual-mode/#step-4-ship",
+   "reviewed": false,
+   "source": null,
    "steps": [
     {
      "you": "/rota-review"
@@ -516,9 +514,9 @@
     "main carries the fix as one revertable unit",
     "status.json entry cleared"
    ],
-   "reviewed": true,
-   "source": "walkthroughs/quickstart-manual-mode.md#step-4-ship",
-   "source_url": "/rota/docs/walkthroughs/quickstart-manual-mode/#step-4-ship",
+   "reviewed": false,
+   "source": "getting-started.md",
+   "source_url": "/rota/docs/getting-started/",
    "steps": [
     {
      "you": "/rota-ship"
@@ -689,7 +687,7 @@
     "one new bullet under its topic in .rota/KNOWLEDGE.md, date-stamped",
     "the rota-knowledge topic index in AGENTS.md refreshed"
    ],
-   "reviewed": true,
+   "reviewed": false,
    "source": "walkthroughs/brownfield-existing-project.md#step-8-a-real-debug-cycle",
    "source_url": "/rota/docs/walkthroughs/brownfield-existing-project/#step-8-a-real-debug-cycle",
    "steps": [
