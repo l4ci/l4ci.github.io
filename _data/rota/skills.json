@@ -135,10 +135,10 @@
    "source_url": "/rota/docs/walkthroughs/greenfield-from-brief/#step-3-rota-spike-optional",
    "steps": [
     {
-     "you": "/rota-spike sqlite-schema \"Will a single-currency schema survive multi-currency migration cleanly?\""
+     "you": "/rota-spike will a single-currency schema survive a later move to multi-currency?"
     },
     {
-     "agent": "Created branch spike/sqlite-schema and .rota/spikes/sqlite-schema.md.\nThe question is recorded. Experiment on the branch; fill in Findings and Decision when done.\n"
+     "agent": "Question: can a single-currency schema migrate to multi-currency without data loss? Named it sqlite-schema.\nCreated branch spike/sqlite-schema and .rota/spikes/sqlite-schema.md.\nThe question is recorded. Experiment on the branch; fill in Findings and Decision when done.\n"
     }
    ]
   },
