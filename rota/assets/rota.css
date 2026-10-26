@@ -619,8 +619,8 @@ div.highlighter-rouge pre, div.highlight pre { margin: 0; }
   .ex-tabs button { border-left: 0; border-bottom: 1px solid var(--rule); font-size: 0.88rem; }
   .ex-tabs button:last-child { border-bottom: 0; }
   .ex-tabs button[aria-selected="true"] { border-bottom-color: var(--rule); box-shadow: inset 3px 0 0 var(--duty); }
-  .term-body { overflow-x: visible; }
-  .term .t-agent, .t-you { white-space: pre-wrap; overflow-wrap: anywhere; }
+  .examples .term-body { overflow-x: visible; }
+  .examples .term .t-agent, .examples .t-you { white-space: pre-wrap; overflow-wrap: anywhere; }
   .skill-grid { grid-template-columns: minmax(0, 1fr); }
   .chain-strip { grid-template-columns: minmax(0, 1fr); }
   .chain-side:last-child { justify-content: flex-start; }

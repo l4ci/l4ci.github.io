@@ -4,16 +4,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {% if page.permalink == "/rota/" %}
-    <title>rota · capture, build and ship work with coding agents</title>
+    <title>rota · make sure what your coding agents merge works</title>
     {% else %}
     <title>{{ page.title | strip_html }} · rota docs</title>
     {% endif %}
-    <meta name="description" content="{{ page.description | default: 'rota turns a to-do list into reviewed, merged work with Claude Code, Codex or OpenCode, one item or a parallel round.' | strip_html | escape }}">
+    <meta name="description" content="{{ page.description | default: 'Coding agents write fast; rota makes sure what they merge works. Issues in, reviewed and tested PRs out, for Claude Code, Codex and OpenCode.' | strip_html | escape }}">
     <meta name="theme-color" content="#F7F8FA" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#0D1117" media="(prefers-color-scheme: dark)">
     <link rel="canonical" href="{{ site.url }}{{ page.url }}">
     <meta property="og:title" content="{{ page.title | default: 'rota' | strip_html | escape }}">
-    <meta property="og:description" content="{{ page.description | default: 'Capture, build and ship work with Claude Code or Codex, one item or many.' | strip_html | escape }}">
+    <meta property="og:description" content="{{ page.description | default: 'Coding agents write fast; rota makes sure what they merge works. Issues in, reviewed and tested PRs out, for Claude Code, Codex and OpenCode.' | strip_html | escape }}">
     <meta property="og:url" content="{{ site.url }}{{ page.url }}">
     <meta property="og:type" content="website">
     <link rel="icon" href="/rota/assets/favicon.svg" type="image/svg+xml">

@@ -27,7 +27,8 @@ description: Situations you meet while working with coding agents, and the rota 
       {%- assign s = skills | where: "skill", st.skill | first %}
       <li>
         <p class="eg-why"><a href="{{ s.url }}"><code>/{{ st.skill }}</code></a> {{ st.why | markdownify | remove: '<p>' | remove: '</p>' | strip }}</p>
-        {%- include rota/term.html example=s.example label=st.skill bare=true %}
+        {%- assign exm = st.example | default: s.example %}
+          {%- include rota/term.html example=exm label=st.skill bare=true %}
       </li>
       {%- endfor %}
     </ol>

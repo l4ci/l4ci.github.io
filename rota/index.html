@@ -3,13 +3,13 @@ layout: rota/base
 permalink: /rota/
 body_class: is-landing
 title: rota
-description: rota turns a to-do list into reviewed, merged work with Claude Code, Codex or OpenCode. One agent and one item, or a parallel round with a merge gate.
+description: Coding agents write fast; rota makes sure what they merge works. Issues in, reviewed and tested PRs out, for Claude Code, Codex and OpenCode.
 ---
 <main id="main">
   <section class="hero">
     <div class="hero-copy">
-      <h1>Capture, build and ship work with Claude Code or Codex, one item or many.</h1>
-      <p class="lede">rota turns a to-do list into reviewed, merged work. You capture an item, your agent builds it in small commits, and <code>/rota-ship</code> reviews the branch and merges it. What the project learned is kept for the next session.</p>
+      <h1>Coding agents write fast. rota makes sure what they merge works.</h1>
+      <p class="lede">Capture work as issues. rota hands them to Claude Code, Codex or OpenCode, reviews every branch and merges only what passes your tests, one issue at a time or a round in parallel. Lessons and decisions stay in the repo, so the next session starts ahead.</p>
       <div class="install">
         <pre><code>brew install l4ci/tap/rota</code></pre>
         <p>or <a href="/rota/docs/install/">the install script, a release binary or the Claude Code plugin</a></p>
@@ -169,7 +169,8 @@ description: rota turns a to-do list into reviewed, merged work with Claude Code
         {%- assign s = skills | where: "skill", st.skill | first %}
         <div class="ex-step" data-step="{{ forloop.index0 }}">
           <p class="ex-why"><span class="ex-n">Step {{ forloop.index }} of {{ c.steps.size }}</span> {{ st.why | markdownify | remove: '<p>' | remove: '</p>' | strip }}</p>
-          {%- include rota/term.html example=s.example label=st.skill bare=true %}
+          {%- assign exm = st.example | default: s.example %}
+          {%- include rota/term.html example=exm label=st.skill bare=true %}
           <p class="ex-more">{{ s.when | markdownify | remove: '<p>' | remove: '</p>' | strip }} <a href="{{ s.url }}">All about <code>/{{ s.skill }}</code></a></p>
         </div>
         {%- endfor %}
