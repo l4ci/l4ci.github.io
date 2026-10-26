@@ -1,0 +1,17 @@
+{%- assign ex = include.example -%}
+<figure class="term" data-term>
+  <div class="term-bar"><span>{{ include.label | default: "Example" }}</span>{% unless ex.reviewed %}<em>illustrative, condensed</em>{% endunless %}<button type="button" class="term-replay" hidden>Replay</button></div>
+  <div class="term-body">
+    {%- for st in ex.steps -%}
+    {%- if st.you %}<div class="t-you">{{ st.you | escape }}</div>{% endif -%}
+    {%- if st.agent %}<pre class="t-agent">{{ st.agent | escape }}</pre>{% endif -%}
+    {%- endfor -%}
+  </div>
+  {%- unless include.bare %}
+  <figcaption>
+    <strong>What changes</strong>
+    <ul>{% for c in ex.changes %}<li>{{ c | markdownify | remove: '<p>' | remove: '</p>' | strip }}</li>{% endfor %}</ul>
+    {%- if ex.source_url %}<a href="{{ ex.source_url }}">Where this example comes from</a>{% endif %}
+  </figcaption>
+  {%- endunless %}
+</figure>

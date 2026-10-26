@@ -1,0 +1,134 @@
+---
+layout: rota/doc
+title: "Implementing"
+description: "Items captured in the backlog (BACKLOG.md, or issues on the issue backend) reach \"merged\" through /rota-work, an orchestrator that plans, dispatches parallel…"
+permalink: /rota/docs/usage/running-work/
+source: docs/usage/running-work.md
+---
+{% raw %}
+Items captured in the backlog ([`BACKLOG.md`](/rota/docs/reference/rota-folder/), or issues on the [issue backend](/rota/docs/usage/issue-backend/)) reach "merged" through `/rota-work`, an orchestrator that plans, dispatches parallel workers, and lands one atomic commit per task. For a single ad-hoc fix, run `/rota-capture`, then `/rota-work <ID>`.
+
+## /rota-work
+
+`/rota-work` is the main implementation driver. The orchestrator plans tasks, dispatches workers in parallel (one per task), verifies each result, then either merges to main or opens a PR based on your `work.mergeStrategy`. On the issue backend it always opens a PR.
+
+**Trigger phrases:**
+
+- `/rota-work` with no argument reconciles the backlog, reports a round in flight or an item that failed its gate, suggests an item, then works it
+- `/rota-work [B03]` to implement a specific item by ID (`/rota-work 42` on the issue backend)
+- `/rota-work [B03] [F07]` to implement a batch of items together
+- `/rota-work "add retry logic to the upload pipeline"` takes a brief; run `/rota-capture` first so the work has an ID to close
+
+**Precondition:** a clean working tree. Files that tools generate beside your work (a lockfile, a codegen output) are swept into a `chore:` commit and the run continues. Any other uncommitted change of yours stops it: commit or stash first.
+
+**Status tracking:** registers in `.rota/status.json` at start so [`/rota-work` (no argument)](/rota/docs/usage/picking-work/) in another session knows those items are in progress.
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant O as Orchestrator
+    participant W1 as Worker 1
+    participant W2 as Worker 2
+    participant G as Git
+
+    U->>O: /rota-work [B03] [F07]
+    O->>G: clean-tree guard
+    O->>O: plan tasks into waves
+    O->>G: create branch rota/<slug>
+    par Wave 1 (parallel, write-only)
+        O->>W1: brief: edit files for Task A
+        O->>W2: brief: edit files for Task B
+    end
+    W1-->>O: report files modified
+    W2-->>O: report files modified
+    O->>O: verify diffs match briefs
+    O->>G: commit Task A
+    O->>G: commit Task B
+    O->>G: merge --no-ff (or open PR)
+    O-->>U: summary: branch landed
+```
+
+## One commit per task
+
+Each task lands as its own atomic commit. The skill doesn't fix a message format: each worker brief carries a suggested message and the orchestrator commits with it verbatim. Naming the item ID in the message (for example `[B03]`) is what lets `/rota-ship` find the item for the PR body. Commits might look like this:
+
+```
+a1b2c3d fix: retry logic on network timeout [B03]
+d4e5f6a feat: per-project theme support [F07]
+g7h8i9j chore: update CI to Node 20 [T02]
+```
+
+That keeps reverts surgical (drop one task without touching others), makes PR review easier (read commit by commit), and leaves a history `/rota-ship` reads to build PR bodies: it lists the items whose IDs the commits name.
+
+## Isolation: branch vs. worktree
+
+Set `work.isolation` in [`config.json`](/rota/docs/usage/configuration/):
+
+| Mode | How it works | When to use |
+|------|-------------|-------------|
+| `"branch"` (default) | Feature branch in the current worktree | Solo work, simple workflows |
+| `"worktree"` | Isolated directory under `.claude/worktrees/` | Parallel sessions, keep main clean while agents work |
+
+With `"branch"`, your main worktree switches to the feature branch for the duration of the run. With `"worktree"`, the main worktree stays on `main`, so you can keep editing there while agents work in isolation.
+
+To run multiple `/rota-work` sessions at the same time on different item batches, pick `"worktree"`. See [parallel-work](/rota/docs/usage/parallel-work/) for the multi-session pattern.
+
+## Capture, then work
+
+For a single ad-hoc fix, run `/rota-capture` and then `/rota-work` on the printed ID.
+
+```
+/rota-capture "fix the off-by-one in RingBuffer"
+/rota-capture "add a Cmd+K shortcut to the project picker"
+```
+
+The item gets a real ID (`#N` on the issue backend, `[B07]` on the file backend). Capture prints the ID and stops; it never starts work. If the scope is fuzzy, refine the item before running `/rota-work <ID>`.
+
+**Flow:** `/rota-capture` files the item, `/rota-work <ID>` implements it. All `/rota-capture` rules (classification, detail-file overflow, ID assignment) and all `/rota-work` rules (clean-tree guard, branch/worktree isolation, parallel workers, per-task commits) apply.
+
+## Capture vs. Work: picking the right entry
+
+Pick by **intent**, not by the verb typed:
+
+| The user wants to… | Use | Why |
+|---------------------|-----|-----|
+| Brain-dump items into the backlog without acting now | `/rota-capture` | Records only; no execution, no clean-tree guard |
+| Get one specific thing done right now (not yet captured) | `/rota-capture`, then `/rota-work <ID>` | Capture records only; work is a separate step |
+| Implement an item that's already in the backlog | `/rota-work <ID>` | Plans, dispatches workers, verifies, commits per task |
+| Pick the next thing from the backlog and execute | `/rota-work` (no argument) | Reconciles, suggests, then works the pick |
+
+**Rules of thumb:**
+
+- *"fix X"* / *"add Y"* / *"do Z"*: clear single thing, not yet captured: `/rota-capture`, then `/rota-work <ID>`.
+- A list of things, no immediate action, *"capture this"* / *"add to backlog"*: `/rota-capture`.
+- Reference to an existing `[B##]`/`[F##]`/`[T##]` plus *"implement"* / *"build"* / *"do this one"*: `/rota-work <ID>`.
+- *"what's next?"* / *"pick something"* / *"what should I work on?"*: `/rota-work` with no argument.
+
+When intent is ambiguous, `/rota-capture` is the cheapest path: it only records, so nothing runs until you say so.
+
+See [capturing work](/rota/docs/usage/capturing-work/) for capture details and [picking work](/rota/docs/usage/picking-work/) for how the no-argument `/rota-work` selects and prioritizes.
+
+## Proof: what Step 7 records
+
+After each task, `/rota-work` checks the diff against the brief, then writes proof: rows saying what ran and whether it passed.
+
+- `rota proof record <ID> -- <command>` runs the command and writes the row itself: PASS when it exits 0, FAIL otherwise (and it exits 1 then). A row is measured, never typed. For a docs-only task with no command, `rota proof add` writes the row; its check says `no test seam: docs/skill change`.
+- For a behavior change, run the new test through `rota proof record` before the change. The FAIL row is the red run. Run it again after the change for the PASS row. A test that fails on a build or setup error (missing import, undefined symbol) is not a red run; it has to fail on an assertion. Set [`work.tdd`](/rota/docs/usage/configuration/#worktdd-red-first-on-or-off) to `false` to drop the red-first rule. PASS rows are still recorded.
+- When `test.fast` is set, Step 7 runs `rota test run fast`, and that row is the PASS proof.
+- If the issue's body has a `## Acceptance` list, each line carries an id (`AC-1`, `AC-2`, ...). `rota item complete` closes an item only when it has proof and exits 4 otherwise. On the issue backend, a plan's tasks name the ids they deliver (`Serves: AC-1`), and `rota plan pass <key> <AC-id> --proof <sha>:<check>` marks a criterion met by one proof row. See [vision and plans](/rota/docs/usage/vision-and-plans/#rota-plan-write-the-implementation-plan).
+
+## Merge or PR
+
+After `/rota-work` finishes, `work.mergeStrategy` in `config.json` controls what happens next:
+
+| Strategy | Behavior |
+|----------|----------|
+| `"direct"` (default) | Merges the branch to main with `--no-ff`, deletes the branch |
+| `"pr"` | Pushes the branch and opens a GitHub PR or GitLab MR with a summary |
+
+On the issue backend the strategy is treated as `pr`, the PR closes the issues when it merges, and `/rota-work` never merges (`/rota-review --queue` does). The actual ship-time gates (review, second opinion, QA, PR body composition) live in [review and ship](/rota/docs/usage/review-and-ship/).
+
+## Many items at once
+
+`/rota-work` takes items one session at a time, with subagents inside that session. To run several issues in parallel, each worker in its own worktree and terminal tab, use a round: run `rota doctor`, then ask for `/rota-orchestrate`. See [parallel rounds](/rota/docs/usage/parallel-rounds/), the [`rota round` verbs](/rota/docs/reference/cli-helpers/#rota-round) and [`/rota-orchestrate`](/rota/docs/skills/rota-orchestrate/).
+{% endraw %}

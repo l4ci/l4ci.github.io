@@ -1,0 +1,48 @@
+---
+layout: rota/base
+---
+{%- assign flat = "" | split: "" -%}
+{%- for g in site.data.rota.nav -%}{%- for it in g.items -%}
+  {%- unless flat contains it.url -%}{%- assign flat = flat | push: it.url -%}{%- endunless -%}
+{%- endfor -%}{%- endfor -%}
+{%- assign idx = -1 -%}
+{%- for u in flat -%}{%- if u == page.url -%}{%- assign idx = forloop.index0 -%}{%- endif -%}{%- endfor -%}
+<div class="docs">
+  <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="docnav">Docs menu</button>
+  <nav class="docnav" id="docnav" aria-label="Documentation">
+    {%- for g in site.data.rota.nav %}
+    <section>
+      <h2>{{ g.group }}</h2>
+      <ul>
+        {%- for it in g.items %}
+        <li><a href="{{ it.url }}"{% if it.url == page.url %} aria-current="page"{% endif %}>{{ it.title | markdownify | remove: '<p>' | remove: '</p>' | strip }}</a></li>
+        {%- endfor %}
+      </ul>
+    </section>
+    {%- endfor %}
+  </nav>
+  <main id="main" class="article">
+    <article class="prose">
+      <h1>{{ page.title | markdownify | remove: '<p>' | remove: '</p>' | strip }}</h1>
+      {%- if page.skill -%}
+      {%- assign s = site.data.rota.skills | where: "skill", page.skill | first -%}
+      {%- include rota/skill-card.html skill=s -%}
+      <h2 id="details">Details</h2>
+      {%- endif %}
+      {{ content }}
+    </article>
+    <div class="pager">
+      {%- if idx > 0 -%}{%- assign p = idx | minus: 1 -%}{%- assign purl = flat[p] -%}
+      {%- for g in site.data.rota.nav -%}{%- for it in g.items -%}{%- if it.url == purl -%}{%- assign ptitle = it.title -%}{%- endif -%}{%- endfor -%}{%- endfor %}
+      <a class="prev" href="{{ purl }}" rel="prev"><span>Previous</span>{{ ptitle | markdownify | remove: '<p>' | remove: '</p>' | strip }}</a>
+      {%- endif -%}
+      {%- if idx >= 0 -%}{%- assign n = idx | plus: 1 -%}{%- assign nurl = flat[n] -%}
+      {%- if nurl -%}
+      {%- for g in site.data.rota.nav -%}{%- for it in g.items -%}{%- if it.url == nurl -%}{%- assign ntitle = it.title -%}{%- endif -%}{%- endfor -%}{%- endfor %}
+      <a class="next" href="{{ nurl }}" rel="next"><span>Next</span>{{ ntitle | markdownify | remove: '<p>' | remove: '</p>' | strip }}</a>
+      {%- endif -%}{%- endif %}
+    </div>
+    <p class="edit"><a href="https://github.com/l4ci/rota/blob/main/{{ page.source }}">Edit this page on GitHub</a></p>
+  </main>
+  <aside class="toc" aria-label="On this page"></aside>
+</div>

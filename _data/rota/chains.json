@@ -1,0 +1,173 @@
+[
+ {
+  "id": "small-item",
+  "steps": [
+   {
+    "skill": "rota-capture",
+    "why": "Write the item down. Capture records it and stops."
+   },
+   {
+    "skill": "rota-work",
+    "why": "Build it in small commits. The proof gate needs a red run, then a green one."
+   },
+   {
+    "skill": "rota-ship",
+    "why": "Review the branch, then open the PR or merge."
+   }
+  ],
+  "title": "Fix a small bug or add a small feature",
+  "walkthrough": "walkthroughs/quickstart-manual-mode.md",
+  "walkthrough_url": "/rota/docs/walkthroughs/quickstart-manual-mode/",
+  "when": "One clear item, small enough to build in one sitting."
+ },
+ {
+  "id": "big-feature",
+  "steps": [
+   {
+    "skill": "rota-capture",
+    "why": "Record the feature as an item."
+   },
+   {
+    "skill": "rota-brainstorm",
+    "why": "Settle the design with you, section by section."
+   },
+   {
+    "skill": "rota-plan",
+    "why": "Turn the design into tasks with a way to verify each."
+   },
+   {
+    "skill": "rota-work",
+    "why": "Build the plan, one verified task at a time."
+   },
+   {
+    "skill": "rota-ship",
+    "why": "Review against what the item promised, then merge."
+   }
+  ],
+  "title": "Build a bigger feature",
+  "walkthrough": "walkthroughs/round-cycle.md#a-major-item-brainstorm-then-plan",
+  "walkthrough_url": "/rota/docs/walkthroughs/round-cycle/#a-major-item-brainstorm-then-plan",
+  "when": "A Major item where the design or the approach needs sign-off before code lands."
+ },
+ {
+  "id": "unclear-bug",
+  "steps": [
+   {
+    "skill": "rota-debug",
+    "why": "Reproduce it, test one hypothesis at a time, fix it in one commit."
+   },
+   {
+    "skill": "rota-ship",
+    "why": "Review and merge the fix."
+   },
+   {
+    "skill": "rota-learn",
+    "why": "Keep what the bug taught you for the next session."
+   }
+  ],
+  "title": "Chase a bug you don't understand",
+  "walkthrough": "walkthroughs/greenfield-from-brief.md#step-7-a-real-bug-run-rota-debug",
+  "walkthrough_url": "/rota/docs/walkthroughs/greenfield-from-brief/#step-7-a-real-bug-run-rota-debug",
+  "when": "Something is broken and the cause is not known yet."
+ },
+ {
+  "id": "risky-idea",
+  "steps": [
+   {
+    "skill": "rota-spike",
+    "why": "Try it on a throwaway branch. Only the findings come back."
+   },
+   {
+    "skill": "rota-plan",
+    "why": "Plan the real work with what the spike found."
+   },
+   {
+    "skill": "rota-work",
+    "why": "Build it."
+   }
+  ],
+  "title": "Try a risky idea first",
+  "walkthrough": "walkthroughs/greenfield-from-brief.md#step-3-rota-spike-optional",
+  "walkthrough_url": "/rota/docs/walkthroughs/greenfield-from-brief/#step-3-rota-spike-optional",
+  "when": "You don't know yet whether an approach or a library works."
+ },
+ {
+  "id": "new-project",
+  "steps": [
+   {
+    "skill": "rota-init",
+    "why": "Suggest config values from the repo, confirmed one by one."
+   },
+   {
+    "skill": "rota-vision",
+    "why": "Turn the brief into milestones."
+   },
+   {
+    "skill": "rota-plan",
+    "why": "Plan the first milestone slice."
+   },
+   {
+    "skill": "rota-capture",
+    "why": "Turn the plan into backlog items."
+   },
+   {
+    "skill": "rota-work",
+    "why": "Build the first item."
+   }
+  ],
+  "title": "Start a project from a brief",
+  "walkthrough": "walkthroughs/greenfield-from-brief.md",
+  "walkthrough_url": "/rota/docs/walkthroughs/greenfield-from-brief/",
+  "when": "An empty repo and an idea of where it should go."
+ },
+ {
+  "id": "parallel-round",
+  "steps": [
+   {
+    "skill": "rota-plan",
+    "why": "Shape the slate so every issue has clear acceptance."
+   },
+   {
+    "skill": "rota-orchestrate",
+    "why": "Hand issues to workers, review their PRs, merge through the gate."
+   },
+   {
+    "skill": "rota-answer",
+    "why": "Answer the decisions the round put to you, one at a time."
+   },
+   {
+    "skill": "rota-learn",
+    "why": "At wind-down, keep what the round learned."
+   },
+   {
+    "skill": "rota-release",
+    "why": "Cut a release when the work adds up to one."
+   }
+  ],
+  "title": "Run several issues in parallel",
+  "walkthrough": "walkthroughs/round-cycle.md",
+  "walkthrough_url": "/rota/docs/walkthroughs/round-cycle/",
+  "when": "A few independent issues are ready and you can stay around for questions."
+ },
+ {
+  "id": "end-of-session",
+  "steps": [
+   {
+    "skill": "rota-learn",
+    "why": "Save the lessons worth keeping."
+   },
+   {
+    "skill": "rota-pause",
+    "why": "Write a handoff so a fresh session continues."
+   },
+   {
+    "skill": "rota-work",
+    "why": "Next session, with no argument, it reads the handoff and picks up."
+   }
+  ],
+  "title": "Stop for today",
+  "walkthrough": null,
+  "walkthrough_url": null,
+  "when": "The context is filling up or you have to leave mid-item."
+ }
+]

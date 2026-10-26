@@ -1,0 +1,215 @@
+---
+layout: rota/base
+permalink: /rota/
+body_class: is-landing
+title: rota
+description: rota turns a to-do list into reviewed, merged work with Claude Code, Codex or OpenCode. One agent and one item, or a parallel round with a merge gate.
+---
+<main id="main">
+  <section class="hero">
+    <div class="hero-copy">
+      <h1>Capture, build and ship work with Claude Code or Codex, one item or many.</h1>
+      <p class="lede">rota turns a to-do list into reviewed, merged work. You capture an item, your agent builds it in small commits, and <code>/rota-ship</code> reviews the branch and merges it. What the project learned is kept for the next session.</p>
+      <div class="install">
+        <pre><code>brew install l4ci/tap/rota</code></pre>
+        <p>or <a href="/rota/docs/install/">the install script, a release binary or the Claude Code plugin</a></p>
+      </div>
+      <p class="actions">
+        <a class="btn btn-primary" href="/rota/docs/getting-started/">Get started</a>
+        <a class="btn" href="https://github.com/l4ci/rota">View on GitHub</a>
+      </p>
+    </div>
+
+    <figure class="roster" aria-labelledby="roster-cap">
+      <div class="roster-grid" role="img" aria-label="Four workers each take issues in turn; the gate merges each finished pull request into main.">
+        <span class="r-head r-who">worker</span>
+        <span class="r-head" style="--c:2">09:00</span><span class="r-head" style="--c:3">10:00</span><span class="r-head" style="--c:4">11:00</span><span class="r-head" style="--c:5">12:00</span><span class="r-head" style="--c:6">13:00</span><span class="r-head" style="--c:7">14:00</span>
+
+        <span class="r-who" style="--r:2">ben <i>claude</i></span>
+        <span class="shift done" style="--r:2;--s:2;--e:4;--d:0"><b>#412</b> login redirect loop</span>
+        <span class="shift live" style="--r:2;--s:4;--e:8;--d:3"><b>#418</b> rate-limit retries</span>
+
+        <span class="r-who" style="--r:3">dana <i>codex</i></span>
+        <span class="shift done" style="--r:3;--s:2;--e:5;--d:1"><b>#415</b> dark mode toggle</span>
+        <span class="shift ask" style="--r:3;--s:5;--e:7;--d:4"><b>#420</b> asks: keep old export?</span>
+
+        <span class="r-who" style="--r:4">nia <i>claude</i></span>
+        <span class="shift done" style="--r:4;--s:2;--e:3;--d:2"><b>#409</b> 502 fix</span>
+        <span class="shift done" style="--r:4;--s:3;--e:6;--d:3"><b>#416</b> settings page copy</span>
+        <span class="shift live" style="--r:4;--s:6;--e:8;--d:5"><b>#421</b> audit log</span>
+
+        <span class="r-who" style="--r:5">kit <i>opencode</i></span>
+        <span class="shift done" style="--r:5;--s:3;--e:6;--d:4"><b>#417</b> CSV export</span>
+
+        <span class="r-who r-gate" style="--r:6">gate</span>
+        <span class="merge" style="--c:3;--d:6">#409</span>
+        <span class="merge" style="--c:4;--d:7">#412</span>
+        <span class="merge" style="--c:5;--d:8">#415</span>
+        <span class="merge" style="--c:6;--d:9">#416 #417</span>
+      </div>
+      <figcaption id="roster-cap">A round, drawn as a roster. Workers hold one issue at a time and open a PR; the gate merges it after your tests pass on the merged <code>main</code>. Sample project.</figcaption>
+    </figure>
+  </section>
+
+  <section class="band" aria-labelledby="loop">
+    <h2 id="loop">One agent, one item</h2>
+    <p class="band-intro">You stay in the conversation. You need git and Claude Code or Codex, and nothing else.</p>
+    <ol class="loop">
+      <li>
+        <code>/rota-capture</code>
+        <h3>Write it down</h3>
+        <p>Turn a brain dump into backlog items or issues. Mixed input, one line or a page.</p>
+      </li>
+      <li>
+        <code>/rota-work</code>
+        <h3>Build it</h3>
+        <p>Picks the next item, plans it, and builds it in small commits on its own branch.</p>
+      </li>
+      <li>
+        <code>/rota-ship</code>
+        <h3>Review, then merge</h3>
+        <p>Reviews the branch, then opens a PR or merges. <code>/rota-ship --undo</code> rolls a cycle back.</p>
+      </li>
+    </ol>
+    <p><a href="/rota/docs/getting-started/">Getting started</a> walks the loop end to end, with what each <code>rota setup</code> question decides.</p>
+  </section>
+
+  <section class="band" aria-labelledby="round">
+    <h2 id="round">A round: several agents in parallel</h2>
+    <p class="band-intro">When you have a few independent issues, a round runs them side by side. You stay available for product questions.</p>
+    <dl class="roles">
+      <div>
+        <dt>Orchestrator</dt>
+        <dd>One agent that picks the next issues, hands them out, answers workers' questions and merges. It asks you only for product decisions.</dd>
+      </div>
+      <div>
+        <dt>Workers</dt>
+        <dd>Agents that each take one issue in their own git worktree and terminal tab, build it and open a PR. They never merge.</dd>
+      </div>
+      <div>
+        <dt>Gate</dt>
+        <dd>The only merge path. It checks the PR is current and signed off, merges it, then runs your full test suite on the merged <code>main</code>. A red result stops the round until it's fixed.</dd>
+      </div>
+    </dl>
+    <figure class="demo">
+      <img src="/rota/docs/images/rota-round.gif" alt="Running rota opens its palette; picking Orchestrate starts a round in herdr's split view, where the orchestrator assigns three issues to Claude and Codex workers, escalates a worker's product question, gates and merges a finished PR, and places the next issue on the account with the most headroom." loading="lazy" width="1280" height="760">
+      <figcaption>A round in herdr's split view. Illustration with a sample project; the palette is rota's real first screen.</figcaption>
+    </figure>
+    <p><a href="/rota/docs/first-round/">Your first round</a> sets it up step by step. You'll want <code>gh</code> or <code>glab</code>, and herdr or tmux.</p>
+  </section>
+
+  <section class="band split" aria-labelledby="terminal">
+    <div>
+      <h2 id="terminal">Runs in your terminal</h2>
+      <p>A round runs in your terminal, not in a cloud dashboard. Every worker gets its own tab, so you can watch any agent, or type into one, at any time.</p>
+      <ul class="ticks">
+        <li><strong>herdr</strong> reports each agent's state directly (working, blocked, done), and rota waits on those events instead of polling.</li>
+        <li><strong>tmux</strong> works too: rota reads the panes to tell what each worker is doing.</li>
+        <li><strong>Neither?</strong> The round still runs, with workers as subagents of the orchestrator.</li>
+      </ul>
+    </div>
+    <div>
+      <h2 id="accounts">Several accounts, balanced</h2>
+      <p>Long rounds run into usage limits. List your accounts and rota spreads the work and routes around limits.</p>
+      <ul class="ticks">
+        <li>New work goes to the Claude account with the most headroom and skips one that is cooling down.</li>
+        <li>When a worker hits a limit, its issue moves to a free slot on another account and continues from the pushed branch.</li>
+        <li>The orchestrator hands off and restarts under another account before it hits its own limit.</li>
+      </ul>
+      <p><a href="/rota/docs/usage/unattended-rounds/">Unattended rounds</a></p>
+    </div>
+  </section>
+
+  <section class="band" aria-labelledby="fixes">
+    <h2 id="fixes">Problems this fixes</h2>
+    <table class="fixes">
+      <thead><tr><th scope="col">What goes wrong</th><th scope="col">What rota does</th></tr></thead>
+      <tbody>
+        <tr><td>Agents start building before the task is clear.</td><td><code>/rota-brainstorm</code> and <code>/rota-plan</code> settle it first.</td></tr>
+        <tr><td>A session ends and the next one starts blind.</td><td><code>.rota/</code> and <code>/rota-pause</code> carry state across.</td></tr>
+        <tr><td>Parallel agents collide or merge red.</td><td>Each gets a worktree, and the gate tests the merged <code>main</code>.</td></tr>
+        <tr><td>Lessons get lost.</td><td><code>/rota-learn</code> and <code>/rota-decide</code> keep them where the next session reads them.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="band" aria-labelledby="memory">
+    <h2 id="memory">A memory that lives in the repo</h2>
+    <p class="band-intro">Both ways of working share <code>.rota/</code>, committed next to your code, so a fresh session picks up where the last one stopped.</p>
+    <pre class="tree"><code>.rota/
+├── KNOWLEDGE.md    <span>what the project has learned</span>
+├── DECISIONS.md    <span>the lines it must not cross</span>
+├── BACKLOG.md      <span>items, or your GitHub/GitLab issues instead</span>
+├── MILESTONES.md   <span>the bigger picture</span>
+└── handoff/        <span>notes for the next session</span></code></pre>
+    <p><a href="/rota/docs/reference/rota-folder/">The <code>.rota/</code> folder</a> lists every file.</p>
+  </section>
+
+  <section class="band explorer" aria-labelledby="skills">
+    <h2 id="skills">See how the skills chain</h2>
+    <p class="band-intro">Pick a situation, then step through the skills rota reaches for and what each one prints.</p>
+    {%- assign skills = site.data.rota.skills %}
+    <div class="ex" data-explorer>
+      <div class="ex-tabs" role="tablist" aria-label="Situations">
+        {%- for c in site.data.rota.chains %}
+        <button type="button" role="tab" id="tab-{{ c.id }}" aria-controls="panel-{{ c.id }}" aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">{{ c.title | escape }}</button>
+        {%- endfor %}
+      </div>
+      {%- for c in site.data.rota.chains %}
+      <div class="ex-panel" role="tabpanel" id="panel-{{ c.id }}" aria-labelledby="tab-{{ c.id }}">
+        <p class="ex-when">{{ c.when | markdownify | remove: '<p>' | remove: '</p>' | strip }}</p>
+        <ol class="ex-steps">
+          {%- for st in c.steps %}
+          <li><button type="button" data-goto="{{ forloop.index0 }}"><code>/{{ st.skill }}</code></button></li>
+          {%- endfor %}
+        </ol>
+        {%- for st in c.steps %}
+        {%- assign s = skills | where: "skill", st.skill | first %}
+        <div class="ex-step" data-step="{{ forloop.index0 }}">
+          <p class="ex-why"><span class="ex-n">Step {{ forloop.index }} of {{ c.steps.size }}</span> {{ st.why | markdownify | remove: '<p>' | remove: '</p>' | strip }}</p>
+          {%- include rota/term.html example=s.example label=st.skill bare=true %}
+          <p class="ex-more">{{ s.when | markdownify | remove: '<p>' | remove: '</p>' | strip }} <a href="{{ s.url }}">All about <code>/{{ s.skill }}</code></a></p>
+        </div>
+        {%- endfor %}
+        <div class="ex-nav">
+          <button type="button" class="btn" data-prev>Previous</button>
+          <button type="button" class="btn btn-primary" data-next>Next step</button>
+          {%- if c.walkthrough_url %}<a href="{{ c.walkthrough_url }}">The full walkthrough</a>{% endif %}
+        </div>
+      </div>
+      {%- endfor %}
+    </div>
+
+    <h3 class="lanes-h">Every skill, by stage</h3>
+    <dl class="lanes">
+      {%- assign lanes = skills | group_by: "lane_name" %}
+      {%- for l in lanes %}
+      <div>
+        <dt>{{ l.name }}</dt>
+        <dd>{% for s in l.items %}<a href="{{ s.url }}" title="{{ s.summary | escape }}"><code>/{{ s.skill }}</code></a>{% endfor %}</dd>
+      </div>
+      {%- endfor %}
+    </dl>
+  </section>
+
+  <section class="band" aria-labelledby="works">
+    <h2 id="works">Works with</h2>
+    <dl class="works">
+      <div><dt>Agent harnesses</dt><dd>Claude Code, Codex, OpenCode, mixed in one round</dd></div>
+      <div><dt>Forges</dt><dd>GitHub, GitLab (self-hosted too), or local with direct merge</dd></div>
+      <div><dt>Issue sources</dt><dd><code>BACKLOG.md</code>, GitHub Issues, GitLab Issues, Jira, Linear, It's a Plan</dd></div>
+      <div><dt>Terminal hosts</dt><dd>herdr, tmux</dd></div>
+    </dl>
+  </section>
+
+  <section class="band closing" aria-labelledby="start">
+    <h2 id="start">Start with one item</h2>
+    <pre><code>brew install l4ci/tap/rota
+rota skills install
+cd your-project &amp;&amp; rota setup</code></pre>
+    <p class="actions">
+      <a class="btn btn-primary" href="/rota/docs/getting-started/">Get started</a>
+      <a class="btn" href="/rota/docs/">Read the docs</a>
+    </p>
+  </section>
+</main>

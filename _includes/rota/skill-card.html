@@ -1,0 +1,46 @@
+{%- assign s = include.skill -%}
+<section class="skill-card" aria-label="At a glance">
+  <p class="skill-summary">{{ s.summary | markdownify | remove: '<p>' | remove: '</p>' | strip }}</p>
+  {%- if s.manual_only %}<p class="skill-flag">Manual only: you type it, other skills never start it.</p>{% endif %}
+  <div class="skill-grid">
+    <div>
+      <h2>When to use</h2>
+      <p>{{ s.when | markdownify | remove: '<p>' | remove: '</p>' | strip }}</p>
+    </div>
+    {%- if s.not_when.size > 0 %}
+    <div>
+      <h2>Reach for another skill when</h2>
+      <ul>
+        {%- for n in s.not_when %}
+        <li>{{ n.when | markdownify | remove: '<p>' | remove: '</p>' | strip }}: <a href="/rota/docs/skills/{{ n.use }}/"><code>/{{ n.use }}</code></a></li>
+        {%- endfor %}
+      </ul>
+    </div>
+    {%- endif %}
+  </div>
+
+  <div class="chain-strip" aria-label="Usually comes between">
+    <div class="chain-side">
+      <span>Usually before</span>
+      {%- for b in s.before %}<a href="/rota/docs/skills/{{ b }}/"><code>/{{ b }}</code></a>{% else %}<em>nothing in particular</em>{% endfor %}
+    </div>
+    <div class="chain-self"><code>/{{ s.skill }}</code></div>
+    <div class="chain-side">
+      <span>Usually after</span>
+      {%- for a in s.after %}<a href="/rota/docs/skills/{{ a }}/"><code>/{{ a }}</code></a>{% else %}<em>nothing in particular</em>{% endfor %}
+    </div>
+  </div>
+
+  {%- if s.example %}
+  {%- include rota/term.html example=s.example -%}
+  {%- endif %}
+
+  {%- if s.flags.size > 0 %}
+  <h2 class="skill-h">Flags and modes</h2>
+  <dl class="flags">
+    {%- for f in s.flags %}
+    <div><dt><code>{{ f.flag | escape }}</code></dt><dd>{{ f.does | markdownify | remove: '<p>' | remove: '</p>' | strip }}</dd></div>
+    {%- endfor %}
+  </dl>
+  {%- endif %}
+</section>

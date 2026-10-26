@@ -1,0 +1,1111 @@
+[
+ {
+  "after": [
+   "rota-brainstorm",
+   "rota-plan",
+   "rota-work"
+  ],
+  "before": [],
+  "example": {
+   "changes": [
+    "a new row under `## Bugs` in `.rota/BACKLOG.md`",
+    "nothing else; capture records and stops"
+   ],
+   "reviewed": true,
+   "source": "walkthroughs/quickstart-manual-mode.md#step-1-capture",
+   "source_url": "/rota/docs/walkthroughs/quickstart-manual-mode/#step-1-capture",
+   "steps": [
+    {
+     "you": "/rota-capture \"--limit 0 prints every row instead of none\""
+    },
+    {
+     "agent": "[B03] --limit 0 prints every row instead of none   Bug, P2\n"
+    }
+   ]
+  },
+  "flags": [
+   {
+    "does": "remove a captured item and clean up its dependencies; dry-run first, asks before applying",
+    "flag": "--remove <ID>"
+   },
+   {
+    "does": "vet a tracker issue someone else filed; creates no item, ends in closed, needs-info or ready",
+    "flag": "--triage <N>"
+   }
+  ],
+  "lane": "capture",
+  "lane_name": "Capture",
+  "manual_only": false,
+  "not_when": [
+   {
+    "use": "rota-work",
+    "when": "the item is already captured and needs implementing"
+   },
+   {
+    "use": "rota-debug",
+    "when": "a bug needs a proper root-cause cycle now, not a backlog entry"
+   },
+   {
+    "use": "rota-brainstorm",
+    "when": "a captured Major item needs its design negotiated first"
+   }
+  ],
+  "order": 10,
+  "situation": "Something to do",
+  "skill": "rota-capture",
+  "summary": "Record bugs, features and tasks in the backlog without starting work.",
+  "url": "/rota/docs/skills/rota-capture/",
+  "when": "Use when the user brain-dumps work, says \"capture\", \"add to backlog\", \"note this bug\", \"/rota-capture\", or describes a problem without asking for an immediate fix. Also use on \"remove [B07]\", \"delete this entry\", \"drop this item\" to delete captured items. Use `--triage <N>` on a tracker issue filed by someone else."
+ },
+ {
+  "after": [
+   "rota-plan"
+  ],
+  "before": [
+   "rota-capture"
+  ],
+  "example": {
+   "changes": [
+    "the approved design stored as a note on issue #42 (file backend `.rota/designs/<ID>.md`)",
+    "nothing in code"
+   ],
+   "reviewed": false,
+   "source": "usage/brainstorm.md#one-example-end-to-end",
+   "source_url": "/rota/docs/usage/brainstorm/#one-example-end-to-end",
+   "steps": [
+    {
+     "you": "/rota-brainstorm 42"
+    },
+    {
+     "agent": "Read #42, KNOWLEDGE.md and DECISIONS.md.\nQuestion: does \"resolved\" mean Completed only, or ARCHIVE.md too?\n"
+    },
+    {
+     "you": "Completed only."
+    },
+    {
+     "agent": "Design drafted: 3 approaches with tradeoffs, recommended #2.\nApprove and hand off to /rota-plan, approve with no plan yet, or revise?\n"
+    }
+   ]
+  },
+  "flags": [
+   {
+    "does": "force the one-pass grilling of open decisions on any item, not only Major features and P0 bugs",
+    "flag": "--grill"
+   }
+  ],
+  "lane": "plan",
+  "lane_name": "Plan",
+  "manual_only": false,
+  "not_when": [
+   {
+    "use": "rota-vision",
+    "when": "the scope is the whole project or a milestone, not one backlog item"
+   },
+   {
+    "use": "rota-plan",
+    "when": "the shape is already clear and you need tasks with verify steps"
+   },
+   {
+    "use": "rota-spike",
+    "when": "one factual question must be tried out before any design makes sense"
+   }
+  ],
+  "order": 20,
+  "situation": "Not sure how",
+  "skill": "rota-brainstorm",
+  "summary": "Negotiate the design of one Major item before planning it.",
+  "url": "/rota/docs/skills/rota-brainstorm/",
+  "when": "Use when a Major feature or P0 bug needs design negotiation before implementation planning, or on \"brainstorm 42\", \"design this item\"."
+ },
+ {
+  "after": [
+   "rota-plan"
+  ],
+  "before": [
+   "rota-vision",
+   "rota-brainstorm"
+  ],
+  "example": {
+   "changes": [
+    "a `spike/<name>` branch that is never merged",
+    "`.rota/spikes/<name>.md` with the question, findings and decision"
+   ],
+   "reviewed": true,
+   "source": "walkthroughs/greenfield-from-brief.md#step-3-rota-spike-optional",
+   "source_url": "/rota/docs/walkthroughs/greenfield-from-brief/#step-3-rota-spike-optional",
+   "steps": [
+    {
+     "you": "/rota-spike sqlite-schema \"Will a single-currency schema survive multi-currency migration cleanly?\""
+    },
+    {
+     "agent": "Created branch spike/sqlite-schema and .rota/spikes/sqlite-schema.md.\nThe question is recorded. Experiment on the branch; fill in Findings and Decision when done.\n"
+    }
+   ]
+  },
+  "flags": [
+   {
+    "does": "close the spike with a verdict (viable, not viable, depends-on-X, inconclusive)",
+    "flag": "done <name>"
+   }
+  ],
+  "lane": "plan",
+  "lane_name": "Plan",
+  "manual_only": false,
+  "not_when": [
+   {
+    "use": "rota-brainstorm",
+    "when": "the question is which design to pick, not whether something works"
+   },
+   {
+    "use": "rota-work",
+    "when": "the result should be shipped code, not a finding"
+   }
+  ],
+  "order": 25,
+  "situation": "Not sure how",
+  "skill": "rota-spike",
+  "summary": "Try one risky idea on a throwaway branch and keep only the finding.",
+  "url": "/rota/docs/skills/rota-spike/",
+  "when": "Use when X must be tried before committing to it (\"can we use SSE?\", \"does this library handle our scale?\") and the answer is a finding, not shipped code."
+ },
+ {
+  "after": [
+   "rota-work"
+  ],
+  "before": [
+   "rota-brainstorm",
+   "rota-spike",
+   "rota-vision"
+  ],
+  "example": {
+   "changes": [
+    "the plan written to `.rota/plans/B03.md` (issue backend: a note on the issue)"
+   ],
+   "reviewed": true,
+   "source": "walkthroughs/quickstart-manual-mode.md#step-2-plan-optional",
+   "source_url": "/rota/docs/walkthroughs/quickstart-manual-mode/#step-2-plan-optional",
+   "steps": [
+    {
+     "you": "/rota-plan B03"
+    },
+    {
+     "agent": "Goal: --limit 0 yields zero rows.\nT1. Treat 0 as a real limit in cmd/list.go.\n    Verify: go test ./cmd -run TestListLimitZero\nConfirm this plan? (yes / changes)\n"
+    },
+    {
+     "you": "yes"
+    }
+   ]
+  },
+  "flags": [],
+  "lane": "plan",
+  "lane_name": "Plan",
+  "manual_only": false,
+  "not_when": [
+   {
+    "use": "rota-work",
+    "when": "the item is small enough to build directly; work plans its own tasks"
+   },
+   {
+    "use": "rota-brainstorm",
+    "when": "the design itself is still undecided"
+   },
+   {
+    "use": "rota-vision",
+    "when": "you need milestones for the whole project, not a plan for one item or slice"
+   }
+  ],
+  "order": 30,
+  "situation": "Ready to build",
+  "skill": "rota-plan",
+  "summary": "Write a signed-off implementation plan with verifiable tasks.",
+  "url": "/rota/docs/skills/rota-plan/",
+  "when": "Use when an item or milestone slice is too big to one-shot, or when alignment matters before code lands, or on \"plan 42\", \"write a plan for this\"."
+ },
+ {
+  "after": [
+   "rota-capture",
+   "rota-plan"
+  ],
+  "before": [],
+  "example": {
+   "changes": [
+    "`.rota/MILESTONES.md` and `.rota/milestones/M01.md` ... `M03.md`",
+    "the always-on `## Project Vision` block in `AGENTS.md`"
+   ],
+   "reviewed": true,
+   "source": "walkthroughs/greenfield-from-brief.md#step-2-rota-vision",
+   "source_url": "/rota/docs/walkthroughs/greenfield-from-brief/#step-2-rota-vision",
+   "steps": [
+    {
+     "you": "/rota-vision"
+    },
+    {
+     "agent": "I found README.md (Tally). Seed milestones from it?\nYour brief says \"dogfood within two weeks.\" What does dogfooded mean concretely?\n"
+    },
+    {
+     "you": "a CLI I use daily for two weeks before showing anyone else"
+    },
+    {
+     "agent": "Proposed: M01 CLI MVP, M02 Web dashboard (depends M01), M03 Budget alerts (depends M01).\nM01 marked active.\n"
+    }
+   ]
+  },
+  "flags": [],
+  "lane": "plan",
+  "lane_name": "Plan",
+  "manual_only": false,
+  "not_when": [
+   {
+    "use": "rota-brainstorm",
+    "when": "the question is the design of one backlog item"
+   },
+   {
+    "use": "rota-plan",
+    "when": "you need tasks for one item or slice, not the roadmap"
+   }
+  ],
+  "order": 110,
+  "situation": "Bigger picture",
+  "skill": "rota-vision",
+  "summary": "Turn an idea into milestones with dependencies and ready/blocked status.",
+  "url": "/rota/docs/skills/rota-vision/",
+  "when": "Use on \"let's plan\", \"what's the bigger picture\", \"create a roadmap\", \"brainstorm milestones\"."
+ },
+ {
+  "after": [
+   "rota-ship",
+   "rota-pause"
+  ],
+  "before": [
+   "rota-capture",
+   "rota-plan"
+  ],
+  "example": {
+   "changes": [
+    "a feature branch with one commit per task",
+    "a proof row per check",
+    "B03 marked in progress in .rota/status.json until it lands"
+   ],
+   "reviewed": true,
+   "source": "walkthroughs/quickstart-manual-mode.md#step-3-work",
+   "source_url": "/rota/docs/walkthroughs/quickstart-manual-mode/#step-3-work",
+   "steps": [
+    {
+     "you": "/rota-work B03"
+    },
+    {
+     "agent": "Tree clean. Branch rota/B03-limit-zero created.\nT1  treat 0 as a real limit in cmd/list.go\n    rota proof record B03 -- go test ./cmd -run TestListLimitZero   FAIL (red run)\n    rota proof record B03 -- go test ./cmd -run TestListLimitZero   PASS\na1b2c3d fix: treat --limit 0 as zero rows [B03]\n"
+    }
+   ]
+  },
+  "flags": [
+   {
+    "does": "read-only peek at the intended approach (files, tests, assumptions, unknowns); writes nothing",
+    "flag": "--preview <ID>"
+   },
+   {
+    "does": "reconcile the backlog against git state, read any handoff note, and suggest the next item",
+    "flag": "(no argument)"
+   }
+  ],
+  "lane": "execute",
+  "lane_name": "Execute",
+  "manual_only": false,
+  "not_when": [
+   {
+    "use": "rota-orchestrate",
+    "when": "several independent issues should run side by side with standing workers"
+   },
+   {
+    "use": "rota-capture",
+    "when": "the work is not captured yet"
+   },
+   {
+    "use": "rota-debug",
+    "when": "it is a bug whose cause you don't know yet"
+   }
+  ],
+  "order": 40,
+  "situation": "Ready to build",
+  "skill": "rota-work",
+  "summary": "Build the next item in small commits, one verified task at a time.",
+  "url": "/rota/docs/skills/rota-work/",
+  "when": "Use when backlog items already exist and need implementation (\"implement 42\", \"build these\", or \"implement [B07]\" on the file backend), or with no argument to reconcile active work and pick the next item. A parallel round with standing workers is /rota-orchestrate, not this skill; an item not yet captured goes through /rota-capture first."
+ },
+ {
+  "after": [
+   "rota-learn",
+   "rota-ship"
+  ],
+  "before": [
+   "rota-capture",
+   "rota-work"
+  ],
+  "example": {
+   "changes": [
+    "one atomic fix commit on a `rota/fix-*` branch",
+    "a proof row for the reproducer",
+    "a PR on the issue backend; on the file backend B01 is marked complete instead"
+   ],
+   "reviewed": false,
+   "source": "walkthroughs/brownfield-existing-project.md",
+   "source_url": "/rota/docs/walkthroughs/brownfield-existing-project/",
+   "steps": [
+    {
+     "you": "/rota-debug B01"
+    },
+    {
+     "agent": "Reproduced: TestDedupAcrossIntegrations fails, two events instead of one.\nHypothesis: dedupKey includes severity, and the integrations differ in casing.\nVerified before touching code: lowercased severities give matching keys.\nFix: lowercase severity in the dedup-key computation. Reproducer passes.\nfix: normalize severity casing in dedup key [B01]\nNon-obvious cause: run /rota-learn to save this gotcha.\n"
+    }
+   ]
+  },
+  "flags": [],
+  "lane": "execute",
+  "lane_name": "Execute",
+  "manual_only": false,
+  "not_when": [
+   {
+    "use": "rota-work",
+    "when": "the cause is obvious and the fix is a one-liner"
+   },
+   {
+    "use": "rota-capture",
+    "when": "the bug is not captured yet"
+   },
+   {
+    "use": "rota-spike",
+    "when": "you are testing whether an approach can work, not chasing a defect"
+   }
+  ],
+  "order": 45,
+  "situation": "Something broke",
+  "skill": "rota-debug",
+  "summary": "Find the root cause of one bug, fix it atomically and prove it.",
+  "url": "/rota/docs/skills/rota-debug/",
+  "when": "Use on \"debug 42\" or \"debug [B07]\" on the file backend, \"why is X broken\", \"investigate the crash\", or when a bug needs a proper cycle rather than a one-shot fix."
+ },
+ {
+  "after": [
+   "rota-work"
+  ],
+  "before": [],
+  "example": {
+   "changes": [
+    "one `refactor`-labelled issue per candidate",
+    "no code changes unless you pass --fix"
+   ],
+   "reviewed": false,
+   "source": "walkthroughs/brownfield-existing-project.md",
+   "source_url": "/rota/docs/walkthroughs/brownfield-existing-project/",
+   "steps": [
+    {
+     "you": "/rota-refactor internal/cli"
+    },
+    {
+     "agent": "Strong: split cmd dispatch from flag parsing (deletion test: parsing has one caller).\nWorth exploring: second adapter for the config store.\nFiled #71 and #72 as `refactor` issues with `## Acceptance`; skipped 1 duplicate.\nNo code changed.\n"
+    }
+   ]
+  },
+  "flags": [
+   {
+    "does": "implement the candidates you pick (parallel workers, verification, one commit)",
+    "flag": "--fix"
+   },
+   {
+    "does": "draft competing interfaces for structural candidates",
+    "flag": "--designs"
+   },
+   {
+    "does": "choose which candidates to file",
+    "flag": "--interactive"
+   },
+   {
+    "does": "write the `.rota/map/` subsystem files, then run `rota map index`",
+    "flag": "--map"
+   }
+  ],
+  "lane": "execute",
+  "lane_name": "Execute",
+  "manual_only": false,
+  "not_when": [
+   {
+    "use": "rota-work",
+    "when": "the refactor is already an issue and ready to build"
+   },
+   {
+    "use": "rota-vision",
+    "when": "you are planning product milestones, not code structure"
+   }
+  ],
+  "order": 115,
+  "situation": "Bigger picture",
+  "skill": "rota-refactor",
+  "summary": "Review the architecture and file refactor issues; --map drafts the map.",
+  "url": "/rota/docs/skills/rota-refactor/",
+  "when": "Use on \"review the architecture\", \"find refactoring opportunities\", \"deepen modules\", \"map the repo\", \"refresh the project map\" (--map), or scoped to one area (\"/rota-refactor internal/cli\")."
+ },
+ {
+  "after": [
+   "rota-ship"
+  ],
+  "before": [
+   "rota-work"
+  ],
+  "example": {
+   "changes": [
+    "nothing in the tree (read-only, no commits)",
+    "spec and quality verdicts recorded against the reviewed sha"
+   ],
+   "reviewed": false,
+   "source": "walkthroughs/quickstart-manual-mode.md#step-4-ship",
+   "source_url": "/rota/docs/walkthroughs/quickstart-manual-mode/#step-4-ship",
+   "steps": [
+    {
+     "you": "/rota-review"
+    },
+    {
+     "agent": "Spec reviewer: B03 promised --limit 0 yields zero rows; cmd/list.go and TestListLimitZero match.\nStandards reviewer: conventions and test quality fine.\nVerdict: PASS (the worse of the two)\n"
+    }
+   ]
+  },
+  "flags": [
+   {
+    "does": "re-review a bounced branch, only the fix, against the last review's findings",
+    "flag": "--since <sha>"
+   },
+   {
+    "does": "issue backend; review every needs-review item's open PR or MR and merge the ones that pass",
+    "flag": "--queue"
+   }
+  ],
+  "lane": "ship",
+  "lane_name": "Ship",
+  "manual_only": false,
+  "not_when": [
+   {
+    "use": "rota-qa",
+    "when": "you need evidence the built product works (perf, a11y, smoke), not a read of the diff"
+   },
+   {
+    "use": "rota-refactor",
+    "when": "you want code changed based on findings rather than a verdict"
+   },
+   {
+    "use": "rota-work",
+    "when": "the code is still in flight"
+   }
+  ],
+  "order": 50,
+  "situation": "Done",
+  "skill": "rota-review",
+  "summary": "Review a branch against its spec and conventions before it leaves.",
+  "url": "/rota/docs/skills/rota-review/",
+  "when": "Use on \"review this\", \"check before I ship\", \"look over the branch\", before a merge or PR, or implicitly from /rota-ship."
+ },
+ {
+  "after": [
+   "rota-release"
+  ],
+  "before": [
+   "rota-review",
+   "rota-work"
+  ],
+  "example": {
+   "changes": [
+    "B03 under ## Completed in BACKLOG.md, stamped with the fix commit's hash",
+    "main carries the fix as one revertable unit",
+    "status.json entry cleared"
+   ],
+   "reviewed": false,
+   "source": "walkthroughs/quickstart-manual-mode.md#step-4-ship",
+   "source_url": "/rota/docs/walkthroughs/quickstart-manual-mode/#step-4-ship",
+   "steps": [
+    {
+     "you": "/rota-ship"
+    },
+    {
+     "agent": "/rota-review: PASS\nPR body built from commit subjects and resolved IDs: B03\nMerged into main with --no-ff; branch deleted.\n"
+    }
+   ]
+  },
+  "flags": [
+   {
+    "does": "guided rollback of the last cycle on the base branch; dry-run preview first, asks before applying",
+    "flag": "--undo"
+   },
+   {
+    "does": "deprecated alias for /rota-docs",
+    "flag": "--docs"
+   }
+  ],
+  "lane": "ship",
+  "lane_name": "Ship",
+  "manual_only": false,
+  "not_when": [
+   {
+    "use": "rota-review",
+    "when": "you want a verdict only and nothing integrated"
+   },
+   {
+    "use": "rota-release",
+    "when": "you are cutting a tagged version, not landing a branch"
+   }
+  ],
+  "order": 55,
+  "situation": "Done",
+  "skill": "rota-ship",
+  "summary": "Review, then open the PR or merge, linking items by ID.",
+  "url": "/rota/docs/skills/rota-ship/",
+  "when": "Use on \"ship it\", \"open the PR\", \"finish this branch\", or when work is done and ready to integrate. Use --undo on \"roll back the last cycle\", \"revert that merge\"."
+ },
+ {
+  "after": [
+   "rota-release"
+  ],
+  "before": [
+   "rota-ship"
+  ],
+  "example": {
+   "changes": [
+    "doc pages under docs.path, only after you approve",
+    "a docs: commit that marks the next after-work baseline"
+   ],
+   "reviewed": false,
+   "source": null,
+   "steps": [
+    {
+     "you": "/rota-docs"
+    },
+    {
+     "agent": "After-work mode is on. Checking docs against changes since the last `docs:` commit.\nProposed updates:\n  docs/usage/running-work.md  add the new --preview note\nApply these doc updates? Apply all / Apply selectively / Skip / Cancel\n"
+    }
+   ]
+  },
+  "flags": [
+   {
+    "does": "audit and reorganize the docs tree; follows autonomy.level",
+    "flag": "restructure"
+   },
+   {
+    "does": "first-run scaffold if docs.path is missing or empty, else after-work proposals",
+    "flag": "(no argument)"
+   }
+  ],
+  "lane": "ship",
+  "lane_name": "Ship",
+  "manual_only": false,
+  "not_when": [
+   {
+    "use": "rota-learn",
+    "when": "the point is a gotcha for future sessions, not user-facing documentation"
+   },
+   {
+    "use": "rota-release",
+    "when": "you want release notes and a tag"
+   }
+  ],
+  "order": 60,
+  "situation": "Docs drifted",
+  "skill": "rota-docs",
+  "summary": "Scaffold, update or reorganize the public docs.",
+  "url": "/rota/docs/skills/rota-docs/",
+  "when": "Use on \"update docs\", \"scaffold the docs\", \"sync the docs with recent changes\", \"restructure the docs\", or \"/rota-docs\"."
+ },
+ {
+  "after": [
+   "rota-ship"
+  ],
+  "before": [
+   "rota-work"
+  ],
+  "example": {
+   "changes": [
+    "artifacts under .rota/qa-runs/<timestamp>/",
+    "proof rows for the items on the branch",
+    "a qa verdict that /rota-ship routes on"
+   ],
+   "reviewed": false,
+   "source": "usage/qa.md#invocation",
+   "source_url": "/rota/docs/usage/qa/#invocation",
+   "steps": [
+    {
+     "you": "/rota-qa run web"
+    },
+    {
+     "agent": "Infra preflight: dev server on :3000 reachable.\nExecutable checks: 4 run, 4 met their pass criteria.\nAudit pass: no blockers.\nVerdict: PASS (recorded as a qa verdict; artifacts under .rota/qa-runs/<timestamp>/)\n"
+    }
+   ]
+  },
+  "flags": [
+   {
+    "does": "probe surfaces and propose a strategy in .rota/qa/<target>.md",
+    "flag": "first-run"
+   },
+   {
+    "does": "execute the strategy and return PASS, CONCERNS, FAIL or INFRA-FAIL",
+    "flag": "run [<target>]"
+   },
+   {
+    "does": "audit strategy files, retire dead ones, fix broken commands",
+    "flag": "restructure"
+   },
+   {
+    "does": "walk one item's acceptance criteria with you",
+    "flag": "uat <ID>"
+   }
+  ],
+  "lane": "ship",
+  "lane_name": "Ship",
+  "manual_only": false,
+  "not_when": [
+   {
+    "use": "rota-review",
+    "when": "you want a read of the diff and commits, not a run of the product"
+   },
+   {
+    "use": "rota-work",
+    "when": "nothing is built yet"
+   },
+   {
+    "use": "rota-debug",
+    "when": "QA found a failure and you need to fix it"
+   }
+  ],
+  "order": 120,
+  "situation": "Bigger picture",
+  "skill": "rota-qa",
+  "summary": "Run product-level QA against the built artifact and score it.",
+  "url": "/rota/docs/skills/rota-qa/",
+  "when": "Use on \"/rota-qa\", \"run QA\", \"test the feature\", \"validate the build\", before ship as a gate, or on the first cycle to scaffold a per-repo QA strategy. QA of the built product, not the diff."
+ },
+ {
+  "after": [],
+  "before": [
+   "rota-debug",
+   "rota-work"
+  ],
+  "example": {
+   "changes": [
+    "one new bullet under its topic in .rota/KNOWLEDGE.md, date-stamped",
+    "the rota-knowledge topic index in AGENTS.md refreshed"
+   ],
+   "reviewed": false,
+   "source": "walkthroughs/brownfield-existing-project.md#step-8-a-real-debug-cycle",
+   "source_url": "/rota/docs/walkthroughs/brownfield-existing-project/#step-8-a-real-debug-cycle",
+   "steps": [
+    {
+     "you": "/rota-learn"
+    },
+    {
+     "agent": "Proposed bullet under ## Alerts:\nSeverity is case-sensitive in the dedup key path. Normalize at the boundary, not at storage time.\nWritten to .rota/KNOWLEDGE.md.\n"
+    }
+   ]
+  },
+  "flags": [
+   {
+    "does": "run the Opus verifier over the new bullets",
+    "flag": "--strict"
+   },
+   {
+    "does": "turn the session's mistakes into guardrails and standards",
+    "flag": "--retro [<session-id|path>]"
+   },
+   {
+    "does": "write a Glossary entry",
+    "flag": "--term <name>"
+   },
+   {
+    "does": "edit one existing bullet's tier or body without the capture flow",
+    "flag": "--promote | --deprecate | --amend <topic> \"<title>\""
+   }
+  ],
+  "lane": "persist",
+  "lane_name": "Persist",
+  "manual_only": false,
+  "not_when": [
+   {
+    "use": "rota-decide",
+    "when": "the point is a commitment with explicit forbids and permits, not a gotcha"
+   },
+   {
+    "use": "rota-pause",
+    "when": "you only need to hand off where you stopped, not record lasting knowledge"
+   }
+  ],
+  "order": 80,
+  "situation": "Worth remembering",
+  "skill": "rota-learn",
+  "summary": "Save the session's durable lessons to KNOWLEDGE.md.",
+  "url": "/rota/docs/skills/rota-learn/",
+  "when": "Use at the end of a session that surfaced reusable knowledge, after a correction-rich debugging arc, or on \"save what we learned\", \"capture this learning\", \"/rota-learn\"."
+ },
+ {
+  "after": [],
+  "before": [
+   "rota-spike",
+   "rota-learn"
+  ],
+  "example": {
+   "changes": [
+    "a four-part entry (rule, why, forbids, permits) in .rota/DECISIONS.md"
+   ],
+   "reviewed": false,
+   "source": "usage/decisions.md#capturing-a-decision",
+   "source_url": "/rota/docs/usage/decisions/#capturing-a-decision",
+   "steps": [
+    {
+     "you": "/rota-decide"
+    },
+    {
+     "agent": "Draft for topic \"Architecture\":\n  Rule: never store session tokens client-side\n  Why: <from the conversation>\n  Forbids / Permits: <drafted from context>\nWrite it? (nothing is written without your \"Write it\")\n"
+    }
+   ]
+  },
+  "flags": [
+   {
+    "does": "seed rule and why from a KNOWLEDGE.md bullet",
+    "flag": "--from-learning <topic>"
+   },
+   {
+    "does": "seed rule and why from a spike finding (inconclusive spikes are refused)",
+    "flag": "--from-spike <name>"
+   },
+   {
+    "does": "replace an existing decision with a new one",
+    "flag": "--supersede <topic> \"<title>\""
+   },
+   {
+    "does": "mark a decision lifted, nothing replacing it",
+    "flag": "--retire <topic> \"<title>\""
+   }
+  ],
+  "lane": "persist",
+  "lane_name": "Persist",
+  "manual_only": true,
+  "not_when": [
+   {
+    "use": "rota-learn",
+    "when": "you cannot state forbids and permits, so it is a gotcha rather than a commitment"
+   },
+   {
+    "use": "rota-spike",
+    "when": "the question is still open and needs an experiment first"
+   }
+  ],
+  "order": 85,
+  "situation": "Worth remembering",
+  "skill": "rota-decide",
+  "summary": "Record a hard-boundary decision with explicit forbids and permits.",
+  "url": "/rota/docs/skills/rota-decide/",
+  "when": "Use on \"decide on X\", \"we're committing to X\", \"lock in the boundary that Y\", or when a session has produced a constraint future work must respect."
+ },
+ {
+  "after": [
+   "rota-work"
+  ],
+  "before": [
+   "rota-work",
+   "rota-debug"
+  ],
+  "example": {
+   "changes": [
+    "`.rota/handoff/<branch>.md` (gitignored, one per branch, overwritten on re-pause)",
+    "the chosen wip commit or stash"
+   ],
+   "reviewed": false,
+   "source": "usage/pausing-and-resuming.md",
+   "source_url": "/rota/docs/usage/pausing-and-resuming/",
+   "steps": [
+    {
+     "you": "/rota-pause"
+    },
+    {
+     "agent": "Uncommitted work on rota/fix-B07-timer-badge: wip commit, stash, or leave in place?\n"
+    },
+    {
+     "you": "wip commit"
+    },
+    {
+     "agent": "Paused rota/fix-B07-timer-badge - handoff note saved.\nResume with /rota-work in a fresh session.\n"
+    }
+   ]
+  },
+  "flags": [
+   {
+    "does": "also write .rota/handoff/<branch>.report.md (commits, files, tasks, proof) for you to read",
+    "flag": "--report"
+   }
+  ],
+  "lane": "persist",
+  "lane_name": "Persist",
+  "manual_only": false,
+  "not_when": [
+   {
+    "use": "rota-learn",
+    "when": "you want to keep a durable gotcha, not the state of the work in flight"
+   },
+   {
+    "use": "rota-ship",
+    "when": "the work is done and ready to integrate"
+   }
+  ],
+  "order": 100,
+  "situation": "Out of context",
+  "skill": "rota-pause",
+  "summary": "Stop cleanly and leave a handoff note for the next session.",
+  "url": "/rota/docs/skills/rota-pause/",
+  "when": "Use when the session is approaching a context limit, the work must be handed off, a long /rota-work cycle should stop cleanly, or an orchestrator must stop mid-round."
+ },
+ {
+  "after": [
+   "rota-learn",
+   "rota-release"
+  ],
+  "before": [
+   "rota-capture",
+   "rota-plan"
+  ],
+  "example": {
+   "changes": [
+    "one worktree, branch and terminal tab per assigned issue",
+    "an orchestrator lease and slot rows in the round state",
+    "worker PRs that you review, gate and merge"
+   ],
+   "reviewed": false,
+   "source": "walkthroughs/round-cycle.md#2-run-the-round",
+   "source_url": "/rota/docs/walkthroughs/round-cycle/#2-run-the-round",
+   "steps": [
+    {
+     "you": "rota orchestrate"
+    },
+    {
+     "you": "run a round on issues 42, 51, 58 and 63"
+    },
+    {
+     "agent": "rota round start --scope slate --items 42,51,58,63\nrota round assign 42   # claims #42, cuts <agent>/42-<slug>, starts a worker\n...\nArmed rota round watch in the background; it wakes me on a slot, PR or escalation change.\n"
+    }
+   ]
+  },
+  "flags": [],
+  "lane": "rounds",
+  "lane_name": "Rounds",
+  "manual_only": false,
+  "not_when": [
+   {
+    "use": "rota-work",
+    "when": "you have one item and need no worker isolation"
+   },
+   {
+    "use": "rota-capture",
+    "when": "the issues are not captured yet"
+   }
+  ],
+  "order": 70,
+  "situation": "Many issues at once",
+  "skill": "rota-orchestrate",
+  "summary": "Run a parallel round: pick the slate, watch workers, merge their PRs.",
+  "url": "/rota/docs/skills/rota-orchestrate/",
+  "when": "Use on \"you are the orchestrator\", \"run a round\", \"orchestrate\", \"assign the next issues to the workers\", \"what are my workers doing\"."
+ },
+ {
+  "after": [
+   "rota-orchestrate"
+  ],
+  "before": [
+   "rota-orchestrate"
+  ],
+  "example": {
+   "changes": [
+    "a `decision` comment per answer, citing the maintainer",
+    "the answer applied (relay, re-recorded verdict, issue edit or follow-up)"
+   ],
+   "reviewed": false,
+   "source": null,
+   "steps": [
+    {
+     "you": "/rota-answer"
+    },
+    {
+     "agent": "1 of 3: slot nia is blocked on #58.\nWorker asks: keep the old --json shape or break it?\nA) Keep the old shape (recommended)\nB) Break it and note it in the changelog\nC) Write your own answer\n"
+    },
+    {
+     "you": "A"
+    },
+    {
+     "agent": "Recorded as a decision comment on #58 and relayed to nia.\n"
+    }
+   ]
+  },
+  "flags": [],
+  "lane": "rounds",
+  "lane_name": "Rounds",
+  "manual_only": true,
+  "not_when": [
+   {
+    "use": "rota-orchestrate",
+    "when": "you want to run or steer the round itself, not answer its queued questions"
+   },
+   {
+    "use": "rota-decide",
+    "when": "you are recording a lasting hard boundary rather than answering one pending question"
+   }
+  ],
+  "order": 75,
+  "situation": "Many issues at once",
+  "skill": "rota-answer",
+  "summary": "Answer every decision a round is waiting on, one question at a time.",
+  "url": "/rota/docs/skills/rota-answer/",
+  "when": "Use only when the maintainer types \"/rota-answer\" during a round. The orchestrator points the maintainer to it when two or more decisions wait; it never starts it."
+ },
+ {
+  "after": [
+   "rota-capture",
+   "rota-work"
+  ],
+  "before": [],
+  "example": {
+   "changes": [
+    "confirmed keys written to the rota config",
+    "nothing is written for keys you decline"
+   ],
+   "reviewed": false,
+   "source": null,
+   "steps": [
+    {
+     "you": "/rota-init"
+    },
+    {
+     "agent": "test.fast = go test ./...   (from Makefile target `test`)\ngit.baseBranch = main       (from origin/HEAD)\nforge.provider = github     (from the origin remote URL)\nSet test.fast to `go test ./...`?  A) yes (recommended)  B) other\n"
+    },
+    {
+     "you": "A"
+    },
+    {
+     "agent": "rota config set test.fast '[\"go test ./...\"]'\n"
+    }
+   ]
+  },
+  "flags": [],
+  "lane": "maintenance",
+  "lane_name": "Maintenance",
+  "manual_only": true,
+  "not_when": [
+   {
+    "use": "rota-decide",
+    "when": "you are recording a hard boundary, not a config value"
+   },
+   {
+    "use": "rota-docs",
+    "when": "you want the project's public docs scaffolded or updated"
+   }
+  ],
+  "order": 90,
+  "situation": "Fresh project",
+  "skill": "rota-init",
+  "summary": "Suggest config values from the repo and write the ones you confirm.",
+  "url": "/rota/docs/skills/rota-init/",
+  "when": "Use only when the maintainer types \"/rota-init\" to have rota inspect the repo and suggest config values. Never starts on its own."
+ },
+ {
+  "after": [],
+  "before": [],
+  "example": {
+   "changes": [
+    "an issue filed on the rota repo",
+    "the local record in .rota/bugreports.jsonl marked `filed`, with the issue URL"
+   ],
+   "reviewed": false,
+   "source": null,
+   "steps": [
+    {
+     "you": "/rota-bugreport"
+    },
+    {
+     "agent": "1 open record: rota worker gate exited 70.\nDraft (redacted; rota version, OS, harness, model attached):\n  title: worker gate exits 70 on a PR with no body\nChecked l4ci/rota for duplicates: none.\nFile it?\n"
+    },
+    {
+     "you": "yes"
+    }
+   ]
+  },
+  "flags": [],
+  "lane": "maintenance",
+  "lane_name": "Maintenance",
+  "manual_only": false,
+  "not_when": [
+   {
+    "use": "rota-capture",
+    "when": "the bug is in your own project, not in rota"
+   },
+   {
+    "use": "rota-debug",
+    "when": "you need to find the cause of a bug in your own code"
+   }
+  ],
+  "order": 95,
+  "situation": "rota itself misbehaved",
+  "skill": "rota-bugreport",
+  "summary": "File rota's own mistakes upstream, after your explicit yes.",
+  "url": "/rota/docs/skills/rota-bugreport/",
+  "when": "Use when rota itself misbehaved (a verb exited 70, a refusal was wrong, a skill step contradicted a verb, the watch reported a false state), on \"report a rota bug\", \"file this upstream\", or when `round wind-down` or the Stop hook offers recorded mistakes."
+ },
+ {
+  "after": [],
+  "before": [
+   "rota-learn"
+  ],
+  "example": {
+   "changes": [
+    "version file and `CHANGELOG.md` updated in a `chore: release` commit",
+    "an annotated git tag, pushed after your yes",
+    "a published GitHub or GitLab release"
+   ],
+   "reviewed": false,
+   "source": "walkthroughs/round-cycle.md#4-release",
+   "source_url": "/rota/docs/walkthroughs/round-cycle/#4-release",
+   "steps": [
+    {
+     "you": "/rota-release"
+    },
+    {
+     "agent": "Checklist (.rota/RELEASE.md): all items pass.\nCommits since v0.25.0: 1 feature, 4 fixes. Recommend minor.\n"
+    },
+    {
+     "you": "minor"
+    },
+    {
+     "agent": "Release notes drafted for v0.26.0.\nNotes look good? Yes pushes the tag and publishes the release. (manual gate)\n"
+    }
+   ]
+  },
+  "flags": [
+   {
+    "does": "set the bump level instead of being asked",
+    "flag": "major | minor | patch | <semver>"
+   },
+   {
+    "does": "run the flow without tagging or publishing; skips the close-upstream-issues gate",
+    "flag": "--dry-run"
+   }
+  ],
+  "lane": "maintenance",
+  "lane_name": "Maintenance",
+  "manual_only": true,
+  "not_when": [
+   {
+    "use": "rota-ship",
+    "when": "you are landing one branch, not tagging a release"
+   },
+   {
+    "use": "rota-docs",
+    "when": "you only need the public docs brought up to date"
+   }
+  ],
+  "order": 125,
+  "situation": "Bigger picture",
+  "skill": "rota-release",
+  "summary": "Cut a release: checklist, version bump, notes, tag, publish.",
+  "url": "/rota/docs/skills/rota-release/",
+  "when": "Use on \"release\", \"cut a release\", \"tag a release\", \"ship X.Y.Z\"."
+ }
+]
