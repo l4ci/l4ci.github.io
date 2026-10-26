@@ -236,7 +236,7 @@
        "you": "/rota-plan M01-S01"
       },
       {
-       "agent": "Read .rota/spikes/sqlite-schema.md: ship single-currency in M01, no currency column yet.\nGoal: stand up the SQLite schema and tally add end to end.\nT1. Skeleton CLI in cmd/tally.\n    Verify: go test ./... && tally --version | grep v0.0.0\nT2. Migrations engine in internal/store/migrate.go.\n    Verify: run tally init twice; the second run is a no-op\n...\nConfirm this plan? (yes / changes)\n"
+       "agent": "Planning dial: 3 (research round) - a schema migration does not revert cleanly; the spike already answered the open question. Override: say \"level 1\" or \"level 4\".\nRead .rota/spikes/sqlite-schema.md: ship single-currency in M01, no currency column yet.\nGoal: stand up the SQLite schema and tally add end to end.\nT1. Skeleton CLI in cmd/tally.\n    Verify: go test ./... && tally --version | grep v0.0.0\nT2. Migrations engine in internal/store/migrate.go.\n    Verify: run tally init twice; the second run is a no-op\n...\nConfirm this plan? (yes / changes)\n"
       },
       {
        "you": "yes"
@@ -297,7 +297,7 @@
        "you": "/rota-plan M01-S01"
       },
       {
-       "agent": "Goal: stand up the SQLite schema and tally add end to end.\nT1. Skeleton CLI in cmd/tally.\n    Verify: go test ./... && tally --version | grep v0.0.0\nT2. Migrations engine in internal/store/migrate.go.\n    Verify: run tally init twice; the second run is a no-op\n...\nConfirm this plan? (yes / changes)\n"
+       "agent": "Planning dial: 2 (spec) - first slice of a new schema; a migration does not revert cleanly. Override: say \"level 1\" or \"level 4\".\nGoal: stand up the SQLite schema and tally add end to end.\nT1. Skeleton CLI in cmd/tally.\n    Verify: go test ./... && tally --version | grep v0.0.0\nT2. Migrations engine in internal/store/migrate.go.\n    Verify: run tally init twice; the second run is a no-op\n...\nConfirm this plan? (yes / changes)\n"
       },
       {
        "you": "yes"
