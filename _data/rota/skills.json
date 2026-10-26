@@ -393,9 +393,8 @@
     "one `refactor`-labelled issue per candidate",
     "no code changes unless you pass --fix"
    ],
-   "reviewed": true,
-   "source": "walkthroughs/brownfield-existing-project.md",
-   "source_url": "/rota/docs/walkthroughs/brownfield-existing-project/",
+   "reviewed": false,
+   "source": null,
    "steps": [
     {
      "you": "/rota-refactor internal/cli"
