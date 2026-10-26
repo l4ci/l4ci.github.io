@@ -29,6 +29,7 @@
     <header class="masthead">
       <a class="brand" href="/rota/" aria-label="rota home">{% include rota/logo.svg %}</a>
       <nav class="topnav" aria-label="Site">
+        <a href="/rota/examples/"{% if page.url contains '/rota/examples/' %} aria-current="page"{% endif %}>Examples</a>
         <a href="/rota/docs/"{% if page.url contains '/rota/docs/' %} aria-current="page"{% endif %}>Docs</a>
         <a href="/rota/docs/install/">Install</a>
         <a href="https://github.com/l4ci/rota">GitHub</a>

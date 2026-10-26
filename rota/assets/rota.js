@@ -172,7 +172,7 @@
     }
 
     // Static terminals on skill pages play once when scrolled into view.
-    var pageTerms = document.querySelectorAll(".prose [data-term]");
+    var pageTerms = document.querySelectorAll(".prose [data-term], .examples [data-term]");
     if (pageTerms.length && "IntersectionObserver" in window) {
       var tio = new IntersectionObserver(function (entries) {
         entries.forEach(function (e) {

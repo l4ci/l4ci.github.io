@@ -1,0 +1,39 @@
+---
+layout: rota/base
+permalink: /rota/examples/
+body_class: is-landing
+title: Examples
+description: Situations you meet while working with coding agents, and the rota skills that handle each one, with the commands you type and what the agent prints.
+---
+<main id="main" class="examples">
+  <div class="eg-head">
+    <h1>Examples</h1>
+    <p class="band-intro">Each example is a situation and the skills rota reaches for in it. Every step shows what you type and what the agent prints.</p>
+    <nav aria-label="Examples">
+      <ul class="eg-jump">
+        {%- for c in site.data.rota.chains %}
+        <li><a href="#{{ c.id }}">{{ c.title | escape }}</a></li>
+        {%- endfor %}
+      </ul>
+    </nav>
+  </div>
+  {%- assign skills = site.data.rota.skills %}
+  {%- for c in site.data.rota.chains %}
+  <section class="eg" id="{{ c.id }}" aria-labelledby="h-{{ c.id }}">
+    <h2 id="h-{{ c.id }}">{{ c.title | escape }}</h2>
+    <p class="eg-when">{{ c.when | markdownify | remove: '<p>' | remove: '</p>' | strip }}</p>
+    <ol class="eg-steps">
+      {%- for st in c.steps %}
+      {%- assign s = skills | where: "skill", st.skill | first %}
+      <li>
+        <p class="eg-why"><a href="{{ s.url }}"><code>/{{ st.skill }}</code></a> {{ st.why | markdownify | remove: '<p>' | remove: '</p>' | strip }}</p>
+        {%- include rota/term.html example=s.example label=st.skill bare=true %}
+      </li>
+      {%- endfor %}
+    </ol>
+    {%- if c.walkthrough_url %}
+    <p class="eg-more"><a href="{{ c.walkthrough_url }}">The full walkthrough</a> →</p>
+    {%- endif %}
+  </section>
+  {%- endfor %}
+</main>

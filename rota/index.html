@@ -148,15 +148,16 @@ description: rota turns a to-do list into reviewed, merged work with Claude Code
 
   <section class="band explorer" aria-labelledby="skills">
     <h2 id="skills">See how the skills chain</h2>
-    <p class="band-intro">Pick a situation, then step through the skills rota reaches for and what each one prints.</p>
+    <p class="band-intro">Three common situations, each a short chain of skills. Pick one and step through what each skill prints.</p>
     {%- assign skills = site.data.rota.skills %}
+    {%- assign featured = site.data.rota.chains | where: "featured", true %}
     <div class="ex" data-explorer>
       <div class="ex-tabs" role="tablist" aria-label="Situations">
-        {%- for c in site.data.rota.chains %}
+        {%- for c in featured %}
         <button type="button" role="tab" id="tab-{{ c.id }}" aria-controls="panel-{{ c.id }}" aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">{{ c.title | escape }}</button>
         {%- endfor %}
       </div>
-      {%- for c in site.data.rota.chains %}
+      {%- for c in featured %}
       <div class="ex-panel" role="tabpanel" id="panel-{{ c.id }}" aria-labelledby="tab-{{ c.id }}">
         <p class="ex-when">{{ c.when | markdownify | remove: '<p>' | remove: '</p>' | strip }}</p>
         <ol class="ex-steps">
@@ -180,6 +181,7 @@ description: rota turns a to-do list into reviewed, merged work with Claude Code
       </div>
       {%- endfor %}
     </div>
+    <p class="band-more"><a href="/rota/examples/">All {{ site.data.rota.chains.size }} examples</a> →</p>
 
     <h3 class="lanes-h">Every skill, by stage</h3>
     <dl class="lanes">
