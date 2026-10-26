@@ -16,10 +16,10 @@
    "source_url": "/rota/docs/walkthroughs/quickstart-manual-mode/#step-1-capture",
    "steps": [
     {
-     "you": "/rota-capture \"--limit 0 prints every row instead of none\""
+     "you": "/rota-capture the list command shows every row when I ask for zero"
     },
     {
-     "agent": "[B03] --limit 0 prints every row instead of none   Bug, P2\n"
+     "agent": "[B03] list shows every row when the limit is zero   Bug, P2\n"
     }
    ]
   },
