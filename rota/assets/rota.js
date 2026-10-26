@@ -18,12 +18,33 @@
       });
     }
 
+    // Sticky offsets follow the real header and toggle heights, so nothing gaps or overlaps.
+    var mast = document.querySelector(".masthead");
     var navBtn = document.querySelector(".nav-toggle");
+    function measure() {
+      root.style.setProperty("--mast-h", mast.getBoundingClientRect().height + "px");
+      root.style.setProperty("--toggle-h", (navBtn ? navBtn.getBoundingClientRect().height : 0) + "px");
+    }
+    if (mast) {
+      measure();
+      if ("ResizeObserver" in window) new ResizeObserver(measure).observe(mast);
+      window.addEventListener("resize", measure);
+    }
+
     var nav = document.getElementById("docnav");
     if (navBtn && nav) {
-      navBtn.addEventListener("click", function () {
-        var open = nav.classList.toggle("open");
+      function setOpen(open) {
+        nav.classList.toggle("open", open);
         navBtn.setAttribute("aria-expanded", String(open));
+        if (open) {
+          var cur = nav.querySelector("[aria-current]");
+          if (cur) cur.scrollIntoView({ block: "center" });
+        }
+      }
+      navBtn.addEventListener("click", function () { setOpen(!nav.classList.contains("open")); });
+      nav.addEventListener("click", function (e) { if (e.target.closest("a")) setOpen(false); });
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && nav.classList.contains("open")) { setOpen(false); navBtn.focus(); }
       });
     }
 
