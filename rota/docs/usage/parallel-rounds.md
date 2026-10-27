@@ -392,6 +392,40 @@ blocking finding, when the gate sent it back at its current head (a push clears 
 it is already merged or closed. The autopilot assigns by itself, so
 a watch running with `--autopilot` skips the assign line but still prints the train line.
 
+Set `round.trainMax` and `round.trainFillMinutes` to wait for a fuller train or an age deadline.
+The tick and nudge wait until either threshold fires on one base. For example, `3` and `60` wait
+for three reviewed PRs or sixty minutes since the oldest PR's latest current-head review. A lone
+PR at the deadline gets a `worker gate` command. The nudge names the threshold in its text and
+JSON `reason`, and its text reports the observed oldest wait. `round.trainMax` also caps the
+train size: trimming keeps the oldest-ready members while preserving their relative order
+for the existing merge-order selector. Without `round.trainFillMinutes`, a lone ready PR can
+wait indefinitely. Set both keys for a deadline. Each key defaults to `0` (disabled); leaving
+both unset keeps the behavior above.
+
+While filling, the tick reports one non-actionable line per base, such as
+`holding train for main: 2/4 ready, oldest waited 6m of 20m` (JSON `holding`).
+Changed holding notices use a base/count/maximum key, including across watch restarts;
+elapsed minutes alone produce no new notice. Current observed age remains visible in explicit
+tick output (`fillStatus` in JSON), `round status` and watch heartbeat output. A holding notice
+alone does not wake the armed watch; completed merges and new attention items still do. With review disabled, readiness age uses the worker done time. A ready record with
+no usable done time goes straight to the gate. Persisted gate holds keep failed heads out of
+both tick and nudge readiness; PR state refusals still reach the gate for cleanup.
+
+The autopilot checks the required review verdicts at a done PR's head before
+gating it. Missing reviews, an incomplete probe or an unreadable PR head make it
+report the problem and wait. A known PR identity or state verdict goes to the real
+gate, which handles mismatches and already-merged PRs; it also checks reviews
+before merging. A merge conflict, failed verification (including CI and
+train checks), or vacuous-test result holds that head across watch
+restarts, worker busy/done transitions, and moving the PR into the review queue;
+a push with a new head permits another attempt. A train member skipped because
+another member failed can still run. Temporary refusals such as a busy gate,
+forge trouble, train order, missing CI or a verification timeout retry on the
+next tick without a push. Configuration, approval and assignment refusals
+(`ci-config-changed`, `no-verify`, `stale-attempt`) also retry: those conditions
+can change without changing the PR head. The first `gate-failed` report for a
+held head and later reports all say to push a new head to retry.
+
 `rota worker dispatch` and `--relay` check what is on the prompt line before they type. A typed human
 draft is refused as a draft (exit 5, nothing sent). The autocompact settings picker is dismissed once
 with Escape and the send is retried. Any other Claude Code dialog, or a picker that survives Escape, is
@@ -514,7 +548,8 @@ Runs only under `autonomy.level: auto`; under `off` or `roundtrip` both verbs ex
 
 1. repair the safe drift (`reconcile --apply`);
 2. gate and merge every finished PR, as one `worker train` when several wait, at most
-   `round.autopilotCap` (default 3) per tick, and only under `ship.mergeApproval: none`;
+   `round.autopilotCap` (default 3) per tick, and only under `ship.mergeApproval: none`.
+   When train fill thresholds are enabled, wait for their count or age rule first;
 3. run the architecture-review trigger (`rota round architecture`): when the
    threshold is reached, or a slot is idle with nothing assignable, mint the review items
    (`round.architectureEvery` 0 never mints), one audit line per mint;
@@ -525,12 +560,21 @@ Runs only under `autonomy.level: auto`; under `off` or `roundtrip` both verbs ex
    at `round.batch` open items: the tick assigns nothing and says `batch-full`; gating and merging
    go on, and the next tick assigns once an item has landed.
 
+If a manual gate or train is running or waiting for the land lock, the tick
+defers its merges until that work finishes. It reports `deferred`, keeps the
+train nudge visible when reviewed PRs wait, and retries on the next tick.
+This is a wait, so it creates no gate failure, bounce or hold.
+
 It never answers a worker, approves a permission, picks a higher tier, reclaims a slot or merges
 without a passing gate. A blocked, limited or dead slot, a failed gate, drift it will not repair and
 any merge a policy sends to a person come back in `needsYou`. The watch wakes you only for an item you
 have not seen, at the heartbeat, or when the autopilot stops (a wind-down or a lost lease). A gate that
 failed for a reason a person must clear is held, not re-run on every tick. Every action is one line in
 `.rota/gate-audit.jsonl` with `"gate": "autopilot"`.
+
+A `branch-no-pr` finding appears only after a slot is done or idle with commits and no PR.
+The watch reports it once per slot state or held-issue change, and again if it disappears and returns.
+Repeated heartbeats omit it from text and JSON; `round status` and `round reconcile` still list it.
 
 The scope you chose at `round start` bounds what it assigns; start a `slate` round to keep it to
 issues you picked.
@@ -549,7 +593,12 @@ whose worker is busy, blocked or has uncommitted files is never taken.
   `rota worker gate <slot>` on a slot whose PR moved to review is refused with the PR to gate, so a
   habitual slot gate never merges the slot's next branch.
 - **Bounce it**: `rota round transfer <issue> --to <free slot> --body-file <gap>` checks the
-  branch out in that slot, moves the PR back onto it and dispatches the follow-up. Count it first with
+  branch out in that slot, moves the PR back onto it and dispatches the follow-up. Use
+  `--kind <harness>` and `--model <id>` to override the receiver's harness and model.
+  Transfer uses the same precedence and launch checks as `round assign`: flags override
+  issue labels, which otherwise apply to the target slot. These flags require a slot target;
+  using either with `--to human` is a usage error (exit 2).
+  Count it first with
   `rota round bounce <issue> --head <sha>`: it exits 4 once the item is at `round.maxBounces`, and
   `rota round status` shows each slot's count. At the cap, never bounce it again: audit the issue's acceptance criteria first (is each one
   checkable as written, with one reading; three lines per criterion at most). If any is not, hand the
@@ -576,6 +625,19 @@ A worker that printed `ROTA-DONE` keeps its PR open for review. When a reviewer 
 A worker or the orchestrator that needs a human decision does not guess. `rota round escalate send`
 posts the question on the issue or PR thread and raises a host notification; `rota round escalate check`
 reads the answers back.
+
+Run `rota round status --needs-you` for a list of what waits on the maintainer:
+open escalations, needs-human parks, merge approvals, stale-claim reclaim approvals
+and unfiled bugreports. Raw worker questions and bounce-cap audits belong to the
+orchestrator; they reach this list only after an escalation or handoff to the human. Each row shows the item, question, compact age (`4m`, `2h`) and a one-word default reply. Use
+`--json` for the same list as `needsYou`. Explicit Spec waiver requests are
+escalations; an ordinary failing review remains work for the worker. An unknown
+age means the source has no recorded timestamp. The command never answers an item.
+
+Status and the watch's forge pass refresh a local count for the prompt. A prompt
+might say `3 wait on you, as of 4m ago`; it never calls the tracker to refresh that
+count. Missing snapshots and snapshots older than the watch heartbeat (ten minutes
+by default) are omitted. Run status again to pick up label-only changes immediately.
 
 When several decisions wait, type `/rota-answer`. The orchestrator then asks them one by one (the
 `AskUserQuestion` picker in Claude Code; one message with an `A)` to `E)` list elsewhere, `A)` the
@@ -669,6 +731,22 @@ they match, that is the pass. When the base moved between the last check and the
 `VERIFY-AGAIN` and runs the checks once more on the landed base; a red result there is `verify-failed`
 with `data.changed` true, and you fix forward with a new PR. With `test.fullWhere` set to `ci`, CI
 checks the merge result first and nothing lands when it fails.
+
+For local verification, the gate and train retry a configured command once when its output
+identifies Go assertion failures (`--- FAIL: <test>` followed by a final `FAIL` summary).
+The retry runs sequentially in the same directory at the same clean tree. A pass stays green and
+adds `FLAKY <command>` with failing test names and rerun wall time to the result's notes and structured `data.flaky` entries; it costs no bounce. A second failure stays red.
+Build, setup, panic, infrastructure, timeout, signal and unknown failures are not retried.
+The known-red exclusion ledger keeps its existing behavior and is checked before retrying.
+
+Each recovery appends the command, failing test names, tree, PR references, round, timestamp
+and both runs' output and exit status to the gitignored `.rota/flakes.jsonl` in the gate
+checkout. `rota test flakes` ranks commands and test names by repeat count. `rota round summary`
+and the wind-down summary report the round's recorded recoveries as `metrics.flakes`.
+A missing or unreadable ledger makes that metric unavailable, rather than claiming zero flakes.
+CI verification, `rota test run` and `## Try it` steps do not retry. Wrapper output that does
+not identify assertion failures also stays red; this repo's `test/gate.sh` needs the separate
+adapter tracked in #2196 before it can use sequential retries.
 
 After `test.full` and `test.e2e` pass, the gate runs the `## Try it` steps of the slot's issue on the merged tree, in order, stopping at the first failure. A step fails on a non-zero exit or a missing `expect:` substring (`verify-failed`, nothing lands). The steps run only when the issue's author and last editor have write access on the forge (a file issue source runs unchecked); otherwise the gate notes `BEHAVIOUR-SKIP` and continues. The transcript goes to `.rota/qa-runs/behaviour/` and a `behaviour` verdict is recorded. `--check-only` and `--no-verify` skip the run.
 
@@ -830,7 +908,13 @@ acceptance. The gate refuses (`blockedBy: closes`) a PR that does not close ever
 lands or bounces as a unit: `rota round bounce` counts it on the lead and refuses a member.
 
 To drop one member, `rota round transfer <member> --to human`. Closing a member drops it too: `rota worker done` no longer wants its proof row, the gate no longer wants its `Closes` line, and the next `round assign` of the lead removes it from the slot's bundle.
-The lead cannot be transferred while members remain, not even after `round.maxBounces`: transfer the members to the human first, or return or reclaim the slot. `round return`, `round reclaim` and
+To drop the lead, `rota round transfer <lead> --to human`: the first member becomes the lead,
+and the other members stay in order. The branch and PR stay in place, and an active worker
+keeps its session. The dropped issue loses its claim and in-progress state and gets `needs-human`; the
+gate requires closing references only for the issues still held. `round status` shows the new
+lead. When only one issue remains, transferring it to the human frees the slot as usual.
+Transferring a lead with members to another slot is still refused: transfer the members to
+the human first, or return or reclaim the slot. `round return`, `round reclaim` and
 `round wind-down` release the lead and its members together. `rota round status` shows the slot
 as `1559 (+#1563, +#1564)`.
 
@@ -839,6 +923,7 @@ as `1559 (+#1563, +#1564)`.
 ```sh
 rota round return ben --reason "wrong premise" --note-file next.md   # the worker's own verb
 rota round transfer 59 --to dana --note-file next.md                 # orchestrator: to a slot
+rota round transfer 59 --to dana --kind codex --model gpt-6.1-sol    # orchestrator: override harness and model
 rota round transfer 59 --to human                                    # orchestrator: to the human
 rota round transfer 59 --to human --cap-reason ambiguous-criteria --note-file audit.md  # at the bounce cap, after the criteria audit
 rota round transfer 59 --to kit --tier heavy --tier-reason "bounced 3x"  # orchestrator: to a stronger worker
@@ -936,6 +1021,35 @@ merged), then totals per slot and per account, then an idle table (each stretch 
 its next assign, with the median; `idle` in JSON), then the round's gate audit lines. A re-done after a
 bounce is not counted as idle time.
 
+The summary also prints round metrics, with a counting rule on each line:
+
+- **Lead time assign→merged and done→merged:** each distinct merged PR's winning
+  assignment, using its first assign, latest done report and first merge observation.
+  Text prints durations; JSON gives whole seconds. Open PRs are excluded.
+  The median averages the middle pair for an even sample; p90 uses nearest rank
+  (`ceil(0.9 × samples)`). Missing or invalid timestamps make that metric unavailable.
+- **Red-train rate:** non-pass train outcomes divided by recorded train outcomes. One
+  outcome is recorded per completed train invocation, including refusals; plans and
+  usage errors without a verdict are excluded. Member gate rows are not trains. Older
+  rounds without train outcomes show unavailable.
+- **Bounces per merged PR:** all bounce events in the round divided by its distinct
+  merged PRs, including bounces on work that did not land.
+
+Missing or unreadable sources print `unavailable (<reason>)`, never a measured zero.
+JSON puts these under `metrics`: `assignToMerged`, `doneToMerged`, `redTrainRate`,
+`bouncesPerMergedPR`. Each carries `rule` and `unavailable` (null when
+available); lead times carry `samples`, `medianSeconds` and `p90Seconds`, while ratios
+carry `numerator`, `denominator` and `value`. Unavailable numeric values, including
+`samples` counts, are null.
+
+Unreadable ledger lines are skipped and counted in `skippedLedgerLines` (across the
+file). If a damaged event has a readable round number, only that round's metrics
+become unavailable. A torn line whose round cannot be identified does not invalidate
+other readable events. Once the ledger loads, an explicitly requested round with
+no identifiable events exits 3. Missing or wholly unreadable ledgers return
+unavailable metrics at exit 0, even with an explicit `--round`. Existing issue-row `mergedAt` and fallback `wallSeconds` retain the
+last merge observation; only the new lead-time metrics use the first.
+
 ```sh
 rota round summary              # the current round, else the highest in the ledger
 rota round summary --round 3
@@ -961,8 +1075,8 @@ With `round.support` set, main labels issues for the support machine (`rota roun
 and the two orchestrators talk through the issue thread. The support machine hands back an issue
 it cannot work with `rota round support return <ID> --reason-file <f>`. Both `round watch` runs
 wake on the other machine's PR changes and comments (the support machine's also on main's comments on the issue of a PR parked for review, and on a PR of its own that turns conflicting with its base), and main's merge gate accepts a support PR's
-approvals from relays the support orchestrator posted as issue comments. See
-`docs/contributing/rounds.md` (Support role) for the rules.
+approvals from relays the support orchestrator posted as issue comments. Setup, pinning, claim
+labels and hand-back are on [Support machine](/rota/docs/usage/support-machine/).
 
 ## Winding down
 
@@ -1070,4 +1184,25 @@ never reclaim stale claims. The gate refuses an old holder's recorded `claimId` 
 Adopt refuses `claimed` only if the current holder is stale or authoritative claim history
 shows that the branch's former claim was released and replaced. Fresh different holders
 without that evidence do not prevent adoption; unreadable history is warned and skipped.
+
+## Recover a frozen base
+
+A failed verification after a landing freezes the landing queue. `rota round status`
+and the prompt digest show the frozen base, SHA and failed checks. Gate, train and
+assign refuse unrelated work until recovery. Name the repair with
+`rota round freeze --repair-issue 123` (or `--repair-issue B07` on the file backend,
+or `--repair-pr 456` for an existing PR),
+then assign and gate it normally. A verified repair landing clears the freeze.
+After repairing outside the round, update your base checkout and run
+`rota round freeze --verify`. Verification requires a clean checkout of the frozen
+base at its current origin SHA and configured `test.full` commands or CI checks;
+otherwise it refuses with exit 4. CI checks that time out or never run stop the
+train without creating a freeze. To override the freeze deliberately, use
+`rota round freeze --clear --reason 'why verification can be bypassed'`;
+the reason is recorded in the gate audit. This also recovers an unreadable freeze
+record or a freeze whose base was deleted. A manual clear records the frozen base
+SHA when it resolves, otherwise the operator's current HEAD; replacing an unreadable
+record is noted in the audit. Plain `round freeze`, repair designation and verification
+refuse an unreadable record with exit 4 and the clear command. Status and the prompt
+digest warn about unreadable records and show the recovery command.
 {% endraw %}

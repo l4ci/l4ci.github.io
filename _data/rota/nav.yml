@@ -144,6 +144,9 @@
     - title: Parallel work
       url: /rota/docs/usage/parallel-work/
       desc: "worktree mode, concurrent `/rota-work` sessions"
+    - title: Support machine
+      url: /rota/docs/usage/support-machine/
+      desc: "a second machine in the same round, pinning, claim labels, hand-back"
 - group: Shipping
   items:
     - title: Review and ship

@@ -74,6 +74,7 @@ Public user guide for rota, a dev workflow for Claude Code and Codex, with OpenC
 - [Debugging](/rota/docs/usage/debugging/): `/rota-debug` systematic cycle
 - [Pausing and resuming](/rota/docs/usage/pausing-and-resuming/): `/rota-pause`, recovering after `/clear`
 - [Parallel work](/rota/docs/usage/parallel-work/): worktree mode, concurrent `/rota-work` sessions
+- [Support machine](/rota/docs/usage/support-machine/): a second machine in the same round, pinning, claim labels, hand-back
 
 ### 📦 Shipping
 
@@ -112,7 +113,7 @@ Public user guide for rota, a dev workflow for Claude Code and Codex, with OpenC
 - [Rounds on rota itself](https://github.com/l4ci/rota/blob/main/docs/contributing/rounds.md): the gate, repo rules and roster for contributors
 - [Skill-rule audit, October 2026](https://github.com/l4ci/rota/blob/main/docs/contributing/skill-rule-audit-2026-10.md): the complete never/must inventory, enforcement gaps and observed breakage
 - [Release signing](https://github.com/l4ci/rota/blob/main/docs/contributing/release-signing.md): generating or rotating the minisign key, the Actions secret, verifying by hand
-- [Market review, October 2026](https://github.com/l4ci/rota/blob/main/docs/contributing/market-review-2026-10.md): what comparable orchestrators' users ask for, where rota stands, and the ranked gaps behind issues #574 to #587
+- [Market review, October 2026](https://github.com/l4ci/rota/blob/main/docs/contributing/market-review-2026-10.md): what comparable orchestrators' users ask for, where rota stands, and the ranked gaps behind issues #574 to #587; refreshed 2026-10-27 with gstack (#2170 to #2174) and new entrants
 - [Plain orchestrator comparison, October 2026](https://github.com/l4ci/rota/blob/main/docs/contributing/plain-orchestrator-comparison-2026-10.md): what a bare Claude Code session would do to run a team against what rounds do, and the six gaps behind issues #897 to #902. The [re-judged user version](/rota/docs/usage/rota-vs-plain-session/) is the current one
 
 ### ⚖ Compare
