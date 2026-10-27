@@ -17,6 +17,7 @@
     <meta property="og:url" content="{{ site.url }}{{ page.url }}">
     <meta property="og:type" content="website">
     <link rel="icon" href="/rota/assets/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/rota/assets/apple-touch-icon.png">
     <link rel="stylesheet" href="/rota/assets/fonts/fonts.css">
     <link rel="stylesheet" href="/rota/assets/rota.css">
     <script>
@@ -27,7 +28,7 @@
   <body class="{{ page.body_class | default: 'is-doc' }}">
     <a class="skip" href="#main">Skip to content</a>
     <header class="masthead">
-      <a class="brand" href="/rota/" aria-label="rota home">{% include rota/logo.svg %}</a>
+      <a class="brand" href="/rota/" aria-label="rota home">{% include rota/icon.svg %}<span class="wordmark">rota</span></a>
       <nav class="topnav" aria-label="Site">
         <a href="/rota/examples/"{% if page.url contains '/rota/examples/' %} aria-current="page"{% endif %}>Examples</a>
         <a href="/rota/docs/"{% if page.url contains '/rota/docs/' %} aria-current="page"{% endif %}>Docs</a>

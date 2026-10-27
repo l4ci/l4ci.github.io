@@ -97,8 +97,9 @@ img { max-width: 100%; height: auto; }
   border-bottom: 1px solid var(--rule);
 }
 
-.brand { color: var(--ink); display: block; line-height: 0; }
-.brand .logo { width: 92px; height: auto; }
+.brand { color: var(--ink); display: flex; align-items: center; gap: 0.55rem; text-decoration: none; }
+.brand .icon { width: 32px; height: 32px; flex: none; }
+.brand .wordmark { font: 700 1.05rem/1 var(--mono); letter-spacing: -0.01em; }
 
 .topnav { display: flex; align-items: center; gap: clamp(0.75rem, 2.5vw, 1.75rem); font: 500 0.8rem/1 var(--mono); }
 .topnav a { color: var(--ink); text-decoration: none; padding: 0.4rem 0; }
@@ -721,7 +722,7 @@ div.highlighter-rouge pre, div.highlight pre { margin: 0; }
 
 @media (max-width: 560px) {
   body { font-size: 1rem; }
-  .brand .logo { width: 76px; }
+  .brand .icon { width: 28px; height: 28px; }
   .topnav { gap: 0.6rem; font-size: 0.72rem; }
   .masthead { gap: 0.5rem; }
   .roster-grid { --who: 3.6rem; font-size: 0.62rem; padding: 0.6rem 0.5rem 0.4rem; }
