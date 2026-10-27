@@ -113,9 +113,21 @@ After each task, `/rota-work` checks the diff against the brief, then writes pro
 - `rota proof record <ID> -- <command>` runs the command and writes the row itself: PASS when it exits 0, FAIL otherwise (and it exits 1 then). A row is measured, never typed. For a docs-only task with no command, `rota proof add` writes the row; its check says `no test seam: docs/skill change`.
 - For a behavior change, run the new test through `rota proof record` before the change. The FAIL row is the red run. Run it again after the change for the PASS row. A test that fails on a build or setup error (missing import, undefined symbol) is not a red run; it has to fail on an assertion. Set [`work.tdd`](/rota/docs/usage/configuration/#worktdd-red-first-on-or-off) to `false` to drop the red-first rule. PASS rows are still recorded.
 - When `test.fast` is set, Step 7 runs `rota test run fast`, and that row is the PASS proof.
+- A FAIL gets a fix dispatch, at most three per task. `rota debug work-fix attempt <ID> --task <N>` counts them across sessions and exits 4 on the fourth; `/rota-work` then stops, prints the failing rows and points at `/rota-debug <ID>`. A PASS clears that task's count only; only a human reset (`rota debug work-fix reset`, a manual gate) lifts the cap.
 - If the issue's body has a `## Acceptance` list, each line carries an id (`AC-1`, `AC-2`, ...). `rota item complete` closes an item only when it has proof and exits 4 otherwise. On the issue backend, a plan's tasks name the ids they deliver (`Serves: AC-1`), and `rota plan pass <key> <AC-id> --proof <sha>:<check>` marks a criterion met by one proof row. See [vision and plans](/rota/docs/usage/vision-and-plans/#rota-plan-write-the-implementation-plan).
 
 ## Merge or PR
+
+On the issue backend, mark acceptance after recording PASS proof and before shipping:
+`rota plan pass '#2150' AC-1 --proof '<sha>:<check>'`. Use the sha and check from
+`rota proof show 2150`, and repeat for each verified criterion. Leave unmet criteria
+unmarked and state their ids and reasons. In a round, report them with
+`worker done --outcome partial --summary-file <f>` on the summary's third line;
+`--outcome done` refuses while explicit criteria on tracker items the PR closes remain unmet.
+Non-closing `Refs` slices and file-mode items keep their existing done flow. An intentional
+close with unmet criteria uses `rota item complete <ID> --commit <sha> --unmet-reason <text>`
+to record the gaps and reason; in a round, this is the merger's responsibility. The gate
+skips acceptance for explicitly closed issues. Items without `AC-n` ids need no marks.
 
 After `/rota-work` finishes, `work.mergeStrategy` in `config.json` controls what happens next:
 

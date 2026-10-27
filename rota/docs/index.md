@@ -15,6 +15,7 @@ Public user guide for rota, a dev workflow for Claude Code and Codex, with OpenC
 - [Install](/rota/docs/install/): Homebrew, the install script, release binaries, the Claude Code plugin, upgrading, uninstalling
 - [Getting started](/rota/docs/getting-started/): install and run your first cycle
 - [How it works](/rota/docs/how-it-works/): the two ways to use rota (orchestrator, workers, gate), plus how each skill connects to the artifacts it touches
+- [Where coding agents go wrong](/rota/docs/agent-mistakes/): seven common mistakes, enforced checks, written rules and remaining gaps
 
 ### Walkthroughs
 
@@ -102,12 +103,14 @@ Public user guide for rota, a dev workflow for Claude Code and Codex, with OpenC
 - [The `.rota/` folder](/rota/docs/reference/rota-folder/): files and directories created by `rota init`
 - [`rota` verb reference](/rota/docs/reference/cli-helpers/): every `rota` verb, with conventions and exit codes
 - [Configuration options](/rota/docs/reference/config-options/): every config key and option label, set via `rota config set`
+- [Tracker labels](/rota/docs/reference/labels/): label definitions, project declarations and dry-run sync
 - [Upstream issues reference](/rota/docs/reference/rota-issues/): GitHub/GitLab issue backend and round-trip closing
 - [Project check](/rota/docs/reference/preflight/): what `rota init check` verifies, plus exit-code meanings
 
 ### 🤝 Contributing
 
 - [Rounds on rota itself](https://github.com/l4ci/rota/blob/main/docs/contributing/rounds.md): the gate, repo rules and roster for contributors
+- [Skill-rule audit, October 2026](https://github.com/l4ci/rota/blob/main/docs/contributing/skill-rule-audit-2026-10.md): the complete never/must inventory, enforcement gaps and observed breakage
 - [Release signing](https://github.com/l4ci/rota/blob/main/docs/contributing/release-signing.md): generating or rotating the minisign key, the Actions secret, verifying by hand
 - [Market review, October 2026](https://github.com/l4ci/rota/blob/main/docs/contributing/market-review-2026-10.md): what comparable orchestrators' users ask for, where rota stands, and the ranked gaps behind issues #574 to #587
 - [Plain orchestrator comparison, October 2026](https://github.com/l4ci/rota/blob/main/docs/contributing/plain-orchestrator-comparison-2026-10.md): what a bare Claude Code session would do to run a team against what rounds do, and the six gaps behind issues #897 to #902. The [re-judged user version](/rota/docs/usage/rota-vs-plain-session/) is the current one

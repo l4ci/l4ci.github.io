@@ -129,7 +129,7 @@ The orchestrator then does the steps below. To drive a round by hand instead:
 ```sh
 rota doctor                                  # fix every fail it reports
 rota round start --slots 2                   # take the lease, make two slots, list candidates
-rota round assign 59 --body-file notes.md    # first idle slot takes issue 59; repeat for a second issue
+rota round assign 59 --settled-file notes.md    # first idle slot takes issue 59; repeat for a second issue
 rota round wait                              # blocks until a worker is done, blocked or dead
 rota worker gate ben --base main             # verify on the merged tree, merge on a pass
 rota round wind-down                         # re-verify main, park the slots, release the lease
@@ -222,9 +222,10 @@ rota round candidates                         # re-read the board with readiness
 
 ### Picking issues
 
-Candidates carry three checks:
+Candidates carry four checks:
 
-- `criteria`: acceptance criteria, or a design or plan note. Acceptance criteria in the `assign --body-file` text count too.
+- `criteria`: acceptance criteria, or a design or plan note. Acceptance criteria in the `assign --settled-file` text count too.
+- `template`: every feature, including Cosmetic, has Acceptance and Out of scope headings. Missing headings are named; an assign `--settled-file` brief can supply them. Fresh assignment enforces this check; resuming a slot's own issue or deliberately redoing an existing open PR does not enforce it again. Research and decision items are exempt. Bugs and tasks have no required template sections. This checks presence only, so an empty heading or "nothing noted" counts. Existing items need no migration: add the missing headings to the body or supply them in the brief. `rota item ready` reports the same required headings.
 - `dependencies`: every `## Depends on` reference is closed. One that cannot be looked up fails the
   check, so fix the issue text.
 - `overlap`: no shared file with an in-flight slot, from a `## Files` section or the paths the issue
@@ -255,7 +256,8 @@ A directory in an issue's `## Pointers` (`src/app/ui/`) matches every file below
 
 ```sh
 rota round assign 59 --check-only             # readiness only; exit 1 when not ready
-rota round assign 59 --agent ben --body-file decisions.md --siblings 58,60,62
+rota round assign 59 --agent ben --settled-file settled.md --siblings 58,60,62 \
+  --decision-topics "Architecture,Rounds: Orchestration"
 ```
 
 Without `--agent` the first idle roster slot takes it, else the first slot whose worker is done with
@@ -268,7 +270,18 @@ with `no round`, `out of scope`, `not ready`, `overlap`, `claimed`, `open PR`, `
 claims the item (`<agent>@<round>`), sets it in progress with a comment, cuts the slot's
 branch `<agent>/<issue>-<slug>`, picks the account and dispatches a short signed brief: a
 pointer to the standing contract (`round.brief`, else `skills/references/worker-contract.md`), the
-issue to read and dispute, the item's `## Out of scope` section when it has one, the siblings and the decisions from `--body-file`.
+issue to read and dispute, the item's `## Out of scope` section when it has one, the siblings and the settled answers from `--settled-file`.
+
+`--settled-file <path|->` passes answers already settled by the maintainer verbatim under
+“Settled answers” and preserves them when a slot is re-briefed.
+
+`--decision-topics` takes comma-separated DECISIONS.md topics, using the same matching rules as
+`rota decisions query`. The brief includes each matching active entry in full, including its
+Forbids and Permits; retired and superseded entries are excluded. Unknown topics are a usage error.
+Without this flag, the brief lists the available topics and asks the worker to query those its issue
+touches before implementing. A missing or empty DECISIONS.md adds no text. The assignment stores this
+context so re-briefing, resuming and transfer keep the same entries even if DECISIONS.md later changes.
+Workers escalate a conflict between the issue and a binding decision before implementing.
 
 Concurrent assignments reserve the slot under the registry lock. If another manual assign or
 autopilot tick has taken the slot since planning, the later assign exits 4 with
@@ -408,7 +421,7 @@ Neither applies to a solo round, which has no panes to watch.
 
 ### Worker guard
 
-`rota hook install` also adds a `PreToolUse` hook on `Bash` (`rota hook guard`). It reads `ROTA_SLOT`,
+`rota hook install` also adds a `PreToolUse` hook on `Bash|Edit|Write` (`rota hook guard`). Edit and Write recall [path-scoped knowledge and decisions](/rota/docs/usage/learning/#recall-before-editing) in any session. For Bash it reads `ROTA_SLOT`,
 which every worker tab has and the orchestrator and your own sessions do not, and does nothing without
 it. For a worker it refuses (exit 2, one-line reason) the commands the worker contract forbids:
 
@@ -593,6 +606,25 @@ recorded with `rota proof record <ID> -- rota test run fast`. A later commit mak
 the worker records again. With `test.fast` unset it warns and skips that check. The worker brief then tells the worker to run `rota test run full` and have it green first, and `rota round start` warns once that the proof rows will be missing (reviewers treat that as minor at most). On success the slot is
 marked `done`.
 
+On the issue backend, before reporting done, workers mark each verified `AC-n` on the lead and every open
+bundle member with `rota plan pass <ID> AC-n --proof '<sha>:<check>'` (use an issue key
+such as `'#2150'`). The sha and check must name a recorded PASS row from
+`rota proof show <ID>`; proof rows alone do not mark acceptance. A plain done or
+`--outcome done` refuses (exit 4) while explicit criteria on tracker items the PR closes are unmet, listing them and
+their marking commands. Changed criterion text or withdrawn proof makes a mark unmet
+again. When PR closing information cannot be read (for example, with a local origin),
+done checks all held tracker items; it does not require a reachable forge.
+Items without explicit `AC-n` ids keep their existing behavior.
+
+For an unmet criterion, leave it unmarked and report `--outcome partial --summary-file <f>`
+(or `failed` when nothing can be delivered). The file has three lines: what changed,
+what was found, and each unmet id with its reason. These outcomes preserve the merge
+gate's hold until the orchestrator handles the gap. Non-closing `Refs` slices and file-mode
+items keep their existing done flow. An intentional close with gaps uses
+`rota item complete <ID> --commit <sha> --unmet-reason <text>` to record the unmet criteria
+and reason. The merger handles this; a worker never closes an issue to bypass the refusal.
+The gate skips acceptance once that issue is explicitly closed.
+
 `rota worker gate <slot> --base <branch>` is the one merge path in a round. It checks the branch is
 fresh, the PR is the worker's, provenance holds and the PR body closes the slot's issue
 (`Closes #N`, unless the issue is labelled `partial-slice`), then builds a scratch
@@ -602,13 +634,17 @@ when set, and merges on a pass.
 A worker's PR body carries four sections besides the closing keyword: `## Approvals` (the channel of each
 decision it acted on), `## Rulings` (its own calls, each with a cost if wrong), `## Assumptions` (each
 question the issue left open that it answered from the code, `None` if there were none) and the
-`Door:` line. The gate reads only `## Approvals`; the orchestrator reads the rest before review.
+`Door:` line. The gate checks approval provenance and requires the Assumptions and Rulings
+headings. It checks their presence only: `None` and empty sections pass. The orchestrator reads
+the content before review.
 
 The gate refuses before it merges anything (exit 4, nothing lands) in these cases:
 
 - **A recorded FAIL verdict** on the slot's branch (`blockedBy: verdict`, verdict `verdict-blocked`). A newer
   PASS of the same kind clears it. A review record at the current head with a blocking finding
   refuses the same way, even when its verdict is CONCERNS; a newer record at a new head clears it.
+- **A missing `## Assumptions` or `## Rulings` heading** (`blockedBy: assumptions-missing` or
+  `blockedBy: rulings-missing`). Add the heading to the PR body and retry.
 - **No `Closes #N`** in the PR body (`blockedBy: closes`), unless the issue is labelled `partial-slice`.
 - **An unpicked best-of attempt** (`blockedBy: best-of-unpicked`).
 - **A missing review verdict.** The depth `ship.review` resolves for the branch (diff size, the issue's labels) decides what must be on record: `full` both the Spec and Standards verdicts, `light` the Spec verdict (the Standards verdict when the slot has no issue), `none` nothing (`blockedBy: review-missing`). Run `/rota-review`, which records them.
@@ -616,6 +652,12 @@ The gate refuses before it merges anything (exit 4, nothing lands) in these case
   `local`, the gate would merge a tree no command checked, so it stops (`blockedBy: no-verify`). Set
   one with `rota config set test.full <command>`, or pass `--no-verify` to merge unverified on purpose.
   The train takes the same flag.
+
+A train excludes PRs missing these headings before building or verifying its merge. Its
+`culprits` list names each excluded target and PR with its own `blockedBy` reason; the remaining
+PRs train normally. If every PR is excluded, nothing is verified or landed, and the train
+refuses with the first missing-section reason. Other member-check and verification failures
+keep their existing stop behavior. An explicit `--order` retains the order of the remaining PRs.
 
 A local gate verifies before it merges. For a PR it first asks the forge whether the PR merges
 cleanly; a conflict the forge reports (git can miss one, for example after a file move) is
@@ -743,11 +785,14 @@ the winner as usual. If one attempt was returned, reclaimed or died without a PR
 the remaining PR alone; while the other worker is still building, it refuses. The autopilot
 assigns best-of issues but never picks: the pick is yours.
 
-An architecture-review item ends with filed issues, not a PR. When its worker prints
+An architecture-review item ends with its review result and no PR. When its worker prints
 `ROTA-DONE <slot> issues:#a,#b`, read the issues and run `rota round accept <ID>`. It closes the
 item with a note listing them, releases its claim and frees the slot, so no `reclaim` is needed.
-If the slot recorded no issues, pass `--issues #a,#b`. Running it again on a closed item changes
-nothing.
+If the worker filed issues but the slot did not record them, pass `--issues #a,#b`.
+A completed review with no findings prints `ROTA-DONE <slot> issues:none` instead. Accept it
+with `rota round accept <ID>`: it closes with `Review done: no findings.` and frees the slot,
+without a fabricated finding issue. An omitted list or bare `issues:` is missing evidence
+and remains refused, even with a `--gist`. Running accept again on a closed item changes nothing.
 
 A `decision:research` item (see decision milestones in `/rota-vision`) ends with a finding comment,
 also with no PR. `round assign` starts it on the `light` tier (`--tier` overrides) and its worker
@@ -756,6 +801,11 @@ prints `ROTA-DONE <slot> finding:<comment-id>`. Read the finding, then run
 milestone's `## Decisions` list. A `decision:grilling` item is never assigned: `round assign` and
 `round transfer` refuse it (`blockedBy: human decision`), `round candidates` lists it as not ready,
 and the human resolves it with `/rota-brainstorm <ID>`.
+
+For a no-PR item with unmarked AC ids, the filed issue list or accepted finding supplies a
+recorded completion reason. The close comment lists those criteria and the reason. A read
+or parse failure during acceptance preflight leaves the slot, feedback comments and
+research decision log unchanged.
 
 ## Bundles: one worker, several small issues
 
@@ -905,6 +955,8 @@ with no reading, or when headroom rose because the quota window reset.
 
 ## Two machines: main and support
 
+Run `rota update` on either machine to check the installed version against the latest release and see the update command. The check writes nothing.
+
 With `round.support` set, main labels issues for the support machine (`rota round support offer`)
 and the two orchestrators talk through the issue thread. The support machine hands back an issue
 it cannot work with `rota round support return <ID> --reason-file <f>`. Both `round watch` runs
@@ -940,7 +992,7 @@ set and fails when unavailable; solo is never a fallback from it.
 
 Under solo, each worker is a Claude `Agent` subagent the orchestrator launches in the slot's
 `.worktrees/<agent>` checkout. `rota round assign` returns the brief and the worktree instead
-of starting a pane, `rota round report <slot> --state ...` records what the subagent said (`--issues "#a,#b"` in place of `--pr` for an architecture-review item),
+of starting a pane, `rota round report <slot> --state ...` records what the subagent said (`--issues "#a,#b"` in place of `--pr` for an architecture-review item, or `--issues none` for a completed review with no findings),
 and `rota round wait` reads the registry without blocking. The pane verbs (`rota worker
 dispatch`, `rota worker poll`, `rota worker session`) refuse. The registry holds what tab mode writes (minus the
 pane fields), so `rota round reconcile`, the gate and the merge policy work unchanged.

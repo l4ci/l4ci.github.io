@@ -38,6 +38,26 @@ Older configs used `backlog.backend` (`file` or `issues`) and `issues.provider`.
 | `issues.autoCreateLabel` | `true` | Create a missing label on first use. When off, a missing label is an error. |
 | `issues.homeRepo` | `""` | Umbrella only: sub-repo holding milestone tracking issues; empty is the first registered sub-repo. |
 
+### Label registry and sync
+
+The [label registry](/rota/docs/reference/labels/) lists every label rota sets or reads, including
+claim prefixes and review triggers. Configured names under `issues.labels.*` are respected.
+Declare project labels with descriptions in `issues.labels.extra`:
+
+```sh
+rota config set issues.labels.extra '{"area:api":"API ownership"}'
+rota labels sync             # preview missing labels, metadata drift and unknown labels
+rota labels sync --apply     # create missing labels and correct descriptions and colors
+```
+
+Sync writes only with `--apply`. GitHub, GitLab and Linear support metadata changes; Jira and
+It's a Plan report names only and stay read-only. Tracker defaults such as `bug`, unused
+`claimed:*` definitions and unknown or retired labels are reported without changes. A claim
+definition is unused when no open issue carries it. Sync never deletes or renames labels.
+
+`rota doctor` warns about missing or undescribed registry labels and points to this preview.
+An unreachable or name-only tracker (Jira, It's a Plan) skips the definition check with a reason; missing names on these report-only trackers do not warn. The file backend has no label check.
+
 ## Jira
 
 `issues.source: jira` keeps the issues in one Jira project and the code on your forge (GitHub or GitLab). rota talks to the Jira REST API directly, so it needs no CLI: Cloud through REST v3, Data Center through REST v2.
@@ -144,6 +164,8 @@ An ID is the type letter plus the issue number: `#42` is `F42`, `B42` or `T42`. 
 `/rota-work`, `/rota-debug` and `/rota-ship` always open a PR / MR in issue mode and never merge. `rota ship pr --items <IDs>` adds `Closes #<n>` lines. `/rota-review --queue` lists `needs-review` items with their PRs (`rota review queue`), reviews them and merges with `rota ship pr-merge`. Proof comes first: an open linked item with no proof blocks the merge, becomes `changes-requested` and gets a feedback comment (exit 4). Proof rows are added with `rota proof record` (it runs a command and writes the row) or, for a docs-only change with no command, `rota proof add`, into the item's proof note.
 
 In a [round](/rota/docs/usage/parallel-rounds/), `rota worker gate` also wants the PR body to carry `Closes #N` (or `Fixes #N`) for the slot's issue. Without it the merge would leave the issue open and claimed, so the gate refuses (exit 4, `blockedBy: closes`). A PR that lands only part of an issue says `Refs #N` and the issue carries the `partial-slice` label, which exempts it.
+
+A `done` close refuses while any explicit `AC-n` criterion lacks a current `plan pass` mark backed by PASS proof. The refusal lists the unmet criteria. To close with known gaps, pass `--unmet-reason "<why>"`; the close comment records both the gaps and your reason. `--no-proof` only bypasses the proof-row requirement. The merge gate checks acceptance before merging a PR that closes an item, including a merge into a milestone branch.
 
 `rota item complete <ID> --reason handed-off|blocked|dropped` closes without a merge: `dropped` and `handed-off` close as not planned; `blocked` keeps the issue open with the `blocked` label.
 

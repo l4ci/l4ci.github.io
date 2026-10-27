@@ -69,7 +69,9 @@ One topic is special-cased: `## Glossary` holds domain-terminology entries as ne
 
 `DECISIONS.md` records hard boundaries the project has committed to. Unlike the passive gotchas and conventions in `KNOWLEDGE.md`, decisions are active commitments with explicit `forbids:` and `permits:` clauses. [`/rota-decide`](/rota/docs/usage/decisions/) writes new entries; [`/rota-work`](/rota/docs/usage/running-work/), [`/rota-debug`](/rota/docs/usage/debugging/), [`/rota-plan`](/rota/docs/usage/vision-and-plans/), [`/rota-refactor`](/rota/docs/skills/rota-refactor/), [`/rota-review`](/rota/docs/usage/review-and-ship/) and [`/rota-vision`](/rota/docs/usage/vision-and-plans/) consult them as constraints.
 
-A companion managed block in `CLAUDE.md` lists the current decision topics so the model can pull only the relevant entries on demand. See [../usage/decisions.md](/rota/docs/usage/decisions/) for the capture flow and the difference between decisions and learnings.
+The `rota decisions add`, `amend`, `retire` and `supersede` verbs own all writes and refresh the index. `rota decisions check` validates the entry shape; missing date stamps warn without failing. Decisions stay at the umbrella root; the writers reject `--repo`.
+
+A companion managed block in `AGENTS.md` when present, else `CLAUDE.md`, lists the current decision topics so the model can pull only the relevant entries on demand. See [../usage/decisions.md](/rota/docs/usage/decisions/) for the capture flow and the difference between decisions and learnings.
 
 ## MILESTONES.md: milestone overview
 

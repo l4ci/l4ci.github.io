@@ -14,6 +14,9 @@
     - title: How it works
       url: /rota/docs/how-it-works/
       desc: "the two ways to use rota (orchestrator, workers, gate), plus how each skill connects to the artifacts it touches"
+    - title: Where coding agents go wrong
+      url: /rota/docs/agent-mistakes/
+      desc: "seven common mistakes, enforced checks, written rules and remaining gaps"
 - group: Walkthroughs
   items:
     - title: "Greenfield: what a project holds after a brief"
@@ -200,6 +203,9 @@
     - title: Configuration options
       url: /rota/docs/reference/config-options/
       desc: "every config key and option label, set via `rota config set`"
+    - title: Tracker labels
+      url: /rota/docs/reference/labels/
+      desc: "label definitions, project declarations and dry-run sync"
     - title: Upstream issues reference
       url: /rota/docs/reference/rota-issues/
       desc: "GitHub/GitLab issue backend and round-trip closing"

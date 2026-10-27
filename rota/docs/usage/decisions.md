@@ -29,6 +29,18 @@ Run `/rota-decide` when you've reached a commitment. The skill drafts a four-par
 
 The skill also runs a three-gate pre-write check: a candidate must be (a) hard to reverse, where undoing it would mean coordinated edits across many files, retraining habits, or migrating data; (b) surprising without context, where a future contributor wouldn't infer the rule from existing patterns alone; and (c) the result of a real trade-off, where genuine alternatives existed and the project deliberately didn't pick them. If any gate fails, the skill suggests `/rota-learn` (or "leave it inline at the call site") and stops without writing. The gates apply across the default, `--from-learning`, and `--from-spike` modes; all routes through `/rota-decide` go through the same filter.
 
+After confirmation, the skill saves the approved body to a temporary file and runs `rota decisions add --topic "<topic>" --title "<title>" --body-file <file>`. The verb validates the four parts, stamps today's date, inserts the entry at the top of its topic and refreshes the decisions index. A missing topic is created automatically. Every writer checks the complete resulting file before writing; a malformed entry leaves the file and index unchanged. Decisions remain umbrella-only; these writers reject `--repo`.
+
+To correct a part of an active entry, use `rota decisions amend --topic "<topic>" --title "<title>" --part rule|why|forbids|permits --body-file <file>`. Supply only the replacement part's text, without its marker; other parts and entries stay unchanged. See [decisions verbs](/rota/docs/reference/cli-helpers/#rota-decisions) for the command reference.
+
+`rota decisions check` validates every entry, including history. A missing or out-of-order part, malformed status line or unclosed code fence fails; a missing date stamp only warns. Older entries may place their trailing status, paths and date fields in any order. New entries use the canonical order, while amendments preserve existing metadata. Status and heading examples inside backtick or tilde fences stay literal in readers and the index. The project's doclint runs this check as part of the gate. `rota doctor` reports malformed entries as a warning with repair instructions; missing dates appear only in its detail.
+
+### Repairing malformed entries
+
+`amend` can insert a missing part or replace one part only when the complete resulting file passes validation. It cannot repair several missing parts one at a time, and it cannot edit a lifecycle status line.
+
+If no decisions verb can repair the file, manual repair is the recovery exception to the no-hand-edits rule. Correct only the reported malformed entries in `.rota/DECISIONS.md`, preserving the approved rule and history. A malformed `*Status.*` line needs a manual edit: restore `*Status.* Retired YYYY-MM-DD. <reason>` or `*Status.* Superseded YYYY-MM-DD by "<title>".` with a real date and the intended lifecycle state. Then run `rota decisions check`; once it passes, run `rota block decisions` to refresh the index. New decisions and substantive changes still go through `/rota-decide` and its confirmation gate.
+
 ## Promoting a learning or spike into a decision
 
 When a `KNOWLEDGE.md` learning has hardened into a commitment, or a [`/rota-spike`](/rota/docs/usage/spikes/) concluded with a verdict the project is committing to, you can seed the decision draft from the source artifact instead of retyping:
@@ -46,12 +58,14 @@ Both flags only seed `Rule` and `Why`. You still articulate `Forbids` and `Permi
 
 ## Lifting a decision
 
-A decision stays active until you say otherwise, and `DECISIONS.md` is never hand-edited. Two flags mark an entry instead of deleting it:
+A decision stays active until you say otherwise. Lifecycle changes use the verbs below; the [malformed-entry recovery exception](#repairing-malformed-entries) is only for repairing stored syntax. Two flags mark an entry instead of deleting it:
 
 | Flag | Use when | Result |
 |------|----------|--------|
 | `/rota-decide --retire <topic> "<title>"` | the boundary is lifted, nothing replaces it | the entry gets `*Status.* Retired <date>. <reason>` |
 | `/rota-decide --supersede <topic> "<title>"` | a new decision replaces it | the replacement is drafted and passes the same three gates; the old entry gets `*Status.* Superseded <date> by "<new title>"` |
+
+The skill writes lifecycle changes through `rota decisions retire` and `rota decisions supersede`, which also refresh the index. Superseding inserts the replacement in the same topic and marks the old entry in one atomic file update. A rejected replacement leaves the old boundary active.
 
 Retiring asks for the same manual confirmation as a new decision, even in `autonomy.level: auto`. A superseding decision that fails a gate is not written and the old one stays active.
 
