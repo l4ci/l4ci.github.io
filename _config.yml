@@ -20,3 +20,6 @@ permalink:    pretty
 
 readtime:     true
 wpm:          160
+
+plugins:
+  - jekyll-sitemap

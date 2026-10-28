@@ -187,6 +187,10 @@ pre:hover .copy, .copy:focus-visible, .copy[data-done] { opacity: 1; }
 .install pre { margin: 0; padding-right: 4.5rem; font-size: 0.85rem; }
 .install pre::before { content: "$ "; color: var(--muted); }
 .install p { margin: 0.5rem 0 0; font-size: 0.9rem; color: var(--muted); }
+.install .install-label { margin: 0 0 0.4rem; font: 500 0.75rem/1.3 var(--mono); color: var(--muted); }
+.install .prompt { margin: 0; }
+.install p code { font-size: 0.8rem; }
+.prompt code::before { content: "\203A  "; color: var(--duty); font-weight: 700; }
 
 .actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin: 1.75rem 0 0; }
 .compare { margin: 1.25rem 0 0; max-width: 52ch; font-size: 0.9rem; color: var(--muted); }
@@ -342,8 +346,31 @@ td code { white-space: nowrap; }
 .works { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.5rem 2rem; margin: 0; }
 .works dt { font: 700 0.8rem/1.3 var(--mono); margin-bottom: 0.4rem; }
 .works dd { margin: 0; color: var(--muted); }
+.chips { list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0; padding: 0; }
+.chip {
+  display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.3rem 0.6rem;
+  color: var(--ink); background: var(--paper-2); border: 1px solid var(--rule); border-radius: var(--radius);
+  font-size: 0.85rem; line-height: 1.2;
+}
+.chip-icon { width: 1rem; height: 1rem; flex: none; fill: currentColor; color: var(--muted); }
+.chip code { font-size: 0.78rem; background: none; border: 0; padding: 0; }
+.works-note { margin: 0.5rem 0 0; font-size: 0.8rem; }
 
-.closing pre { max-width: 44ch; }
+.closing pre { max-width: 44ch; font-size: 0.74rem; }
+.closing > p { max-width: var(--measure); }
+.prompt {
+  position: relative; max-width: 60ch; margin: 1.25rem 0 0.5rem;
+  padding: 1rem 1.1rem; background: var(--paper-2);
+  border: 1px solid var(--rule); border-left: 3px solid var(--duty); border-radius: var(--radius);
+}
+.prompt code { display: block; white-space: normal; background: none; border: 0; padding: 0; font-size: 0.85rem; line-height: 1.55; overflow-wrap: anywhere; user-select: all; }
+.prompt-copy {
+  margin-top: 0.75rem; padding: 0.4rem 0.7rem;
+  font: 500 0.72rem/1 var(--mono); color: var(--ink); background: var(--paper);
+  border: 1px solid var(--rule); border-radius: var(--radius); cursor: pointer;
+}
+.prompt-copy:hover { border-color: var(--duty); }
+.prompt-copy[data-done] { color: var(--merged); border-color: var(--merged); }
 
 /* ---- docs ---- */
 

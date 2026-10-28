@@ -4,3 +4,5 @@ User-Agent: *
 Disallow: /_drafts
 Disallow: /_includes
 Disallow: /_layouts
+
+Sitemap: https://volkerotto.net/sitemap.xml

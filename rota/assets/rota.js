@@ -101,6 +101,20 @@
       }
     }
 
+    // Prompt copy button: hidden until JS and the clipboard API are available.
+    document.querySelectorAll(".prompt-copy").forEach(function (btn) {
+      var src = document.querySelector(btn.dataset.copy);
+      if (!src || !navigator.clipboard) return;
+      btn.hidden = false;
+      btn.addEventListener("click", function () {
+        navigator.clipboard.writeText(src.textContent.trim()).then(function () {
+          btn.textContent = "Copied";
+          btn.dataset.done = "";
+          setTimeout(function () { btn.textContent = "Copy"; delete btn.dataset.done; }, 1600);
+        });
+      });
+    });
+
     document.querySelectorAll("pre").forEach(function (pre) {
       if (pre.closest(".mermaid")) return;
       var code = pre.querySelector("code");

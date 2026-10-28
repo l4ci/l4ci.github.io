@@ -12,10 +12,58 @@
     <meta name="theme-color" content="#F7F8FA" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#0D1117" media="(prefers-color-scheme: dark)">
     <link rel="canonical" href="{{ site.url }}{{ page.url }}">
-    <meta property="og:title" content="{{ page.title | default: 'rota' | strip_html | escape }}">
-    <meta property="og:description" content="{{ page.description | default: 'Coding agents write fast; rota makes sure what they merge works. Issues in, reviewed and tested PRs out, for Claude Code, Codex and OpenCode.' | strip_html | escape }}">
+    {% assign is_landing = false %}{% if page.permalink == "/rota/" %}{% assign is_landing = true %}{% endif %}
+    {% assign desc = page.description | default: 'Coding agents write fast; rota makes sure what they merge works. Issues in, reviewed and tested PRs out, for Claude Code, Codex and OpenCode.' | strip_html | escape %}
+    {% assign og_image = site.url | append: '/rota/assets/og-image.png' %}
+    {% assign og_alt = 'rota: coding agents write fast, rota makes sure what they merge works' %}
+    {% if is_landing %}{% assign og_title = 'rota · make sure what your coding agents merge works' %}{% else %}{% capture og_title %}{{ page.title | strip_html }} · rota docs{% endcapture %}{% endif %}
+    <meta property="og:site_name" content="rota">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:title" content="{{ og_title | escape }}">
+    <meta property="og:description" content="{{ desc }}">
     <meta property="og:url" content="{{ site.url }}{{ page.url }}">
-    <meta property="og:type" content="website">
+    <meta property="og:type" content="{% if is_landing %}website{% else %}article{% endif %}">
+    <meta property="og:image" content="{{ og_image }}">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="{{ og_alt }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ og_title | escape }}">
+    <meta name="twitter:description" content="{{ desc }}">
+    <meta name="twitter:image" content="{{ og_image }}">
+    <meta name="twitter:image:alt" content="{{ og_alt }}">
+    {% if is_landing %}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "rota",
+      "description": {{ desc | jsonify }},
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Linux, macOS, Windows (WSL2)",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "url": "{{ site.url }}/rota/",
+      "image": "{{ og_image }}",
+      "license": "https://opensource.org/licenses/MIT",
+      "codeRepository": "https://github.com/l4ci/rota",
+      "sameAs": ["https://github.com/l4ci/rota"],
+      "author": { "@type": "Person", "name": "Volker Otto", "url": "{{ site.url }}/" }
+    }
+    </script>
+    {% elsif page.url contains '/rota/docs/' %}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "rota", "item": "{{ site.url }}/rota/" },
+        { "@type": "ListItem", "position": 2, "name": "Docs", "item": "{{ site.url }}/rota/docs/" }{% if page.url != '/rota/docs/' %},
+        { "@type": "ListItem", "position": 3, "name": {{ page.title | strip_html | jsonify }}, "item": "{{ site.url }}{{ page.url }}" }{% endif %}
+      ]
+    }
+    </script>
+    {% endif %}
     <link rel="icon" href="/rota/assets/favicon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/rota/assets/apple-touch-icon.png">
     <link rel="stylesheet" href="/rota/assets/fonts/fonts.css">

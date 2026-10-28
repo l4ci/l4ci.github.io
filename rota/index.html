@@ -5,14 +5,19 @@ body_class: is-landing
 title: rota
 description: Coding agents write fast; rota makes sure what they merge works. Issues in, reviewed and tested PRs out, for Claude Code, Codex and OpenCode.
 ---
+{% include rota/icons.svg %}
 <main id="main">
   <section class="hero">
     <div class="hero-copy">
       <h1>Coding agents write fast. rota makes sure what they merge works.</h1>
       <p class="lede">Capture work as issues. rota hands them to Claude Code, Codex or OpenCode, reviews every branch and merges only what passes your tests, one issue at a time or a round in parallel. Lessons and decisions stay in the repo, so the next session starts ahead.</p>
       <div class="install">
-        <pre><code>brew install l4ci/tap/rota</code></pre>
-        <p>or <a href="/rota/docs/install/">the install script, a release binary or the Claude Code plugin</a></p>
+        <p class="install-label">Paste into your coding agent</p>
+        <div class="prompt">
+          <code id="hero-prompt">Install rota and set it up in this project. Follow https://raw.githubusercontent.com/l4ci/rota/main/install.md</code>
+          <button class="prompt-copy" type="button" data-copy="#hero-prompt" hidden>Copy</button>
+        </div>
+        <p>or in a terminal: <code>brew install l4ci/tap/rota</code>, or <a href="/rota/docs/install/">the install script, a release binary or the Claude Code plugin</a></p>
       </div>
       <p class="actions">
         <a class="btn btn-primary" href="/rota/docs/getting-started/">Get started</a>
@@ -199,9 +204,9 @@ description: Coding agents write fast; rota makes sure what they merge works. Is
   <section class="band" aria-labelledby="works">
     <h2 id="works">Works with</h2>
     <dl class="works">
-      <div><dt>Agent harnesses</dt><dd>Claude Code, Codex, OpenCode, mixed in one round</dd></div>
-      <div><dt>Forges</dt><dd>GitHub, GitLab (self-hosted too), or local with direct merge</dd></div>
-      <div><dt>Issue sources</dt><dd><code>BACKLOG.md</code>, GitHub Issues, GitLab Issues, Jira, Linear, It's a Plan</dd></div>
+      <div><dt>Agent harnesses</dt><dd><ul class="chips"><li class="chip"><svg class="chip-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-claude"/></svg><span>Claude Code</span></li><li class="chip"><svg class="chip-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-openai"/></svg><span>Codex</span></li><li class="chip"><svg class="chip-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-terminal"/></svg><span>OpenCode</span></li></ul><p class="works-note">Mixed in one round</p></dd></div>
+      <div><dt>Forges</dt><dd><ul class="chips"><li class="chip"><svg class="chip-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-github"/></svg><span>GitHub</span></li><li class="chip"><svg class="chip-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-gitlab"/></svg><span>GitLab</span></li><li class="chip"><svg class="chip-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-merge"/></svg><span>Local</span></li></ul><p class="works-note">GitLab self-hosted too; local merges directly</p></dd></div>
+      <div><dt>Issue sources</dt><dd><ul class="chips"><li class="chip"><svg class="chip-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-file"/></svg><span><code>BACKLOG.md</code></span></li><li class="chip"><svg class="chip-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-github"/></svg><span>GitHub Issues</span></li><li class="chip"><svg class="chip-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-gitlab"/></svg><span>GitLab Issues</span></li><li class="chip"><svg class="chip-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-jira"/></svg><span>Jira</span></li><li class="chip"><svg class="chip-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-linear"/></svg><span>Linear</span></li><li class="chip"><svg class="chip-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-plan"/></svg><span>It's a Plan</span></li></ul></dd></div>
       <div><dt>Terminal hosts</dt><dd>herdr, tmux</dd></div>
       <div><dt>Platforms</dt><dd>Linux, macOS, Windows through WSL2</dd></div>
     </dl>
@@ -209,6 +214,7 @@ description: Coding agents write fast; rota makes sure what they merge works. Is
 
   <section class="band closing" aria-labelledby="start">
     <h2 id="start">Start with one item</h2>
+    <p>Paste the prompt at the top of this page into your coding agent, or install by hand:</p>
     <pre><code>brew install l4ci/tap/rota
 rota skills install
 cd your-project &amp;&amp; rota setup</code></pre>
