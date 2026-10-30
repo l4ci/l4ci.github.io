@@ -24,6 +24,7 @@ Verbs are not skills: skills are the `/rota-*` slash commands (see [skills](/rot
 - **Start and set up.** [`rota init`](#rota-init) scaffolds `.rota/`; `rota setup` (same section) adds the config walkthrough. [`rota config`](#rota-config) reads and changes settings. [`rota skills`](#rota-skills) writes and refreshes the skills. [`rota update`](#rota-update) checks for a newer release. [`rota migrate`](#rota-migrate) moves the backlog or milestones.
 - **Bare `rota`.** In a terminal it opens a palette. Enter on the preselected entry runs `rota setup` in a directory without `.rota/` and launches the orchestrator in an initialized project. Outside a terminal it prints usage. See [`rota orchestrate`](#rota-orchestrate).
 - **`--ui`.** Opens a verb's terminal screen instead of printing its result: `rota config --ui`, `rota projects --ui`, `rota round status --ui` (refreshes every 5 s), and read-only views for `rota doctor`, `rota worker account list`, `rota backlog list`, `rota knowledge stats` and `rota decisions stats`. Terminal only; refused with `--json`. Plain output never changes.
+- **Start and finish a work cycle.** [`rota work start`](#rota-work) does the guard, branch, status entry and claim that open `/rota-work`; [`rota ship finish`](#rota-ship) does the status, item and nudge bookkeeping that closes `/rota-ship`. Round workers and umbrella projects use the step-by-step skill path instead.
 - **Run a round.** [`rota orchestrate`](#rota-orchestrate) starts the orchestrator. [`rota round`](#rota-round) takes the lease, assigns issues, waits, summarizes cost (`round summary`) and winds down. [`rota worker`](#rota-worker) holds the slot registry and the merge gate (`rota worker gate <PR>` gates any open PR by number).
 - **Keep a round healthy.** [`rota doctor`](#rota-doctor) preflights the machine. [`rota reap`](#rota-reap) removes leftovers. [`rota layout`](#rota-layout) folds panes into a split view or back into tabs. [`rota keepalive`](#rota-keepalive), [`rota limit`](#rota-limit), [`rota hook`](#rota-hook) and [`rota statusline`](#rota-statusline) cover unattended rounds. [`rota verdict`](#rota-verdict) records review and QA verdicts.
 - **Agents and projects.** [`rota agents write`](#rota-agents) writes the role subagent files. `rota projects` (under [`rota init`](#rota-init)) lists the projects registered on this machine.
@@ -164,6 +165,12 @@ exit codes and repo scope: [verb contract](https://github.com/l4ci/rota/blob/mai
 | `rota status rm <branch>` | end a work stream and drop its handoff note |
 | `rota status show <branch>` | which repo a branch's stream is in |
 | `rota status handoff <branch> [--canonical]` | path of a branch's handoff note |
+
+## `rota work`
+
+| Usage | What it does |
+|---|---|
+| `rota work start <ID>[,<ID>…] [--branch <name>]` | the start of `/rota-work` in one call: clean-tree guard, sweep of the `.uid`, `.import` and `.meta` files beside tracked files and the target's design or plan file into a commit, branch `rota/<id>-<slug>` (or `--branch`) made per `work.isolation`, `status add`, and on a tracker `item ready` and `item claim`; an item another worker holds is dropped and the rest go on; exit 1 on other uncommitted changes (`data.dirty`), 4 when every item is held, for a round worker (`ROTA_SLOT`) or in an umbrella project; running it again changes nothing |
 
 ## `rota refactor`
 
@@ -349,10 +356,10 @@ All writes target the umbrella `.rota/DECISIONS.md`, reject `--repo`, and refres
 | `rota worker reply <slot> --body-file <path\|->` | answer a reviewer on the slot's PR through the tracker; the comment carries a `worker-reply` marker |
 | `rota worker dispatch <slot> --body-file <path\|-> [--task <id>] [--relay] [--round <n>] [--boot-timeout <s>] [--kind <claude\|codex>]` | send a brief into a slot's session; refuses (exit 5) a human draft on the prompt line, and any dialog except the autocompact picker (`blockedBy: dialog`), which it dismisses once with Escape |
 | `rota worker poll [<slot>] [--settle <seconds>] [--lines <n>]` | classify slot states from their panes |
-| `rota worker done <slot> [--base <ref>] [--attempt <id>] [--outcome done\|partial\|failed] [--summary-file <f>] [--require-red]` | the last step before `ROTA-DONE`, after the PR is open and pushed; exit 4 on a dirty worktree or when `origin/<branch>` is absent or not HEAD (`data.dirty`, `data.unpushed`; `--outcome failed` skips both); warns (exit 4 with `--require-red`) when `work.tdd` is on, non-test Go changed and no proof row is a FAIL, and likewise when that diff cannot be computed (`data.noRedUnchecked`); `--outcome` with a three-line summary types how it ended (`partial`/`failed` hold the PR out of the gate until a relay or transfer); exit 4 on a stale `--attempt` (the id from your brief; the assignment was reclaimed or transferred) or unless the slot's item has a PASS `test.fast` proof row at the branch HEAD (`rota proof record`), exit 4 on unmet explicit `AC-n` criteria for tracker items the PR closes across the lead and open bundle members (lists each criterion and its `rota plan pass` command; non-closing slices and file-mode items keep their existing flow); partial/failed outcomes disclose unmet ids and reasons on the summary's third line and skip that refusal; else mark the slot done |
+| `rota worker done <slot> [--base <ref>] [--attempt <id>] [--outcome done\|partial\|failed] [--summary-file <f>] [--require-red]` | the last step before `ROTA-DONE`, after the PR is open and pushed; exit 4 on a dirty worktree or when `origin/<branch>` is absent or not HEAD (`data.dirty`, `data.unpushed`; `--outcome failed` skips both); warns (exit 4 with `--require-red`) when `work.tdd` is on, non-test Go changed and no proof row is a FAIL, and likewise when that diff cannot be computed (`data.noRedUnchecked`); `--outcome` with a three-line summary types how it ended (`partial`/`failed` hold the PR out of the gate until a relay or transfer); exit 4 on a stale `--attempt` (the id from your brief; the assignment was reclaimed or transferred) or unless the slot's item has a PASS `test.fast` proof row at the branch HEAD (`rota proof record`), exit 4 on unmet explicit `AC-n` criteria for tracker items the PR closes across the lead and open bundle members (lists each criterion and its `rota plan pass` command; non-closing slices and file-mode items keep their existing flow); partial/failed outcomes disclose unmet ids and reasons on the summary's third line and skip that refusal; a slot holding a round-minted architecture-review item skips the push, proof and acceptance checks, since that worker ends with filed issues, not a PR (a matching title alone does not count); else mark the slot done |
 | `rota worker send <slot> (--blocked <question> \| --question <text> \| --heartbeat)` | a worker's typed event on its own slot, read by `round wait` and `worker poll` before the pane: `--blocked` and `--question` mark the slot blocked with the text as evidence and write a ledger row, `--heartbeat` only refreshes the stall clock; works on herdr, tmux and solo |
-| `rota worker gate <slot> --base <branch> [--check-only] [--no-verify] [--final-slice] [--confirm --confirm-note <answer> \| --approval <escalation> \| --escalate]` | merge gate for one slot's branch or PR; exit 4 when `ship.mergeApproval` needs a human or `test.full` is empty (`blockedBy no-verify`, unless `--no-verify`) or the PR body does not close the slot's issue (`blockedBy closes`, unless the issue is labelled `partial-slice`), or the forge says a PR closes a `partial-slice` issue (`blockedBy closes`, unless `--final-slice`; a forge that cannot report closing references skips this and notes `CLOSING-REFS-UNKNOWN`), `--escalate` asks on the thread, `--approval` cites the answer |
-| `rota worker train <slot\|PR>... --base <branch> [--plan] [--order <list>] [--land-green] [--no-verify] [--final-slice <member>]... [--confirm --confirm-note <answer> \| --approval <escalation> \| --escalate]` | merge several PRs in a conflict-minimising order (or `--order`) in a scratch tree, verify once, land them all on a pass; a red train bisects to the first member that breaks it; `--plan` previews the conflicts and the largest conflict-free subset with a ready train line, running nothing |
+| `rota worker gate <slot> --base <branch> [--check-only] [--no-verify] [--final-slice] [--confirm --confirm-note <answer> \| --approval <escalation> \| --escalate]` | merge gate for one slot's branch or PR; exit 4 when `ship.mergeApproval` needs a human or `test.full` is empty (`blockedBy no-verify`, unless `--no-verify`) or the PR body does not close the slot's issue (`blockedBy closes`, unless the issue is labelled `partial-slice`), or the forge says a PR closes a `partial-slice` issue (`blockedBy closes`, unless `--final-slice`; a forge that cannot report closing references skips this and notes `CLOSING-REFS-UNKNOWN`), `--escalate` asks on the thread, `--approval` cites the answer; the change tier can swap `test.full` and `test.e2e` for `test.docs` or `test.small` (note `GATE-TIER`; `--json` gains `tier`, `tierReason`, `skipped`) |
+| `rota worker train <slot\|PR>... --base <branch> [--plan] [--order <list>] [--land-green] [--no-verify] [--final-slice <member>]... [--confirm --confirm-note <answer> \| --approval <escalation> \| --escalate]` | merge several PRs in a conflict-minimising order (or `--order`) in a scratch tree, verify once, land them all on a pass; a red train bisects to the first member that breaks it; `--plan` previews the conflicts and the largest conflict-free subset with a ready train line, running nothing; the highest member change tier can swap `test.full` and `test.e2e` for `test.docs` or `test.small` (note `GATE-TIER`; `--json` gains `tier`, `skipped`) |
 | `rota test run <fast\|full\|e2e> [--base <ref>]` | run `test.<tier>` in order, stopping at the first failure; `{files}` expands to the files changed against base; exit 3 when the tier is empty |
 | `rota test lock -- <cmd> [<arg>...]` | run any command holding a slot of the machine-wide test lock (`test.slots`, default 1), passing stdin, stdout and stderr through; the exit code is the command's |
 | `rota test ledger check` | report expired and malformed entries in `.rota/test-ledger.json`; exit 1 when there are any |
@@ -380,6 +387,7 @@ Bare `rota` with no verb does the same in an initialized project and runs `rota 
 | `rota skills status [--scope <user\|project>] [--agent <claude\|codex\|all>] [--current-account]` | compare the installed skills with this binary; a stub root is compared on its skill set and frontmatter and the changed skills are named |
 | `rota skills list` | name the skills embedded in this binary and its version |
 | `rota skills get <name> [--references \| --reference <file>]` | print an embedded skill's `SKILL.md` as the binary carries it (first line `Base directory for this skill: <dir>` in the per-version cache, last block `Files this skill links to:` with absolute paths; a cache failure prints the text with a warning), list its reference files, or print one; exit 2 on an unknown name or reference (the known ones are listed) or when both flags are given |
+| `rota skills links <file>...` | print the relative link targets of each markdown file, the same set `skills get` lists in its footer (code spans, fences, URLs and anchors excluded; `x.md#sec` is `x.md`); one target per line for a single file, `<file>\t<target>` for several; `--json` gives `{"files": [{"file", "links"}]}`; `test/validate-skills.py` reads links through it; exit 1 on an unreadable file, 2 without one |
 | `rota skills update [--scope <user\|project>] [--agent <claude\|codex\|all>] [--overwrite] [--current-account] [--stub \| --full]` | refresh the skill directories that already have a manifest, each in its recorded mode unless a flag switches it (a manifest with no mode is full); both flags exit 1 |
 | `rota skills uninstall [--scope <user\|project>] [--agent <claude\|codex\|all>] [--overwrite] [--current-account]` | remove what rota installed |
 
@@ -509,6 +517,8 @@ A statusline command, not a query: it prints nothing of its own, always exits 0 
 
 Verdicts are `PASS`, `CONCERNS` or `FAIL` (`qa` also takes `INFRA-FAIL`). They live in `.rota/verdicts.json`, which `/rota-ship` routes on.
 
+If `.rota/verdicts.json` does not parse, `verdict add` exits 4 with a repair hint instead of overwriting the file: fix or delete the file, then record the verdict again. Read verbs treat an unparseable store as empty.
+
 ## `rota tracker`
 
 | Usage | What it does |
@@ -526,6 +536,12 @@ Verdicts are `PASS`, `CONCERNS` or `FAIL` (`qa` also takes `INFRA-FAIL`). They l
 | `rota git branch <name> --repos <a,b,...>` | create one branch in several sub-repos, or in none |
 | `rota git worktree-path <branch>` | print the umbrella worktree path of a sub-repo branch |
 
+## `rota change`
+
+| Usage | What it does |
+|---|---|
+| `rota change classify [<branch>] [--base <ref>] [--json]` | put a branch's diff against the base in a tier (`docs`, `small` or `full`) from `change.*` and its PR body's `Door:` line, and say why; the tier picks what the gate and train run and the review depth. Read-only; an unreadable input gives `full`, not an error |
+
 ## `rota review`
 
 | Usage | What it does |
@@ -536,7 +552,7 @@ Verdicts are `PASS`, `CONCERNS` or `FAIL` (`qa` also takes `INFRA-FAIL`). They l
 | `rota review package [<branch>] [--base <ref>] [--since <sha>]` | write a branch's commits, `--stat` and full diff (`-U10`) to `.rota/review/<branch>.md` and print the path (`data.head` is the branch sha it diffed, the sha to pass `verdict add --sha`); `--since` packages only the commits after a sha |
 | `rota review prepare <commit>` | prepare a disposable archive tree at the resolved SHA; returns `data.path` and `data.head`, creates `.review/` for caller inputs, and refuses incomplete setup without a checkout fallback |
 | `rota review cleanup <workspace>` | validate ownership and remove only the prepared workspace; report cleanup failures without widening removal |
-| `rota review depth [<branch>] [--labels <a,b>]` | review depth `ship.review` picks for a branch (`full`, `light`, `none`) from its diff size and the labels given, and why |
+| `rota review depth [<branch>] [--labels <a,b>]` | review depth `ship.review` picks for a branch (`full`, `light`, `none`) from its diff size, change tier and the labels given, and why |
 | `rota review queue` | open issues waiting for review |
 
 ## `rota ship`
@@ -547,6 +563,7 @@ Verdicts are `PASS`, `CONCERNS` or `FAIL` (`qa` also takes `INFRA-FAIL`). They l
 | `rota ship pr <branch> --title <text> --body-file <path\|-> [--items <ID>[,<ID>…]]` | push a branch and open a PR or MR; never removes a slot, the current directory or a worktree with changes |
 | `rota ship merge <branch> --body-file <path\|-> [--confirm --confirm-note <answer>]` | merge a branch into the base branch with --no-ff; exit 4 when `ship.mergeApproval` needs a human |
 | `rota ship pr-merge <pr> [--items <ID>[,<ID>…]] [--confirm --confirm-note <answer> \| --approval <escalation> \| --escalate]` | merge a PR in issue mode; exit 4 when `ship.mergeApproval` needs a human; `--escalate` asks on the approval thread, `--approval` cites the answer; give only one of the three |
+| `rota ship finish [<branch>] [--commit <sha>]` | the end of `/rota-ship` in one call: drops the branch's status entry and handoff note, completes still-open items on the file backend, and reports whether the learn, docs and release triggers fired; it decides and never dispatches a skill; exit 4 when a referenced item has no proof row, for a round worker or in an umbrella project; running it again reports `already finished` |
 | `rota ship undo [--cycle <hash>] [--allow-post-merge] [--apply]` | roll back the last cycle merge on the base branch |
 
 ## `rota release`

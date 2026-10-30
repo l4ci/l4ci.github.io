@@ -503,12 +503,58 @@ How deep a review `/rota-ship` runs before integrating.
 - `scopeDrift`: `true` when omitted. A diff that touches files the issue never named (its `## Files` entries and the path entries of its `## Touches`) resolves `full`, and the reason lists them. A directory entry (`internal/gate`, with or without `/` or `/**`) covers the files under it. Support files do not count as drift: a `_test.go` file in the directory of a declared file or under a declared directory, and anything matching `supportPaths`. An issue that declares neither section has no set to drift from. `false` turns the rule off.
 - `supportPaths`: globs (same syntax as `paths`) of files that never count as scope drift. Omitted, it is `docs/**` (the generated `docs/reference/config-options.md` included), `cmd/rota/testdata/frozen/**`, `internal/*/testdata/golden/**` and `test/sections/**`. A list you set replaces these; `[]` makes every undeclared file count.
 - A PR body line `Door: one-way` (the line every worker PR ends with) resolves `full` whatever the size.
+- A changed file matching `change.riskyPaths` resolves `full` the same way (signal `risky`).
 
-Door and scope drift only lift a `light` review; a `default` of `none` is the review switched off and they leave it. `rota review depth --json` names the deciding signal in `signal`: `label`, `door`, `scope-drift`, `path`, `size` or `default`.
+Door, risky paths and scope drift only lift a `light` review; a `default` of `none` is the review switched off and they leave it. `rota review depth --json` names the deciding signal in `signal`: `label`, `door`, `risky`, `scope-drift`, `path`, `size`, `tier` or `default`. The `tier` signal comes from the change tier (see [change](#change)): a docs-only diff resolves `none`, a small one is capped at `light`.
 
 `rota review depth [branch] [--labels a,b]` prints the depth and why. It reads the issue behind a `<agent>/<issue>-<slug>` branch itself (its labels, and its files for scope drift) and the branch's open PR for the Door line, when the depth could be light; `--labels` adds to the labels. A branch with no PR yet has no Door line to read. `/rota-ship` prints it, and `rota worker gate` applies it: the branch must have the verdicts the depth needs on record at its current head (`full` both, `light` the Standards one, `none` none; a verdict from an older commit is stale and does not count, as in `/rota-review`) or the gate refuses with `blockedBy: review-missing`. `rota config check` fails on a malformed policy.
 
 See [review and ship](/rota/docs/usage/review-and-ship/) for the full `/rota-ship` workflow.
+
+## change
+
+Sizes the merge gate and the review to the diff. `rota change classify [<branch>] [--base <ref>]` puts a branch's diff against the base in one of three tiers and prints `TIER <branch> — <tier> (<reason>)`; `--json` carries a `data` object with `branch`, `base`, `tier`, `reason`, `files` (the deciding files) and `changedLines` (`-1` when the count is unknown). It reads and changes nothing.
+
+| Tier | Gate runs | Review depth |
+|------|-----------|--------------|
+| `docs` | `test.docs` in place of `test.full` and `test.e2e` | `none` |
+| `small` | `test.small` in place of `test.full` and `test.e2e` | at most `light` |
+| `full` | `test.full`, then `test.e2e` | as `ship.review` picks |
+
+The first rule that matches wins:
+
+1. The PR body has a `Door: one-way` line: `full`.
+2. Any changed file matches `change.riskyPaths`: `full`, and review depth `full` too, like a `Door` line.
+3. No changed files: `full`.
+4. Every changed file is a Markdown or image file (`.md`, `.png`, `.jpg`, `.jpeg`, `.gif`, `.svg`, `.webp`) that matches `change.docsPaths`: `docs`. A script or source file under `docs/` is code.
+5. `change.smallBelow` is above 0, the diff has fewer changed lines (added plus deleted) than that, no changed file is binary, and every code file matches `change.smallPaths`: `small`.
+6. Otherwise `full`.
+
+A rename lists both the old and the new path. A diff it cannot read, a line count it cannot get, a PR body it cannot fetch or a malformed `change.*` value gives `full` with the reason; the verb does not fail on them. It errors only when the branch does not resolve or is the base itself.
+
+```json
+{"change": {"docsPaths": ["*.md", "docs/**"], "riskyPaths": ["internal/gate/**", "go.mod", ".github/**"], "smallBelow": 100, "smallPaths": ["internal/**/*.go", "test/sections/*.sh"]}, "test": {"docs": ["bash test/doclint.sh"], "small": ["bash test/fast.sh {files}"]}}
+```
+
+- `change.docsPaths`: globs of documentation files; the file must also be Markdown or an image. `[]` turns the docs tier off. Default `["*.md", "docs/**", "**/*.png", "**/*.jpg", "**/*.jpeg", "**/*.gif", "**/*.svg", "**/*.webp"]`.
+- `change.riskyPaths`: globs of files that always get `full`, such as the gate code, the config schema, CI files and the doc pages your tests read. Default `[]`.
+- `change.smallBelow`: the line limit for `small`. Pick the largest diff your `test.small` command checks as well as `test.full` would, not the size you find comfortable to skim. Default `0`, which turns the small tier off.
+- `change.smallPaths`: globs of the files `test.small` actually covers. A code diff with one file outside them is `full`, so a command that plans nothing for a file never stands in for the full run. Default `[]`, which turns the small tier off. Keep it in step with the command: for `bash test/fast.sh`, the files that script maps.
+- `test.docs` and `test.small`: shell command lists, default `[]`. `{files}` in a `test.small` command expands to the changed files, each single-quoted, deleted files included. `test/fast.sh` runs its package and dependents, and runs every Go package when the file's whole directory is gone.
+
+A glob uses `*` within one path segment and `**` as a whole segment for any directories. A pattern with no slash matches the repo root only, so `*.md` is `README.md`, not `docs/a.md` (`**/*.md` covers both). No braces, no leading slash. `rota config set` refuses a bad glob or a negative `change.smallBelow` (exit 2); `rota config check` reports them.
+
+`rota worker gate` and `rota worker train` apply the tier. With `test.docs` set, a docs change runs it in place of `test.full` and `test.e2e`; with `test.small` set, a small change runs that instead. An empty list for the tier runs `test.full` and `test.e2e` as before. The note `GATE-TIER <slot|train> — <tier> (<reason>); ran test.docs; skipped test.full, test.e2e` says what happened, and `--json` adds `tier`, `tierReason` (gate only) and `skipped`. A train classifies the union of its members' files with their changed lines summed, and never goes below a member's own tier, so one `full` member makes the whole train `full` and three 90-line members under `smallBelow: 100` are `full` together.
+
+The gate saves nothing until `test.docs` or `test.small` is set: a tier with an empty list runs `test.full`. The docs tier sets review depth `none` by default, even under `ship.review: "full"`. `skills/**` is deliberately `full` in this repo: skills are embedded in the binary and read by tests, so a skill edit is code.
+
+Three things keep the full run:
+
+- The `no-verify` refusal still reads `test.full`: a repo with only `test.docs` set is refused as before.
+- With `test.fullWhere: ci` the tier is recorded in the note but not applied; CI runs its own checks.
+- When the base moved before the forge merge, the gate re-verifies the merge result (`VERIFY-AGAIN`) with `test.full` and `test.e2e`, whatever the tier.
+
+Review depth follows the tier: a `docs` diff resolves `none` even under `ship.review: "full"`, and never counts as scope drift. A `small` diff caps the base depth and scope drift at `light`. A label that decides the depth still wins, and a `Door: one-way` line and `ship.review.paths` globs still raise it.
 
 ## ship.secondOpinion
 
@@ -592,7 +638,7 @@ Settings for `rota round` (parallel rounds; see [the rounds guide](/rota/docs/us
 |-----|---------|---------|
 | `round.scope` | `"milestone"` | Which issues `rota round assign` accepts. `"slate"`: only the issues given to `rota round start --items`. `"milestone"`: the open items of the active milestones. `"next"`: the same, then the first planned milestone whose dependencies are shipped once none of the active milestones has an item left to take. With no planned or active milestone at all, `"milestone"` and `"next"` offer every open item, as `"open"` does. `"open"`: every open item no slot holds. Assign refuses anything outside the scope. |
 | `round.roster` | `["ben","dana","nia","kit"]` | Agent names, one slot each (`.worktrees/<agent>`, parked on `park/<agent>`, working on `<agent>/<issue>-<slug>`). Lowercase letters, digits and `-`; no duplicates. |
-| `round.brief` | `""` | Path of the standing worker contract the assignment pointer names. Empty means `skills/references/worker-contract.md` in the project checkout, else the installed `rota-orchestrate/references/worker-contract.md`. |
+| `round.brief` | `""` | Path of the standing worker contract the assignment pointer names. Empty means `skills/references/worker-contract.md` in the project checkout, else the installed `rota-orchestrate/references/worker-contract.md`. A `round.brief` that is missing under rota's skills cache (an update removed that version's tree) falls back to the current cache copy with a warning; one missing anywhere else refuses. |
 | `round.sharedPaths` | `[]` | Repo-relative globs the file-overlap readiness check ignores, for files every issue touches (a command registry, a contract doc). |
 | `round.scopeOverlap` | `warn` | What a clash on declared scopes does to the overlap readiness check. Scopes come from an issue's `## Touches` section, else its `Subsystem:` field. `warn` lists the clash and keeps the item ready; `block` fails the check like a shared file. `--accept-overlap` skips both. |
 | `round.adoptPattern` | `""` | Glob over branch names, for work another tool starts (`codex/*`, `claude/*`; `*` stops at `/`). `rota round reconcile` reports a matching local or remote branch that no slot holds and that is not merged into the base as `unregistered-branch`. `--apply` adopts those whose name carries an issue number (`<agent>/<issue>-<slug>`, `issue-N` or `#N`) as an external slot, after the overlap check; a blocking overlap becomes a warning and the branch stays listed. The rest are listed with `needs --issue`. Empty turns the check off. |
@@ -777,7 +823,7 @@ Whether `/rota-docs` after-work mode writes proposed doc updates without pausing
 - **Type:** boolean
 - **Default:** `false`
 
-Gate for the after-work docs flow. When `true`, the skills [`/rota-work`](/rota/docs/usage/running-work/), `/rota-ship`, and [`/rota-release`](/rota/docs/skills/rota-release/) trigger the docs after-work flow after their primary action completes. `/rota-work` and `/rota-ship` only fire on cycles that resolve 2+ items or touch 5+ files (small fixes don't trigger); `/rota-release` fires on every successful release (release notes are inherently user-facing). `/rota-work` only nudges, in a one-line terminal report, at either autonomy level. `/rota-ship` runs the after-work flow inline, with its approval gate as the checkpoint. `/rota-release` nudges under `autonomy.level: off` and auto-dispatches `/rota-docs` under `auto`.
+Gate for the after-work docs flow. When `true`, the skills [`/rota-work`](/rota/docs/usage/running-work/), `/rota-ship`, and [`/rota-release`](/rota/docs/skills/rota-release/) trigger the docs after-work flow after their primary action completes. `/rota-work` and `/rota-ship` only fire on cycles that resolve 2+ items or touch 5+ files (small fixes don't trigger); `/rota-release` fires on every successful release (release notes are inherently user-facing). `/rota-work` only nudges, in a one-line terminal report, at either autonomy level. `/rota-ship` runs the after-work flow inline, with its approval gate as the checkpoint. `/rota-release` nudges under `autonomy.level: off` and auto-dispatches `/rota-docs` under `auto`. `rota ship finish` reports whether the docs trigger fired.
 
 ```json
 { "docs": { "afterWork": true } }
@@ -850,6 +896,17 @@ Overrides the base branch that `rota git base` resolves to. When empty, `rota` a
 ```
 
 Skills that use the base branch (`/rota-ship`, `/rota-review`, `/rota-work`) call `rota git base` and pick up this override.
+
+## git.remote
+
+- **Type:** string
+- **Default:** `"origin"`
+
+The git remote round workers fetch from and push to. `rota worker done` checks the branch is pushed to it, `rota worker gate` and `rota worker train` compare branches against it, `rota ship pr` and `rota round park` push to it, and the assignment brief tells the worker its name (the contract says `<remote>`). Set it when `origin` is not the remote that holds the PRs, for example when `origin` has a second push URL that mirrors every branch. Round-side verbs (`round assign`, `transfer`, support cuts, stale-claim checks) read it too. Forge detection still reads `origin` unless `forge.provider` is set. The value must be a valid git remote name: `rota config set` refuses an empty one, one starting with `-` or one with whitespace or control characters (exit 4), and every verb that reads it refuses such a value instead of running git.
+
+```json
+{ "git": { "remote": "upstream" } }
+```
 
 ## Issues backend keys
 

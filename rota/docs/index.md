@@ -45,6 +45,7 @@ Public user guide for rota, a dev workflow for Claude Code and Codex, with OpenC
 - [`/rota-spike`](/rota/docs/skills/rota-spike/): Try one risky idea on a throwaway branch and keep only the finding
 - [`/rota-plan`](/rota/docs/skills/rota-plan/): Write a signed-off implementation plan with verifiable tasks
 - [`/rota-work`](/rota/docs/skills/rota-work/): Build the next item in small commits, one verified task at a time
+- [`/rota-go`](/rota/docs/skills/rota-go/): Implement an issue and land it with only gofmt, vet and build; no slow tests, no review
 - [`/rota-debug`](/rota/docs/skills/rota-debug/): Find the root cause of one bug, fix it atomically and prove it
 - [`/rota-review`](/rota/docs/skills/rota-review/): Review a branch against its spec and conventions before it leaves
 - [`/rota-ship`](/rota/docs/skills/rota-ship/): Review, then open the PR or merge, linking items by ID

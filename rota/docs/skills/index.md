@@ -25,6 +25,7 @@ One page per `/rota-*` skill: when to use it, when another skill fits better, wh
 ## Execute
 
 - [`/rota-work`](/rota/docs/skills/rota-work/): Build the next item in small commits, one verified task at a time. Flags: `--preview <ID>`.
+- [`/rota-go`](/rota/docs/skills/rota-go/): Implement an issue and land it with only gofmt, vet and build; no slow tests, no review.
 - [`/rota-debug`](/rota/docs/skills/rota-debug/): Find the root cause of one bug, fix it atomically and prove it.
 - [`/rota-refactor`](/rota/docs/skills/rota-refactor/): Review the architecture and file refactor issues; --map drafts the map. Flags: `--fix`, `--designs`, `--interactive`, `--map`.
 

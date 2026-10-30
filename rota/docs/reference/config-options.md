@@ -147,7 +147,7 @@ Every key, by group. Scope is the layer the key belongs in, with the file `rota 
 | `round.accounts` | machine (local) | list | `[]` |  | Rounds: Logins for worker slots, as {kind, name, dir} objects. kind is claude, codex or opencode and dir the harness's config home (CLAUDE_CONFIG_DIR, CODEX_HOME, OPENCODE_CONFIG_DIR); a leading ~ expands to the home directory. A name stands for one dir: it may repeat across kinds only with the same dir. Layers merge by kind: a layer that lists a kind replaces the lower layers' entries of that kind and inherits the others. Empty: every slot uses the orchestrator's login (Claude) or the harness's default home. Machine-specific, so set it in the global config or config.local.json. An empty list in the project or local file counts as unset, so the global value applies. |
 | `round.scope` | project (tracked) | enum | `"milestone"` | `milestone`, `slate`, `next`, `open` | Rounds: Which issues a round may take. slate: only those named at rota round start --items. milestone: the active milestones. next: also the next ready milestone. open: every open item no slot holds. |
 | `round.roster` | project (tracked) | list | `["ben", "dana", "nia", "kit"]` |  | Rounds: Agent names slots are provisioned under, one slot each. Lowercase letters, digits and -, no duplicates. |
-| `round.brief` | machine (local) | path | unset |  | Rounds: Path of the standing worker contract the assignment pointer names. Empty means skills/references/worker-contract.md in the checkout, else the installed copy. |
+| `round.brief` | machine (local) | path | unset |  | Rounds: Path of the standing worker contract the assignment pointer names. Empty means skills/references/worker-contract.md in the checkout, else the installed copy. A round.brief missing under rota's skills cache (an update removed it) falls back to the current cache copy with a warning; elsewhere it refuses. |
 | `round.sharedPaths` | project (tracked) | list | `[]` |  | Rounds: Repo-relative globs the file-overlap readiness check ignores, for files every issue touches. |
 | `round.scopeOverlap` | project (tracked) | enum | `"warn"` | `warn`, `block` | Rounds: What a clash on declared scopes (the ## Touches section, else Subsystem) does to the overlap check. warn: reported, the item stays ready. block: fails the check like a shared path; --accept-overlap skips it. |
 | `round.adoptPattern` | project (tracked) | string | unset |  | Rounds: Glob over branch names (codex/*, claude/*). rota round reconcile reports a matching branch that no slot holds and that is not merged as unregistered-branch; --apply adopts those whose name carries an issue number. Empty turns the check off. |
@@ -238,6 +238,7 @@ Every key, by group. Scope is the layer the key belongs in, with the file `rota 
 | Key | Scope | Type | Default | Values | Description |
 |-----|-------|------|---------|--------|-------------|
 | `git.baseBranch` | project (tracked) | string | unset |  | Base branch the skills merge into and diff against. Empty auto-detects it. |
+| `git.remote` | project (tracked) | string | `"origin"` |  | Git remote round workers fetch from and push to: worker done, gate and train compare branches against it, and the worker contract names it. Set it when origin is not the remote that holds the PRs. |
 
 ### umbrella
 
@@ -300,8 +301,19 @@ Every key, by group. Scope is the layer the key belongs in, with the file `rota 
 | `test.vacuousCommand` | project (tracked) | string | `"go test -json -count=1 {packages} -run {tests}"` |  | Command for test.vacuousCheck. Shell-quoted {files} selects changed test files; {packages} and {tests} select Go packages and test names. |
 | `test.ciTimeoutMinutes` | project (tracked) | int | `60` |  | How long a ci run waits for its checks, 1 to 1440 minutes. ROTA_CI_TIMEOUT (seconds) overrides it for one run. |
 | `test.ciChecks` | project (tracked) | list | `[]` |  | Check names that must all succeed on the pushed commit under test.fullWhere ci: GitHub check-run names or commit-status contexts, GitLab job names. |
+| `test.docs` | project (tracked) | list | `[]` |  | Shell commands the gate and merge train run instead of test.full and test.e2e when every changed file is documentation (the docs tier of change.docsPaths). Empty runs test.full as before. |
+| `test.small` | project (tracked) | list | `[]` |  | Shell commands the gate and merge train run instead of test.full and test.e2e for a code change under change.smallBelow changed lines (the small tier). {files} expands to the changed files, single-quoted. Empty runs test.full as before. |
 | `test.slots` | machine (local) | int | `1` |  | How many heavy test runs may hold the machine-wide test lock at once, 1 or more. The merge gate, rota test run and rota proof record queue on it; a run that finds every slot taken waits and says so on stderr. |
 | `test.isolate` | project (tracked) | bool | `true` |  | Whether rota test run scrubs HERDR_*, TMUX*, ssh-agent variables and pins HOME and XDG_* to a temp root. The merge gate and train do not read it. |
+
+### change
+
+| Key | Scope | Type | Default | Values | Description |
+|-----|-------|------|---------|--------|-------------|
+| `change.docsPaths` | project (tracked) | list | `["*.md", "docs/**", "**/*.png", "**/*.jpg", "**/*.jpeg", "**/*.gif", "**/*.svg", "**/*.webp"]` |  | Globs of documentation files. A diff whose every file is a Markdown or image file (.md, .png, .jpg, .jpeg, .gif, .svg, .webp) matching one is the docs tier; a script or source file under docs/ is code: the gate runs test.docs and review depth is none. * matches within a path segment, ** across directories; a glob with no slash matches at the root only (*.md is README.md, not docs/a.md); no braces. |
+| `change.riskyPaths` | project (tracked) | list | `[]` |  | Globs of files that always get the full tier: test.full and review depth full, whatever else the diff holds. Same glob grammar as change.docsPaths. |
+| `change.smallPaths` | project (tracked) | list | `[]` |  | Globs of the files test.small covers. A code diff with a file outside them is never the small tier. Empty turns the small tier off. Same glob grammar as change.docsPaths. |
+| `change.smallBelow` | project (tracked) | int | `0` |  | A code diff with fewer changed lines than this, and every file covered by change.smallPaths, is the small tier: the gate runs test.small and review depth is at most light. 0 turns the small tier off. |
 
 ### forge
 

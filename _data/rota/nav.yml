@@ -74,6 +74,9 @@
     - title: "`/rota-work`"
       url: /rota/docs/skills/rota-work/
       desc: "Build the next item in small commits, one verified task at a time"
+    - title: "`/rota-go`"
+      url: /rota/docs/skills/rota-go/
+      desc: "Implement an issue and land it with only gofmt, vet and build; no slow tests, no review"
     - title: "`/rota-debug`"
       url: /rota/docs/skills/rota-debug/
       desc: "Find the root cause of one bug, fix it atomically and prove it"

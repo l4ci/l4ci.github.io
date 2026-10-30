@@ -61,6 +61,8 @@ Run it after finishing work:
 
 **Default flow:** branch check → `/rota-review` (unless `ship.review` is `none`) → second-opinion gate (if `ship.secondOpinion` is `true`) → `/rota-qa` gate (if `ship.qa` is `true`) → UAT gate (if `ship.uat` is `true`) → build PR body → open PR or merge → close resolved items (on the issue backend the PR merge closes them).
 
+After the merge or PR, one `rota ship finish` call does the bookkeeping: it removes the branch's status entry and handoff note, completes still-open items on the file backend, and reports whether the learn, docs and release nudges fire. It decides and never dispatches; `/rota-ship` acts on the result. Round workers and umbrella projects keep the step-by-step path, and the verb refuses an item with no proof row.
+
 The review gate behaves as follows:
 
 - `FAIL` blocks integration; fix the branch and rerun `/rota-ship`.
@@ -116,6 +118,8 @@ See [configuration](/rota/docs/usage/configuration/) for the full `work` block.
 | `none` | Skips the review pass. Integration runs immediately. Use when you already reviewed manually. |
 
 `true` and `false` still work as `full` and `none`. An object picks the depth by diff size, label and path (for example `risk:high` forces `full`), and lifts a `light` review to `full` on a `Door: one-way` PR, a diff outside the issue's declared files or a risky path. Support files do not count as outside: tests beside a declared file, docs (the generated option reference included), frozen and golden records and smoke sections (`ship.review.supportPaths` sets the list); see [configuration](/rota/docs/usage/configuration/#shipreview). `/rota-ship` prints the chosen depth and why.
+
+The change tier also sets the depth: a docs-only diff gets `none`, even under `full`, and a small one is capped at `light`; a label, a `Door: one-way` line or a `paths` match still raises it. `rota change classify` shows the tier; the rules and the `change.*` keys are in [configuration](/rota/docs/usage/configuration/#change).
 
 The review gate is independent of the autonomy level. A `FAIL` verdict still halts the chain until you fix the branch.
 

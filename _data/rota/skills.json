@@ -332,6 +332,53 @@
   "when": "Use when backlog items already exist and need implementation (\"implement 42\", \"build these\", or \"implement [B07]\" on the file backend), or with no argument to reconcile active work and pick the next item. A parallel round with standing workers is /rota-orchestrate, not this skill; an item not yet captured goes through /rota-capture first."
  },
  {
+  "after": [],
+  "before": [
+   "rota-capture"
+  ],
+  "example": {
+   "changes": [
+    "the fix, merged (or a PR opened per `work.mergeStrategy`)",
+    "merge commit or PR body carries the `Landed via /rota-go` line"
+   ],
+   "reviewed": false,
+   "source": "getting-started.md",
+   "source_url": "/rota/docs/getting-started/",
+   "steps": [
+    {
+     "you": "/rota-go 42"
+    },
+    {
+     "agent": "Claimed #42 on rota/42-fix-timer-badge.\ngofmt, go vet, go build: clean.\nMerged into main. Landed via /rota-go: slow tests and review skipped.\n"
+    }
+   ]
+  },
+  "flags": [],
+  "lane": "execute",
+  "lane_name": "Execute",
+  "manual_only": false,
+  "not_when": [
+   {
+    "use": "rota-work",
+    "when": "you want per-task verification, tests and the full review chain"
+   },
+   {
+    "use": "rota-ship",
+    "when": "the work is already built and you want it reviewed before it lands"
+   },
+   {
+    "use": "rota-orchestrate",
+    "when": "several issues run in parallel with workers and a merge gate"
+   }
+  ],
+  "order": 42,
+  "situation": "Quick solo fix",
+  "skill": "rota-go",
+  "summary": "Implement an issue and land it with only gofmt, vet and build; no slow tests, no review.",
+  "url": "/rota/docs/skills/rota-go/",
+  "when": "Use on \"/rota-go 42\", \"just do this issue and land it\", \"fast track 42\" for solo work that should skip slow tests and review. Never inside a round."
+ },
+ {
   "after": [
    "rota-learn",
    "rota-ship"

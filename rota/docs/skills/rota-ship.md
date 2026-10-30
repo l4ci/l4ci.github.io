@@ -7,7 +7,7 @@ source: docs/skills/rota-ship.md
 skill: rota-ship
 ---
 {% raw %}
-Finishes a feature branch: runs `/rota-review` (by default), builds a PR body from commit subjects and resolved item IDs, then either opens a PR (GitHub) or MR (GitLab) or merges directly based on `work.mergeStrategy`. Clears the `status.json` entry and closes referenced items on completion. On the issue backend it always opens a PR or MR with `Closes #N` lines and never merges; the merge closes the issues ([issue backend](/rota/docs/usage/issue-backend/)). See [review and ship](/rota/docs/usage/review-and-ship/).
+Finishes a feature branch: runs `/rota-review` (by default), builds a PR body from commit subjects and resolved item IDs, then either opens a PR (GitHub) or MR (GitLab) or merges directly based on `work.mergeStrategy`. `rota ship finish` clears the `status.json` entry, closes referenced items on completion and reports the learn, docs and release nudges. On the issue backend it always opens a PR or MR with `Closes #N` lines and never merges; the merge closes the issues ([issue backend](/rota/docs/usage/issue-backend/)). See [review and ship](/rota/docs/usage/review-and-ship/).
 
 `--undo` is the one flag mode:
 
