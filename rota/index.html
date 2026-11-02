@@ -3,60 +3,65 @@ layout: rota/base
 permalink: /rota/
 body_class: is-landing
 title: rota
-description: Run coding agents in parallel across tasks and accounts, with reviews and checks before merging. Start in Claude Code or Codex.
+description: Run coding agents in parallel across your tasks and accounts. rota coordinates reviews and tests before merging their work.
 ---
 <main id="main" class="entry">
   <section class="entry-hero" aria-labelledby="entry-title">
-    <p class="eyebrow">Parallel coding agents, coordinated.</p>
-    <h1 id="entry-title">Parallel agents.<br><span>Checked merges.</span></h1>
-    <div class="entry-intro">
-      <p>Run agents across your tasks and accounts. rota coordinates the work, reviews changes and runs your checks before they merge.</p>
-      <a class="entry-cta" href="/rota/docs/getting-started/">Start your first round <span aria-hidden="true">↗</span></a>
-      <p class="entry-compat">Claude Code · Codex · OpenCode workers</p>
-    </div>
+    <h1 id="entry-title">Run coding agents<br>in parallel</h1>
+    <p>Use your agents and accounts to work through several issues.<br class="desktop-break"> rota coordinates reviews and tests before merging their work.</p>
+    <a class="entry-cta" href="/rota/docs/getting-started/">Get started</a>
   </section>
 
-  <figure class="round-sketch" aria-labelledby="round-caption">
-    <div class="sketch-header"><span>One round</span><span>Two tasks, in parallel</span></div>
-    <div class="sketch-lanes">
-      <div class="sketch-task"><span class="sketch-id">#12</span><strong>Fix login redirect</strong><span class="sketch-agent">Claude Code <span>Account A</span></span></div>
-      <div class="sketch-task"><span class="sketch-id">#13</span><strong>Add CSV export</strong><span class="sketch-agent">Codex <span>Account B</span></span></div>
+  <figure class="round-example" aria-labelledby="round-caption">
+    <div class="round-label">Example round</div>
+    <div class="round-work">
+      <div class="worker-rows">
+        <div class="worker-row"><span class="issue-number">#12</span><div><strong>Fix login redirect</strong><span>Claude Code <span class="account">Account A</span></span></div></div>
+        <div class="worker-row"><span class="issue-number">#13</span><div><strong>Add CSV export</strong><span>Codex <span class="account">Account B</span></span></div></div>
+      </div>
+      <div class="round-connector" aria-hidden="true"><span></span><span></span></div>
+      <div class="merge-path"><span>Review</span><span>Test with current main</span><span class="merge-result">Merge</span></div>
     </div>
-    <div class="sketch-join" aria-hidden="true"><span></span><span></span></div>
-    <ol class="sketch-checks" aria-label="Before merging">
-      <li><span aria-hidden="true">01</span> Review</li>
-      <li><span aria-hidden="true">02</span> Test with current main</li>
-      <li class="sketch-merge"><span aria-hidden="true">03</span> Merge</li>
-    </ol>
-    <figcaption id="round-caption">Illustrative round. Failed checks send work back before it merges.</figcaption>
+    <figcaption id="round-caption">Workers build separately. Each change is checked with the current base before it lands.</figcaption>
   </figure>
 
-  <section class="entry-start" aria-labelledby="start-title">
-    <div class="section-label"><span>Get going</span><span aria-hidden="true">01 / 02</span></div>
-    <div class="start-heading">
-      <h2 id="start-title">Your harness.<br>Two skills.</h2>
-      <p>Once rota is installed, open your project in your coding agent. Set it up, then start the round.</p>
-    </div>
-    <div class="harness-choice" role="group" aria-label="Show commands for your coding agent" hidden>
-      <button type="button" data-harness="claude" aria-pressed="true">Claude Code</button>
-      <button type="button" data-harness="codex" aria-pressed="false">Codex</button>
-    </div>
-    <ol class="start-steps">
-      <li><div><span class="step-number">01</span><code data-skill="rota-init">/rota-init</code></div><p>Set up the project with your agent.</p></li>
-      <li><div><span class="step-number">02</span><code data-skill="rota-orchestrate">/rota-orchestrate</code></div><p>Choose the tasks. Let the agents work.</p></li>
-    </ol>
-    <p class="start-footnote">Use <code>$rota-init</code> and <code>$rota-orchestrate</code> in Codex. Separate worker sessions use herdr or tmux. <a href="/rota/docs/getting-started/">Installation and first-round setup <span aria-hidden="true">↗</span></a></p>
-  </section>
+  <div class="entry-body">
+    <nav class="entry-nav" aria-label="On this page">
+      <a href="#overview">Overview</a>
+      <a href="#setup">Setup</a>
+      <a href="#checks">Checks</a>
+    </nav>
+    <div class="entry-prose">
+      <section id="overview" aria-labelledby="overview-title">
+        <h2 id="overview-title">Work across tasks and accounts</h2>
+        <p>Start a round in Claude Code or Codex. That session assigns issues to workers, follows their progress and handles the merges. Workers can use Claude Code, Codex or OpenCode.</p>
+        <p>Use several accounts to spread the work. When an agent needs a product decision, it comes back to you. <a href="/rota/docs/first-round/">Account and worker setup</a></p>
+      </section>
 
-  <section class="entry-trust" aria-labelledby="trust-title">
-    <div class="section-label"><span>Before it lands</span><span aria-hidden="true">02 / 02</span></div>
-    <h2 id="trust-title">"Done" still has to<br>pass the checks.</h2>
-    <p>Required reviews and recorded test results gate the merge. Repeated failures can bring work back to you. Knowledge and decisions stay with the project.</p>
-    <a class="text-link" href="/rota/docs/agent-mistakes/">What rota checks, and where its limits are <span aria-hidden="true">↗</span></a>
-  </section>
-  <nav class="entry-next" aria-label="Explore the documentation">
-    <a href="/rota/docs/getting-started/"><span>Start</span>Your first round <span aria-hidden="true">↗</span></a>
-    <a href="/rota/docs/reference/"><span>Look up</span>Guides & reference <span aria-hidden="true">↗</span></a>
-  </nav>
+      <section id="setup" aria-labelledby="setup-title">
+        <h2 id="setup-title">Start in your coding agent</h2>
+        <p><a href="/rota/docs/install/">Install rota</a>, then open your project in your agent. Init helps configure it; orchestrate starts the round.</p>
+        <div class="setup-example">
+          <div class="harness-choice" role="group" aria-label="Show commands for your coding agent" hidden>
+            <button type="button" data-harness="claude" aria-pressed="true">Claude Code</button>
+            <button type="button" data-harness="codex" aria-pressed="false">Codex</button>
+          </div>
+          <dl class="setup-commands" aria-live="polite">
+            <div><dt><code data-skill="rota-init">/rota-init</code></dt><dd>Set up this project</dd></div>
+            <div><dt><code data-skill="rota-orchestrate">/rota-orchestrate</code></dt><dd>Choose issues and start</dd></div>
+          </dl>
+        </div>
+        <p class="setup-note">In Codex, use <code>$rota-init</code> and <code>$rota-orchestrate</code>. Separate worker sessions use herdr or tmux.</p>
+        <a class="article-link" href="/rota/docs/getting-started/">Follow the first-round guide</a>
+      </section>
+
+      <section id="checks" aria-labelledby="checks-title">
+        <h2 id="checks-title">Check changes before merging</h2>
+        <p>The merge gate checks required reviews and runs your configured tests on the PR combined with the current base. Failed checks send the work back. Repeated failures can pause an issue for your help.</p>
+        <p>What the gate catches depends on your tests and configuration. <a href="/rota/docs/agent-mistakes/">Read about the safeguards and their limits.</a></p>
+      </section>
+      <p class="reference-link"><a href="/rota/docs/reference/">Browse the reference</a></p>
+    </div>
+  </div>
 </main>
 <script src="/rota/assets/entry.js" defer></script>

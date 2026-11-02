@@ -275,14 +275,18 @@
         wrap.replaceWith(div);
       });
       import("https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.esm.min.mjs").then(function (m) {
-        var dark = currentTheme() === "dark";
+        var colors = getComputedStyle(root);
+        function color(name) { return colors.getPropertyValue(name).trim(); }
         m.default.initialize({
           startOnLoad: false,
           theme: "base",
           fontFamily: "Martian Mono, ui-monospace, monospace",
-          themeVariables: dark
-            ? { background: "#0D1117", primaryColor: "#161B22", primaryTextColor: "#F0F6FC", primaryBorderColor: "#9198A1", lineColor: "#9198A1", fontSize: "13px" }
-            : { background: "#F7F8FA", primaryColor: "#EEF0F3", primaryTextColor: "#1F2328", primaryBorderColor: "#59636E", lineColor: "#59636E", fontSize: "13px" }
+          themeVariables: {
+            background: color("--paper"), primaryColor: color("--paper-2"),
+            primaryTextColor: color("--ink"), primaryBorderColor: color("--muted"),
+            secondaryColor: color("--paper-2"), tertiaryColor: color("--paper-2"),
+            lineColor: color("--muted"), fontSize: "13px"
+          }
         });
         m.default.run({ querySelector: ".mermaid" });
       }).catch(function () {});
