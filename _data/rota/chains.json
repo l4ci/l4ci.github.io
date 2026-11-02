@@ -17,8 +17,8 @@
    }
   ],
   "title": "Fix a small bug or add a small feature",
-  "walkthrough": "getting-started.md",
-  "walkthrough_url": "/rota/docs/getting-started/",
+  "walkthrough": "usage/running-work.md",
+  "walkthrough_url": "/rota/docs/usage/running-work/",
   "when": "One clear item, small enough to build in one sitting."
  },
  {
