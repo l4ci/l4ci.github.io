@@ -668,6 +668,12 @@ recorded with `rota proof record <ID> -- rota test run fast`. A later commit mak
 the worker records again. With `test.fast` unset it warns and skips that check. The worker brief then tells the worker to run `rota test run full` and have it green first, and `rota round start` warns once that the proof rows will be missing (reviewers treat that as minor at most). On success the slot is
 marked `done`.
 
+Before recording done, the verb also warns for each missing `## Approvals`,
+`## Rulings` or `## Assumptions` heading in the slot branch's open PR. If the slot
+has no PR URL recorded yet, done looks up the open PR by branch. Add the missing
+sections before review; `None` or empty content is allowed. These warnings do not
+block done. With no open PR or an unavailable forge, this check is skipped.
+
 On the issue backend, before reporting done, workers mark each verified `AC-n` on the lead and every open
 bundle member with `rota plan pass <ID> AC-n --proof '<sha>:<check>'` (use an issue key
 such as `'#2150'`). The sha and check must name a recorded PASS row from
@@ -781,6 +787,12 @@ checkout until it exits; the checkout guard fails the gate on a changed tracked 
 merges them onto the base in a scratch worktree in the order it picks, runs `test.full` on that
 tree, then `test.e2e` when set (the most expensive tier runs once per train, not once per PR), and on a pass lands every member through the gate in order. If the base or a member's head moved
 while it verified, nothing lands (`base-moved`); the same verdict stops the train mid-way if the base changes between landings. Members must be all PRs or all slots without one.
+
+PRs the forge already reports as merged into the requested base are reported as
+`ALREADY-MERGED` and skipped, even if their head branches were deleted. The train
+continues with open PRs; if every target is already merged, it succeeds without
+verification or another merge. A conflicting open PR still gets a hint naming
+its owning slot, or its branch when no slot owns it.
 
 After the tree verifies and before anything lands, the train also runs each member's `## Try it` steps in the scratch tree, member by member in merge order. A member whose steps fail is the `culprit`. `--no-verify` does not skip this.
 
@@ -961,7 +973,9 @@ Each won round claim has a visible `claimed:<agent>@<machine>` label: `claimed:b
 or `claimed:ben@mac` for support slot `mac-ben` when `round.support` is `mac`. Comment claims
 decide ownership; labels follow them. `--apply` repairs missing or stale claim labels without
 editing the comment claims. Release removes that claim's label; completion and the merge gate
-remove all claim labels from closed issues. Reconcile also cleans closed issues that retain them.
+remove all claim labels and the configured in-progress label from closed issues. Reconcile and
+claim-label drift use the same cleanup rule. Open issues keep their workflow labels; cleanup
+leaves unrelated labels and claim history intact.
 
 After upgrading, run `rota round reconcile --apply` once to backfill the visible labels for
 in-flight comment claims. It also repairs stray claim labels on open issues with no remaining
