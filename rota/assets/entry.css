@@ -65,6 +65,11 @@ body { font-size: 1rem; line-height: 1.65; }
 .prose a { color: var(--ink); text-decoration-color: var(--rule); }
 .prose a:hover { text-decoration-color: var(--ink); }
 .prose :not(pre) > code { color: var(--ink); }
+.prose .chain-self > code {
+  color: var(--ink);
+  background: var(--paper-2);
+  border-color: var(--accent);
+}
 .docnav h2, .toc h2 { font-family: var(--sans); font-size: .8rem; font-weight: 500; }
 .docnav a { font-family: var(--sans); font-size: .9rem; }
 .docnav a[aria-current] { border-left-color: var(--accent); font-weight: 400; }
