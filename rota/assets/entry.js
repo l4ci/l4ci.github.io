@@ -25,53 +25,47 @@
   });
 }());
 
-// Split the slanted CLI artwork along the strokes of r, o, t and a.
+// Each non-space character is an independent stroke of the CLI artwork.
 (function () {
   "use strict";
-  var backdrop = document.querySelector(".ambient-ascii");
-  if (!backdrop) return;
-  var art = backdrop.querySelector("pre");
+  var artwork = document.querySelector(".closing-ascii");
+  if (!artwork) return;
+  var art = artwork.querySelector("pre");
   var toggle = document.querySelector("[data-glow-toggle]");
-  var rows = art.textContent.trimEnd().split("\n");
-  var cuts = [[8, 13, 17], [8, 13, 18], [8, 13, 18], [6, 13, 17], [6, 12, 16]];
-  if (rows.length !== cuts.length) return;
-  var groups = [[], [], [], []];
+  var pieces = [];
   var fragment = document.createDocumentFragment();
-  rows.forEach(function (row, line) {
-    var edges = [0].concat(cuts[line], row.length);
-    groups.forEach(function (group, letter) {
-      var span = document.createElement("span");
-      span.className = "ascii-letter";
-      span.dataset.letter = "rota"[letter];
-      span.textContent = row.slice(edges[letter], edges[letter + 1]);
-      group.push(span);
-      fragment.appendChild(span);
-    });
-    if (line < rows.length - 1) fragment.appendChild(document.createTextNode("\n"));
+  Array.from(art.textContent.trimEnd()).forEach(function (character) {
+    if (/\s/.test(character)) {
+      fragment.appendChild(document.createTextNode(character));
+      return;
+    }
+    var span = document.createElement("span");
+    span.className = "ascii-piece";
+    span.textContent = character;
+    pieces.push(span);
+    fragment.appendChild(span);
   });
   art.replaceChildren(fragment);
-  backdrop.dataset.enhanced = "true";
+  artwork.dataset.enhanced = "true";
   var motion = window.matchMedia("(prefers-reduced-motion: reduce)");
-  var paused = false, timer, fadeTimer, previous = -1;
+  var paused = false;
+  var visible = !("IntersectionObserver" in window);
+  var timers = new Map();
   try { paused = localStorage.getItem("rota-glow") === "paused"; } catch (e) {}
 
   function clearGlow() {
-    window.clearTimeout(timer);
-    window.clearTimeout(fadeTimer);
-    groups.forEach(function (group) { group.forEach(function (span) { span.classList.remove("is-glowing"); }); });
+    timers.forEach(function (timer) { window.clearTimeout(timer); });
+    timers.clear();
+    pieces.forEach(function (piece) { piece.classList.remove("is-glowing"); });
   }
-  function schedule() {
-    if (paused || motion.matches || document.hidden) return;
-    timer = window.setTimeout(function () {
-      var next = Math.floor(Math.random() * (previous < 0 ? 4 : 3));
-      if (previous >= 0 && next >= previous) next++;
-      previous = next;
-      groups[next].forEach(function (span) { span.classList.add("is-glowing"); });
-      fadeTimer = window.setTimeout(function () {
-        groups[next].forEach(function (span) { span.classList.remove("is-glowing"); });
-        schedule();
-      }, 2200 + Math.random() * 1300);
-    }, 2500 + Math.random() * 5000);
+  function schedule(piece, initial) {
+    timers.set(piece, window.setTimeout(function () {
+      piece.classList.add("is-glowing");
+      timers.set(piece, window.setTimeout(function () {
+        piece.classList.remove("is-glowing");
+        schedule(piece, false);
+      }, 1200 + Math.random() * 4300));
+    }, (initial ? 0 : 1800) + Math.random() * 9000));
   }
   function sync() {
     clearGlow();
@@ -79,13 +73,20 @@
       toggle.hidden = motion.matches;
       toggle.textContent = paused ? "Resume glow" : "Pause glow";
     }
-    schedule();
+    if (paused || motion.matches || document.hidden || !visible) return;
+    pieces.forEach(function (piece) { schedule(piece, true); });
   }
   if (toggle) toggle.addEventListener("click", function () {
     paused = !paused;
     try { localStorage.setItem("rota-glow", paused ? "paused" : "playing"); } catch (e) {}
     sync();
   });
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(function (entries) {
+      var next = entries[0].isIntersecting;
+      if (next !== visible) { visible = next; sync(); }
+    }).observe(artwork);
+  }
   motion.addEventListener("change", sync);
   document.addEventListener("visibilitychange", sync);
   sync();

@@ -137,18 +137,19 @@ body { font-size: 1rem; line-height: 1.65; }
   .compat-list li { font-size: .85rem; }
 }
 
-/* A fixed CLI wordmark stays behind the content as the page scrolls. */
-.is-landing { isolation: isolate; }
-.ambient-ascii { position: fixed; inset: 0; z-index: -1; display: grid; place-items: center; overflow: hidden; pointer-events: none; user-select: none; }
-.ambient-ascii pre { transform: translateY(-8vh); width: max-content; max-width: 96vw; overflow: hidden; margin: 0; padding: 0; border: 0; background: none; color: var(--accent); opacity: .04; font: 600 clamp(18px, 5.5vw, 88px)/1.1 ui-monospace, "SFMono-Regular", Consolas, monospace; letter-spacing: 0; text-align: left; white-space: pre; }
-.ambient-ascii[data-enhanced] pre { opacity: 1; }
-.ascii-letter { opacity: .04; transition: opacity 1400ms ease-in-out, text-shadow 1400ms ease-in-out; }
-.ascii-letter.is-glowing { opacity: .14; text-shadow: 0 0 24px #f0883e, 0 0 65px rgb(240 136 62 / 55%); }
-:root[data-theme="light"] .ascii-letter, :root[data-theme="light"] .ambient-ascii:not([data-enhanced]) pre { opacity: .03; }
-:root[data-theme="light"] .ascii-letter.is-glowing { opacity: .09; }
+/* The CLI wordmark closes the page, with independent glowing ASCII strokes. */
+.closing-ascii { display: grid; place-items: center; padding: 0 0 4rem; pointer-events: none; user-select: none; }
+.closing-ascii pre { width: max-content; max-width: 100%; margin: 0; padding: 0; border: 0; background: none; color: var(--accent); opacity: .16; font: 600 clamp(9px, 2.75vw, 44px)/1.1 ui-monospace, "SFMono-Regular", Consolas, monospace; letter-spacing: 0; text-align: left; white-space: pre; overflow: visible; }
+.closing-ascii[data-enhanced] pre { opacity: 1; }
+.ascii-piece { opacity: .16; transition: opacity 800ms ease-in-out, text-shadow 800ms ease-in-out; }
+.ascii-piece.is-glowing { opacity: .75; text-shadow: 0 0 12px #f0883e, 0 0 30px rgb(240 136 62 / 45%); }
+:root[data-theme="light"] .ascii-piece, :root[data-theme="light"] .closing-ascii:not([data-enhanced]) pre { opacity: .2; }
+:root[data-theme="light"] .ascii-piece.is-glowing { opacity: .8; }
 .glow-toggle { border: 0; padding: 0; background: none; color: var(--muted); font: inherit; text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: .18em; cursor: pointer; }
-.glow-toggle:hover { color: var(--ink); }
+@media (hover: hover) {
+  .glow-toggle:hover { color: var(--ink); }
+}
 @media (prefers-reduced-motion: reduce) {
-  .ascii-letter { transition: none; }
-  .ascii-letter.is-glowing { opacity: .04; text-shadow: none; }
+  .ascii-piece { transition: none; }
+  .ascii-piece.is-glowing { opacity: .16; text-shadow: none; }
 }
