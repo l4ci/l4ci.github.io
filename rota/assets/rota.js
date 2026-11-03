@@ -45,13 +45,18 @@
     revealCurrentDoc();
     if (document.fonts) document.fonts.ready.then(revealCurrentDoc);
     if (navBtn && nav) {
+      var mobileNav = window.matchMedia("(max-width: 820px)");
+      var covered = document.querySelectorAll(".article, .toc, .colophon");
       function setOpen(open) {
+        open = open && mobileNav.matches;
+        covered.forEach(function (element) { element.inert = open; });
         nav.classList.toggle("open", open);
         navBtn.setAttribute("aria-expanded", String(open));
         if (open) {
           revealCurrentDoc();
         }
       }
+      mobileNav.addEventListener("change", function () { setOpen(false); });
       navBtn.addEventListener("click", function () { setOpen(!nav.classList.contains("open")); });
       nav.addEventListener("click", function (e) { if (e.target.closest("a")) setOpen(false); });
       document.addEventListener("keydown", function (e) {
@@ -112,39 +117,65 @@
       }
     }
 
-    // Prompt copy button: hidden until JS and the clipboard API are available.
-    document.querySelectorAll(".prompt-copy").forEach(function (btn) {
-      var src = document.querySelector(btn.dataset.copy);
-      if (!src || !navigator.clipboard) return;
-      btn.hidden = false;
-      btn.addEventListener("click", function () {
-        navigator.clipboard.writeText(src.textContent.trim()).then(function () {
-          btn.textContent = "Copied";
-          btn.dataset.done = "";
-          setTimeout(function () { btn.textContent = "Copy"; delete btn.dataset.done; }, 1600);
-        });
+    // One copy action per block; a denied clipboard still leaves selectable text.
+    var copyStatus;
+    function attachCopy(button, source, label) {
+      var reset;
+      button.addEventListener("click", async function () {
+        window.clearTimeout(reset);
+        if (!copyStatus) {
+          copyStatus = document.createElement("span");
+          copyStatus.className = "copy-status";
+          copyStatus.setAttribute("role", "status");
+          document.body.appendChild(copyStatus);
+        }
+        copyStatus.textContent = "";
+        try {
+          await navigator.clipboard.writeText(source.textContent.replace(/\n$/, ""));
+          button.textContent = "Copied";
+          button.dataset.done = "";
+          copyStatus.textContent = "Copied to clipboard.";
+        } catch (error) {
+          var range = document.createRange();
+          range.selectNodeContents(source);
+          var selection = window.getSelection();
+          selection.removeAllRanges();
+          selection.addRange(range);
+          button.textContent = "Copy manually";
+          copyStatus.textContent = "Clipboard unavailable. The text is selected; copy it manually.";
+        }
+        reset = window.setTimeout(function () {
+          button.textContent = label;
+          delete button.dataset.done;
+          copyStatus.textContent = "";
+        }, 4000);
       });
+    }
+    document.querySelectorAll(".prompt-copy").forEach(function (button) {
+      var source = document.querySelector(button.dataset.copy);
+      if (!source) return;
+      button.hidden = false;
+      attachCopy(button, source, "Copy");
     });
-
     document.querySelectorAll("pre").forEach(function (pre) {
-      if (pre.closest(".mermaid")) return;
+      if (pre.closest(".mermaid, .install-prompt, [data-term]")) return;
       var code = pre.querySelector("code");
-      if (!code || !navigator.clipboard) return;
-      var btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "copy";
-      btn.textContent = "Copy";
-      btn.addEventListener("click", function () {
-        navigator.clipboard.writeText(code.innerText.replace(/\n$/, "")).then(function () {
-          btn.textContent = "Copied";
-          btn.dataset.done = "";
-          setTimeout(function () { btn.textContent = "Copy"; delete btn.dataset.done; }, 1600);
-        });
-      });
-      pre.appendChild(btn);
+      if (!code || code.classList.contains("language-mermaid")) return;
+      var button = document.createElement("button");
+      button.type = "button";
+      button.className = "copy";
+      button.textContent = "Copy";
+      attachCopy(button, code, "Copy");
+      pre.classList.add("has-copy");
+      pre.appendChild(button);
     });
 
-    var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    var reduce = motionPreference.matches;
+    motionPreference.addEventListener("change", function () {
+      reduce = motionPreference.matches;
+      if (reduce) document.querySelectorAll("[data-term][data-ready]").forEach(play);
+    });
 
     // Terminal playback: type the command, then print the output a line at a time.
     function prepTerm(term) {
