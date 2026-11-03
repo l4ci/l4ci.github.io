@@ -32,13 +32,24 @@
     }
 
     var nav = document.getElementById("docnav");
+    function revealCurrentDoc() {
+      if (!nav || !nav.clientHeight) return;
+      var current = nav.querySelector("[aria-current]");
+      if (!current) return;
+      var bounds = nav.getBoundingClientRect();
+      var item = current.getBoundingClientRect();
+      if (item.bottom > bounds.bottom || item.top < bounds.top) {
+        nav.scrollTop += item.top - bounds.top - nav.clientHeight / 2 + item.height / 2;
+      }
+    }
+    revealCurrentDoc();
+    if (document.fonts) document.fonts.ready.then(revealCurrentDoc);
     if (navBtn && nav) {
       function setOpen(open) {
         nav.classList.toggle("open", open);
         navBtn.setAttribute("aria-expanded", String(open));
         if (open) {
-          var cur = nav.querySelector("[aria-current]");
-          if (cur) cur.scrollIntoView({ block: "center" });
+          revealCurrentDoc();
         }
       }
       navBtn.addEventListener("click", function () { setOpen(!nav.classList.contains("open")); });

@@ -11,6 +11,7 @@ Run several coding agents in parallel, across your accounts, with reviews and ch
 ### Start
 
 - [Get started](/rota/docs/getting-started/): install, set up your project and start a round from your coding agent.
+- [Worker setup](/rota/docs/first-round/): harnesses, accounts and the checks for your first round.
 - [How it works](/rota/docs/how-it-works/): who does the work, who merges and where you come in.
 
 ### Understand the checks
@@ -20,5 +21,7 @@ Run several coding agents in parallel, across your accounts, with reviews and ch
 ### Look something up
 
 - [Reference](/rota/docs/reference/): accounts, configuration, workflows and every command.
+- [Skills](/rota/docs/skills/): a quick reference for every skill.
+- [FAQ](/rota/docs/faq/): common questions about agents, costs and setup.
 - [Troubleshooting](/rota/docs/troubleshooting/): setup failures, missing tests and work that stops moving.
 {% endraw %}

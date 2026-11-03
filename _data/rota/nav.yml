@@ -6,6 +6,9 @@
     - title: Get started
       url: /rota/docs/getting-started/
       desc: "install, set up your project and start a round from your coding agent."
+    - title: Worker setup
+      url: /rota/docs/first-round/
+      desc: "harnesses, accounts and the checks for your first round."
     - title: How it works
       url: /rota/docs/how-it-works/
       desc: "who does the work, who merges and where you come in."
@@ -19,6 +22,12 @@
     - title: Reference
       url: /rota/docs/reference/
       desc: "accounts, configuration, workflows and every command."
+    - title: Skills
+      url: /rota/docs/skills/
+      desc: "a quick reference for every skill."
+    - title: FAQ
+      url: /rota/docs/faq/
+      desc: "common questions about agents, costs and setup."
     - title: Troubleshooting
       url: /rota/docs/troubleshooting/
       desc: "setup failures, missing tests and work that stops moving."
