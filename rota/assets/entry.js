@@ -85,7 +85,7 @@
     new IntersectionObserver(function (entries) {
       var next = entries[0].isIntersecting;
       if (next !== visible) { visible = next; sync(); }
-    }).observe(artwork);
+    }).observe(artwork.closest(".ascii-reveal") || artwork);
   }
   motion.addEventListener("change", sync);
   document.addEventListener("visibilitychange", sync);

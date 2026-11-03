@@ -68,7 +68,7 @@
     <link rel="apple-touch-icon" href="/rota/assets/apple-touch-icon.png">
     <link rel="stylesheet" href="/rota/assets/fonts/fonts.css">
     <link rel="stylesheet" href="/rota/assets/rota.css?v=2">
-    <link rel="stylesheet" href="/rota/assets/entry.css?v=11">
+    <link rel="stylesheet" href="/rota/assets/entry.css?v=12">
     {% if is_landing %}<link rel="stylesheet" href="/rota/assets/round-example.css?v=5">{% endif %}
     <script>
       try { var t = localStorage.getItem("rota-theme"); document.documentElement.dataset.theme = t === "light" ? "light" : "dark"; } catch (e) { document.documentElement.dataset.theme = "dark"; }
@@ -78,6 +78,7 @@
     <script src="/rota/assets/rota.js?v=3" defer></script>
   </head>
   <body class="{{ page.body_class | default: 'is-doc' }}">
+    {% if is_landing %}<div class="landing-surface">{% endif %}
     <a class="skip" href="#main">Skip to content</a>
     <header class="masthead">
       <a class="brand" href="/rota/" aria-label="rota home">{% include rota/icon.svg %}<span class="wordmark">rota</span></a>
@@ -92,7 +93,6 @@
     </header>
     {{ content }}
     <footer class="colophon">
-      {% if is_landing %}<div class="closing-ascii" aria-hidden="true"><pre>{% include rota/ascii.txt %}</pre></div>{% endif %}
       <div class="colophon-inner">
         <p class="footer-brand">{% include rota/icon.svg %}<span>rota is MIT-licensed and made by <a href="/">Volker Otto</a>.</span></p>
         <p>
@@ -104,5 +104,11 @@
         </p>
       </div>
     </footer>
+    {% if is_landing %}
+    </div>
+    <div class="ascii-reveal" aria-hidden="true">
+      <div class="closing-ascii"><pre>{% include rota/ascii.txt %}</pre></div>
+    </div>
+    {% endif %}
   </body>
 </html>
