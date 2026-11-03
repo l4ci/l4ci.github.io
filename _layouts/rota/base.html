@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {% if page.permalink == "/rota/" %}
-    <title>rota · run coding agents in parallel</title>
+    <title>rota · orchestrate multiple coding harnesses in parallel</title>
     {% else %}
     <title>{{ page.title | strip_html }} · rota docs</title>
     {% endif %}
@@ -16,7 +16,7 @@
     {% assign desc = page.description | default: 'Run coding agents in parallel across tasks and accounts, with reviews and configured checks before merging.' | strip_html | escape %}
     {% assign og_image = site.url | append: '/rota/assets/og-image.png' %}
     {% assign og_alt = 'rota: run coding agents in parallel' %}
-    {% if is_landing %}{% assign og_title = 'rota · run coding agents in parallel' %}{% else %}{% capture og_title %}{{ page.title | strip_html }} · rota docs{% endcapture %}{% endif %}
+    {% if is_landing %}{% assign og_title = 'rota · orchestrate multiple coding harnesses in parallel' %}{% else %}{% capture og_title %}{{ page.title | strip_html }} · rota docs{% endcapture %}{% endif %}
     <meta property="og:site_name" content="rota">
     <meta property="og:locale" content="en_US">
     <meta property="og:title" content="{{ og_title | escape }}">
@@ -68,7 +68,8 @@
     <link rel="apple-touch-icon" href="/rota/assets/apple-touch-icon.png">
     <link rel="stylesheet" href="/rota/assets/fonts/fonts.css">
     <link rel="stylesheet" href="/rota/assets/rota.css?v=2">
-    <link rel="stylesheet" href="/rota/assets/entry.css?v=3">
+    <link rel="stylesheet" href="/rota/assets/entry.css?v=4">
+    {% if is_landing %}<link rel="stylesheet" href="/rota/assets/round-example.css?v=1">{% endif %}
     <script>
       try { var t = localStorage.getItem("rota-theme"); document.documentElement.dataset.theme = t === "light" ? "light" : "dark"; } catch (e) { document.documentElement.dataset.theme = "dark"; }
     </script>

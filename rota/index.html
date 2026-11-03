@@ -3,27 +3,16 @@ layout: rota/base
 permalink: /rota/
 body_class: is-landing
 title: rota
-description: Run coding agents in parallel across your tasks and accounts. rota coordinates reviews and tests before merging their work.
+description: Orchestrate multiple coding harnesses in parallel. Use your agents and accounts on the same project, with reviews and tests before each merge to main.
 ---
 <main id="main" class="entry">
   <section class="entry-hero" aria-labelledby="entry-title">
-    <h1 id="entry-title">Run coding agents<br>in parallel</h1>
-    <p>Use your agents and accounts to work through several issues.<br class="desktop-break"> rota coordinates reviews and tests before merging their work.</p>
+    <h1 id="entry-title">Orchestrate multiple<br>coding harnesses in parallel</h1>
+    <p>Use your agents and accounts on the same project.<br class="desktop-break"> rota coordinates the work, with reviews and tests before each merge to main.</p>
     <a class="entry-cta" href="/rota/docs/getting-started/">Get started</a>
   </section>
 
-  <figure class="round-example" aria-labelledby="round-caption">
-    <div class="round-label">Example round</div>
-    <div class="round-work">
-      <div class="worker-rows">
-        <div class="worker-row"><span class="issue-number">#12</span><div><strong>Fix login redirect</strong><span>Claude Code <span class="account">Account A</span></span></div></div>
-        <div class="worker-row"><span class="issue-number">#13</span><div><strong>Add CSV export</strong><span>Codex <span class="account">Account B</span></span></div></div>
-      </div>
-      <div class="round-connector" aria-hidden="true"><span></span><span></span></div>
-      <div class="merge-path"><span>Review</span><span>Test with current main</span><span class="merge-result">Merge</span></div>
-    </div>
-    <figcaption id="round-caption">Workers build separately. Each change is checked with the current base before it lands.</figcaption>
-  </figure>
+  {% include rota/round-example.html %}
 
   <div class="entry-body">
     <nav class="entry-nav" aria-label="On this page">
@@ -65,3 +54,4 @@ description: Run coding agents in parallel across your tasks and accounts. rota 
   </div>
 </main>
 <script src="/rota/assets/entry.js" defer></script>
+<script src="/rota/assets/round-example.js?v=1" defer></script>
