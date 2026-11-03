@@ -13,6 +13,12 @@ body { font-size: 1rem; line-height: 1.65; }
 .entry-hero { text-align: center; padding: 5.5rem 0 4.25rem; }
 .entry h1 { font: 400 clamp(2.5rem, 4.8vw, 4.3rem)/1.08 var(--serif); letter-spacing: -.045em; margin: 0; text-wrap: balance; }
 .entry-hero > p { color: var(--muted); font-size: 1.14rem; line-height: 1.6; margin: 1.6rem auto 2rem; max-width: 68ch; }
+.hero-actions { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: .6rem 1.5rem; }
+.hero-actions a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; font-size: .95rem; }
+.hero-start { padding: .65rem 1.25rem; border: 1px solid var(--ink); border-radius: 8px; background: var(--ink); color: var(--paper); font-weight: 500; text-decoration: none; }
+.hero-start:hover { background: var(--muted); border-color: var(--muted); }
+.hero-details { color: var(--muted); text-decoration-color: var(--rule); }
+.hero-details:hover { color: var(--ink); text-decoration-color: var(--ink); }
 .entry-body { display: grid; grid-template-columns: 150px minmax(0, 640px); gap: 3rem; align-items: start; padding-bottom: 2rem; }
 .entry-nav { position: sticky; top: 6rem; display: flex; flex-direction: column; gap: .7rem; padding-top: .25rem; }
 .entry-nav a { font-size: .85rem; color: var(--muted); text-decoration: none; }
