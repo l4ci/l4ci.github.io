@@ -137,8 +137,8 @@ body { font-size: 1rem; line-height: 1.65; }
   .compat-list li { font-size: .85rem; }
 }
 
-/* The CLI wordmark closes the page, with independent glowing ASCII strokes. */
-.closing-ascii { display: grid; place-items: center; padding: 0 0 4rem; pointer-events: none; user-select: none; }
+/* The CLI wordmark emerges below the footer divider as the page scrolls. */
+.closing-ascii { display: grid; place-items: center; padding: 4rem var(--gutter) 2rem; pointer-events: none; user-select: none; }
 .closing-ascii pre { width: max-content; max-width: 100%; margin: 0; padding: 0; border: 0; background: none; color: var(--accent); opacity: .16; font: 600 clamp(9px, 2.75vw, 44px)/1.1 ui-monospace, "SFMono-Regular", Consolas, monospace; letter-spacing: 0; text-align: left; white-space: pre; overflow: visible; }
 .closing-ascii[data-enhanced] pre { opacity: 1; }
 .ascii-piece { opacity: .16; transition: opacity 800ms ease-in-out, text-shadow 800ms ease-in-out; }
