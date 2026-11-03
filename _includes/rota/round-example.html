@@ -3,6 +3,20 @@
   <div class="round-demo-heading">
     <span id="round-title">An example round</span><span class="round-count">One project · separate sessions and accounts</span>
   </div>
+  <div class="round-map">
+    <svg class="round-wires" aria-hidden="true" focusable="false">
+      <defs>
+        <marker id="wire-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1 7 4 1 7"/></marker>
+        <marker id="wire-arrow-active" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1 7 4 1 7"/></marker>
+      </defs>
+      <g data-wire="worker-12"><path class="wire-track"/><path class="wire-motion"/></g>
+      <g data-wire="worker-13"><path class="wire-track"/><path class="wire-motion"/></g>
+      <g data-wire="worker-14"><path class="wire-track"/><path class="wire-motion"/></g>
+      <g data-wire="human"><path class="wire-track"/><path class="wire-motion"/></g>
+      <g data-wire="gate-12"><path class="wire-track"/><path class="wire-motion"/></g>
+      <g data-wire="gate-13"><path class="wire-track"/><path class="wire-motion"/></g>
+      <g data-wire="gate-14"><path class="wire-track"/><path class="wire-motion"/></g>
+    </svg>
   <div class="round-intake">
     <div class="round-node round-you" data-node="you" data-status="active">
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="7" r="3.5"/><path d="M5 21v-3a7 7 0 0 1 14 0v3"/></svg>
@@ -12,13 +26,13 @@
     <div class="round-node" data-node="backlog" data-status="waiting"><div><strong>Backlog</strong><span>Issues #12 · #13 · #14</span></div></div>
     <span class="intake-link" data-intake-link="orchestrator" aria-hidden="true">→</span>
     <div class="round-node round-orchestrator" data-node="orchestrator" data-status="waiting">
-      <svg class="harness-mark" aria-hidden="true"><use href="#i-openai"/></svg>
-      <div><strong>Orchestrator</strong><span>Your Codex session</span><code>$rota-orchestrate</code></div>
+      <svg class="harness-mark" aria-hidden="true"><use href="#i-claude"/></svg>
+      <div><strong>Orchestrator</strong><span>Your Claude Code session</span><code>/rota-orchestrate</code><span class="orchestrator-duty" data-orchestrator-duty>Spawns workers · runs merge gates</span></div>
     </div>
   </div>
-  <div class="round-spawn" data-spawn="waiting"><svg viewBox="0 0 1000 34" preserveAspectRatio="none" aria-hidden="true"><defs><marker id="round-arrow" viewBox="0 0 6 6" refX="5" refY="3" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M1 1 5 3 1 5" fill="none" stroke="currentColor"/></marker></defs><path data-spawn-path marker-end="url(#round-arrow)" d="M820 0V8Q820 17 810 17H150Q140 17 140 26V33"/></svg><span>Spawns workers · one issue per worktree</span></div>
+  <div class="round-spawn"><span>One issue per worker · separate worktrees</span></div>
   <div class="round-lanes">
-    <div class="round-columns" aria-hidden="true"><span>Worker sessions</span><span>PR</span><span>Reviews</span><span>Merge gate</span></div>
+    <div class="round-columns" aria-hidden="true"><span>Worker sessions</span><span>PR</span><span>Reviews</span><span>Merge gate<small>Run by orchestrator</small></span></div>
     <div class="round-lane" role="group" aria-label="Issue 12" data-issue="12" data-state="queued">
       <div class="round-session" role="group" aria-label="Worker session" data-stage="work" data-status="waiting">
         <svg class="harness-mark" aria-hidden="true"><use href="#i-claude"/></svg>
@@ -58,11 +72,11 @@
       <div class="round-stage" role="group" aria-label="Reviews" data-stage="review" data-status="waiting"><span class="stage-mark" aria-hidden="true"></span><span class="stage-name">Reviews</span><span class="stage-status">Waiting</span></div>
       <span class="round-link" data-link="gate" aria-hidden="true"></span>
       <div class="round-stage" role="group" aria-label="Merge gate" data-stage="gate" data-status="waiting"><span class="stage-mark" aria-hidden="true"></span><span class="stage-name">Merge gate</span><span class="stage-status">Waiting</span></div>
-      <div class="round-question-trail"><span>Decision needed → Orchestrator → YOU</span></div>
     </div>
   </div>
+  </div>
   <div class="round-outcome">
-    <span class="round-gate-note">Gate: reviews + tests on current main</span>
+    <span class="round-gate-note">Orchestrator runs the gate: reviews + tests on current main</span>
     <div class="round-delivery"><span data-main-status>main · 0/3 merged</span><span aria-hidden="true">→</span><span class="round-release" data-release="waiting">Release <span data-release-status>On your approval</span></span></div>
   </div>
   <div class="round-message">
@@ -74,5 +88,5 @@
     <div class="round-chapters" role="group" aria-label="Jump to a part of the example round"></div>
     <div class="round-controls"><button type="button" data-round-toggle>Pause</button><button type="button" data-round-next aria-label="Next step in the example round">Next <span aria-hidden="true">→</span></button></div>
   </div>
-  <figcaption id="round-caption">You set the scope, answer product questions and approve releases in your agent session. The orchestrator here uses Codex; Claude Code and OpenCode work too.</figcaption>
+  <figcaption id="round-caption">You set the scope, answer product questions and approve releases in your agent session. The orchestrator here is your Claude Code session. It starts workers, relays decisions and runs the merge gate.</figcaption>
 </figure>

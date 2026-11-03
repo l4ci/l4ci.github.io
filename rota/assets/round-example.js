@@ -5,7 +5,7 @@
   if (!demo) return;
   var steps = [
     { title: "Capture the work", chapter: 0, states: ["queued", "queued", "queued"], route: "YOU → Backlog", text: "You describe the work: fix login, add CSV export and handle empty search. It becomes issues #12, #13 and #14." },
-    { title: "Start your orchestrator", chapter: 0, states: ["queued", "queued", "queued"], route: "Backlog → Orchestrator", text: "You start rota-orchestrate in your Codex session and choose the issues. This session becomes the orchestrator." },
+    { title: "Start your orchestrator", chapter: 0, states: ["queued", "queued", "queued"], route: "Backlog → Orchestrator", text: "You start rota-orchestrate in your Claude Code session and choose the issues. This session becomes the orchestrator." },
     { title: "Spawn worker sessions", chapter: 1, states: ["building", "building", "building"], route: "Orchestrator → Workers", text: "Your orchestrator starts Claude Code, Codex and OpenCode workers. Each gets one issue, its own worktree and a configured account." },
     { title: "Open a pull request", chapter: 1, states: ["building", "pr", "building"], route: "Worker #13 → PR #42", text: "Codex opens a PR for #13. The other workers keep working; workers do not merge their own changes." },
     { title: "Worker raises a question", chapter: 2, states: ["pr", "review", "question"], route: "Worker #14 → Orchestrator", text: "OpenCode asks: \"Should an empty search show all results or an empty state?\" It pauses #14 for that decision." },
@@ -14,8 +14,8 @@
     { title: "Relay the answer", chapter: 2, states: ["fixing", "merged", "building"], route: "Orchestrator → Worker #14", text: "The orchestrator relays your answer: \"{answer}\" OpenCode resumes #14. A fresh Claude session takes the review feedback for #12.", duration: 5500 },
     { title: "Submit updated work", chapter: 3, states: ["pr", "merged", "pr"], route: "Workers → PRs", text: "Claude updates PR #41 with the login fix. OpenCode opens PR #43 with the empty-search behavior you chose." },
     { title: "Review the changes", chapter: 3, states: ["review", "merged", "review"], route: "PRs → Reviews", text: "The orchestrator coordinates reviews of both PRs. The fix for #12 is reviewed again on its updated code." },
-    { title: "Run the merge gate", chapter: 3, states: ["gate", "merged", "approved"], route: "Reviews → Merge gate", text: "#12 enters the gate: required reviews are checked and tests run on the PR combined with current main. #14 waits its turn." },
-    { title: "Check against updated main", chapter: 3, states: ["merged", "merged", "gate"], route: "Merge gate → main", text: "#12 passes and merges. Now #14 runs the gate against the updated main, including the changes from #12 and #13." },
+    { title: "Run the merge gate", chapter: 3, states: ["gate", "merged", "approved"], route: "Orchestrator → Merge gate for #12", text: "Your Claude orchestrator runs the gate for #12: it checks reviews and tests the PR combined with current main. #14 waits its turn." },
+    { title: "Check against updated main", chapter: 3, states: ["merged", "merged", "gate"], route: "Orchestrator → Merge gate for #14", text: "#12 passes and merges. The orchestrator now runs the gate for #14 against the updated main, including #12 and #13." },
     { title: "Prepare the release", chapter: 4, states: ["merged", "merged", "merged"], route: "main → Release preparation", text: "All three issues are on main. You ask for a release; the agent checks the release checklist and prepares the notes." },
     { title: "You approve the release", chapter: 4, states: ["merged", "merged", "merged"], route: "Agent → YOU → Release", text: "You review the release notes and approve publishing. A finished round does not publish a release by itself." },
     { title: "Publish the release", chapter: 4, states: ["merged", "merged", "merged"], route: "Your approval → Release", text: "The agent tags and publishes the release. Your issues, product decision and approved changes are now in the release.", duration: 6500 }
@@ -49,6 +49,53 @@
     return button;
   });
 
+  // Measure the cards so the same connected paths work at every screen size.
+  var map = demo.querySelector(".round-map");
+  var wires = demo.querySelector(".round-wires");
+  function drawConnections() {
+    var bounds = map.getBoundingClientRect();
+    if (!bounds.width) return;
+    wires.setAttribute("viewBox", "0 0 " + bounds.width + " " + bounds.height);
+    function rect(selector) {
+      var r = map.querySelector(selector).getBoundingClientRect();
+      return { left: r.left - bounds.left, right: r.right - bounds.left, top: r.top - bounds.top, bottom: r.bottom - bounds.top, x: (r.left + r.right) / 2 - bounds.left, y: (r.top + r.bottom) / 2 - bounds.top };
+    }
+    function connect(name, points, active, show) {
+      var group = wires.querySelector('[data-wire="' + name + '"]');
+      var d = points.map(function (p, i) { return (i ? "L" : "M") + p.map(function (n) { return n.toFixed(1); }).join(" "); }).join(" ");
+      group.dataset.active = String(active);
+      group.style.display = show === false ? "none" : "";
+      group.querySelectorAll("path").forEach(function (path) { path.setAttribute("d", d); });
+    }
+    var orchestrator = rect('[data-node="orchestrator"]');
+    var you = rect('[data-node="you"]');
+    var mobile = window.matchMedia("(max-width: 620px)").matches;
+    var left = mobile ? 7 : 12;
+    var right = bounds.width - left;
+    var corridor = orchestrator.bottom + 20;
+    [12, 13, 14].forEach(function (issue, i) {
+      var worker = rect('[data-issue="' + issue + '"] .round-session');
+      var workerPath = mobile ? [[orchestrator.left, orchestrator.y], [left, orchestrator.y], [left, worker.y], [worker.left, worker.y]] :
+        [[orchestrator.left + 24, orchestrator.bottom], [orchestrator.left + 24, corridor], [left, corridor], [left, worker.y], [worker.left, worker.y]];
+      if (issue === 14 && (index === 4 || index === 5)) workerPath.reverse();
+      connect("worker-" + issue, workerPath, index === 2 || (issue === 14 && (index === 4 || index === 7)));
+      var gate = rect('[data-issue="' + issue + '"] [data-stage="gate"] .stage-mark');
+      connect("gate-" + issue, [[orchestrator.right, orchestrator.y], [right, orchestrator.y], [right, gate.y], [gate.right, gate.y]], steps[index].states[i] === "gate");
+    });
+    var humanPath = mobile ? [[orchestrator.left, orchestrator.y], [left, orchestrator.y], [left, you.y], [you.left, you.y]] :
+      [[orchestrator.x, orchestrator.top], [orchestrator.x, 9], [you.x, 9], [you.x, you.top]];
+    if (index >= 6) humanPath.reverse();
+    connect("human", humanPath, index === 5 || index === 6 || (index === 7 && motion.matches), index >= 4 && index <= 7);
+  }
+  var drawFrame;
+  function queueConnections() {
+    window.cancelAnimationFrame(drawFrame);
+    drawFrame = window.requestAnimationFrame(drawConnections);
+  }
+  if ("ResizeObserver" in window) new ResizeObserver(queueConnections).observe(map);
+  window.addEventListener("resize", queueConnections);
+  if (document.fonts) document.fonts.ready.then(queueConnections);
+
   function render(nextIndex) {
     index = nextIndex;
     var step = steps[index];
@@ -59,10 +106,8 @@
       demo.querySelector('[data-node="' + node + '"]').dataset.status = active ? "active" : "waiting";
     });
     demo.querySelector("[data-you-status]").textContent = index === 5 ? "Decision needed" : index === 6 ? "Answer the question" : index === 13 ? "Approve the release" : "Scope & decisions";
-    var relay = index === 5 || index === 6;
-    demo.querySelector("[data-spawn]").dataset.spawn = index === 2 || relay ? "active" : "waiting";
-    demo.querySelector("[data-spawn-path]").setAttribute("d", index === 6 ? "M140 0V8Q140 17 150 17H810Q820 17 820 8V1" : relay ? "M820 0V8Q820 17 810 17H150Q140 17 140 8V1" : "M820 0V8Q820 17 810 17H150Q140 17 140 26V33");
-    demo.querySelector(".round-spawn > span").textContent = index === 5 ? "Question → YOU" : index === 6 ? "Your answer → Orchestrator" : "Spawns workers · one issue per worktree";
+    var gatingIssue = step.states.indexOf("gate");
+    demo.querySelector("[data-orchestrator-duty]").textContent = index === 4 ? "Receives #14's question" : index === 5 ? "Asks you for a decision" : index === 6 ? "Receives your answer" : index === 7 ? "Relays your answer to #14" : gatingIssue >= 0 ? "Runs merge gate · #" + (12 + gatingIssue) : "Spawns workers · runs merge gates";
     demo.querySelector('[data-intake-link="backlog"]').dataset.status = index === 0 ? "active" : "waiting";
     demo.querySelector('[data-intake-link="orchestrator"]').dataset.status = index === 1 ? "active" : "waiting";
     lanes.forEach(function (lane, i) {
@@ -82,6 +127,7 @@
         lane.querySelector('[data-link="' + stage + '"]').dataset.status = state[stage];
       });
     });
+    drawConnections();
     var merged = step.states.filter(function (state) { return state === "merged"; }).length;
     demo.querySelector("[data-main-status]").textContent = "main · " + merged + "/3 merged";
     demo.querySelector("[data-release]").dataset.release = index === 14 ? "done" : index >= 12 ? "active" : "waiting";
@@ -106,9 +152,10 @@
   demo.querySelectorAll("[data-answer]").forEach(function (button) {
     button.addEventListener("click", function () {
       answer = button.dataset.answer;
-      paused = true;
+      // Let the answer visibly travel through the orchestrator before work resumes.
+      paused = motion.matches;
+      render(motion.matches ? 7 : 6);
       syncPlayback();
-      render(7);
       // The answer buttons disappear; keep keyboard focus in the demo.
       demo.querySelector("[data-round-next]").focus({ preventScroll: true });
     });
