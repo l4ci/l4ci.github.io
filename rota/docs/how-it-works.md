@@ -1,40 +1,54 @@
 ---
 layout: rota/doc
-title: "How rota works"
-description: "You choose the tasks and make product decisions. rota coordinates the agents that implement, review and check the changes."
+title: "Behind the scenes"
+description: "rota combines an agent session with a Go command-line tool. The agent makes decisions; the binary manages worker sessions, worktrees, state and merge checks."
 permalink: /rota/docs/how-it-works/
 source: docs/how-it-works.md
 ---
 {% raw %}
-You choose the tasks and make product decisions. rota coordinates the agents that implement, review and check the changes.
+rota combines an agent session with a Go command-line tool. The agent makes decisions; the binary manages worker sessions, worktrees, state and merge checks.
 
-## One conversation, several workers
+## The orchestrator calls the CLI
 
-Start `/rota-orchestrate` in your coding agent. That session becomes the orchestrator: it chooses ready issues, assigns workers and follows their progress.
+The orchestrator is your Claude Code, Codex or other supported [agent session](/rota/docs/usage/orchestrator-harnesses/), following the `rota-orchestrate` skill. It calls `rota` through its shell tool, just as a coding agent calls git or a test runner.
 
-Workers run in separate worktrees, using the configured harnesses and accounts. Each builds one issue and opens a PR. The orchestrator handles review and merging.
-
-```text
-                  worker → PR
-ready issues →    worker → PR    → review → merge checks → main
-                  worker → PR
+```mermaid
+flowchart TD
+    Agent["Your agent session: orchestrator"] -->|CLI commands| Rota["rota binary"]
+    Rota -->|Launch, send prompts, read output| Host["herdr or tmux"]
+    Host --> Workers["Claude Code, Codex, OpenCode workers"]
+    Workers -->|Status and questions| Rota
+    Rota --> Project["Worktrees, tracker, review records, merge checks"]
 ```
 
-## Checks before merging
+| Command | What the binary does |
+|---|---|
+| `rota round assign` | Checks readiness, assigns an issue and starts or resumes a worker in its worktree. |
+| `rota worker dispatch` | Sends a brief or relays a message into a worker session. |
+| `rota round watch` | Watches for worker, PR and question changes; returns a report when something changes or a heartbeat is due. |
+| `rota worker gate` | Checks required reviews and approvals, tests the combined code and merges on a pass. |
 
-The merge gate checks the required review records and runs the configured verification on a scratch merge of the PR and the current base. On a failure, the change needs more work. On a pass, it can merge, subject to your approval policy.
+These are commands the orchestrator uses internally. The [CLI reference](/rota/docs/reference/cli-helpers/#rota-round) covers their arguments.
 
-This verifies the combination that will land. What it catches depends on the checks you configure. [Safeguards and limits](/rota/docs/agent-mistakes/).
+## Why herdr or tmux is involved
 
-## You stay in control
+herdr and tmux host the terminal sessions where workers run. rota uses them to launch a harness, send it instructions and read its output or status. Each worker has its own git worktree and can use a different configured account.
 
-Agents bring unresolved product choices back to you. Repeated failed attempts can park an issue for human help. You can require approval before each merge and ask the orchestrator to wind down.
+The tmux adapter sends input with `send-keys` and reads output with `capture-pane`. herdr also exposes agent-status events.
 
-With multiple accounts, rota can distribute work and react to usage limits. [Account and restart behavior](/rota/docs/usage/unattended-rounds/) depends on the harness and supervision you configure.
+Without a host, Claude Code can run workers as subagents in separate worktrees. They share the orchestrator's account. [Worker setup](/rota/docs/first-round/) explains the choices.
 
-## Context stays with the project
+## Keeping routine work out of model context
 
-Knowledge, decisions and handoff notes help later sessions pick up the work. The agent calls the rota CLI to manage this state; you steer the round in your existing conversation.
+Watching sessions, checking git state and running tests happen in ordinary code. A CLI call can perform those steps and return a result, instead of asking the model to work through each operation.
 
-[Start your first round](/rota/docs/getting-started/) · [Other workflows](/rota/docs/skills/workflows/) · [Reference](/rota/docs/reference/)
+`rota round watch` runs in the background. The process checks workers and the forge while the orchestrator remains available to you. With tmux, polling happens inside the binary; it does not need a new model turn for every check. `rota round wait` is the blocking alternative.
+
+This reduces orchestration chatter and repeated terminal output in context. Coding, reviews and decisions still use your agents' tokens.
+
+## Questions and merges come back through the orchestrator
+
+A worker can record a question with `rota worker send`. The watcher reports it, the orchestrator asks you, then relays your answer to the worker. Issue notes and project state preserve the decision beyond that conversation.
+
+Workers open PRs. The orchestrator calls the merge gate, which checks review records and runs the configured verification on the PR combined with current main. A failure returns to the orchestrator for action; a pass can merge under your approval policy. [Safeguards and limits](/rota/docs/agent-mistakes/).
 {% endraw %}

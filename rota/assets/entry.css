@@ -23,7 +23,7 @@ body { font-size: 1rem; line-height: 1.65; }
 .entry-prose p { color: var(--muted); margin: 0 0 1.2rem; font-size: 1.05rem; line-height: 1.75; }
 .entry-prose a { color: var(--ink); text-decoration-color: var(--rule); }
 .entry-prose a:hover { text-decoration-color: var(--ink); }
-.entry-prose .reference-link { border-top: 1px solid var(--rule); padding-top: 1.5rem; font-size: .95rem; }
+.entry-prose .reference-link { display: flex; flex-wrap: wrap; gap: .6rem 1.5rem; border-top: 1px solid var(--rule); padding-top: 1.5rem; font-size: .95rem; }
 .colophon { background: var(--paper); }
 .colophon-inner { max-width: 1160px; padding-top: 2rem; padding-bottom: 2rem; font-family: var(--sans); font-size: .85rem; }
 /* Apply the same palette and quieter type hierarchy to documentation. */
@@ -99,7 +99,7 @@ body { font-size: 1rem; line-height: 1.65; }
 .install-alternatives > span { color: var(--muted); }
 .install-alternatives a { color: var(--muted); text-decoration-color: var(--rule); }
 .install-alternatives a:hover { color: var(--ink); text-decoration-color: var(--ink); }
-.install-next { margin: .75rem 0 0; font-size: .8rem; color: var(--muted); }
+.entry-prose .install-next { margin: .75rem 0 0; font-size: .8rem; color: var(--muted); }
 .install-next a { color: var(--ink); text-decoration-color: var(--rule); }
 @media (max-width: 560px) {
   .install-prompt { padding: .85rem 1rem; }

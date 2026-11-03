@@ -9,9 +9,9 @@
     - title: Worker setup
       url: /rota/docs/first-round/
       desc: "harnesses, accounts and the checks for your first round."
-    - title: How it works
+    - title: Behind the scenes
       url: /rota/docs/how-it-works/
-      desc: "who does the work, who merges and where you come in."
+      desc: "the orchestrator, CLI commands and worker sessions."
 - group: Understand the checks
   items:
     - title: How changes are checked
