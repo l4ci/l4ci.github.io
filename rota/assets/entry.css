@@ -138,12 +138,18 @@ body { font-size: 1rem; line-height: 1.65; }
 }
 
 /* The page and footer slide over a stationary wordmark at the viewport bottom. */
-.is-landing { --ascii-reveal-height: clamp(180px, 27vw, 360px); isolation: isolate; }
+.is-landing {
+  --ascii-base-size: clamp(9px, 2.75vw, 44px);
+  --ascii-font-size: calc(var(--ascii-base-size) * 1.5);
+  --ascii-top-gap: calc((clamp(180px, 27vw, 360px) - var(--ascii-base-size) * 5.5) / 4);
+  --ascii-reveal-height: calc(var(--ascii-top-gap) + var(--ascii-font-size) * 5.1);
+  isolation: isolate;
+}
 .landing-surface { position: relative; z-index: 1; background: var(--paper); }
 .landing-surface .colophon { border-bottom: 1px solid var(--rule); }
 .ascii-reveal { height: var(--ascii-reveal-height); pointer-events: none; user-select: none; }
-.closing-ascii { position: fixed; inset: auto 0 0; z-index: 0; height: var(--ascii-reveal-height); display: grid; place-items: center; padding: 0 var(--gutter); pointer-events: none; user-select: none; }
-.closing-ascii pre { width: max-content; max-width: 100%; margin: 0; padding: 0; border: 0; background: none; color: var(--accent); opacity: .16; font: 600 clamp(9px, 2.75vw, 44px)/1.1 ui-monospace, "SFMono-Regular", Consolas, monospace; letter-spacing: 0; text-align: left; white-space: pre; overflow: visible; }
+.closing-ascii { position: fixed; inset: auto 0 0; z-index: 0; height: var(--ascii-reveal-height); display: grid; justify-items: center; align-items: start; overflow: hidden; padding: var(--ascii-top-gap) var(--gutter) 0; pointer-events: none; user-select: none; }
+.closing-ascii pre { width: max-content; max-width: 100%; margin: 0; padding: 0; border: 0; background: none; color: var(--accent); opacity: .16; font: 600 var(--ascii-font-size)/1.1 ui-monospace, "SFMono-Regular", Consolas, monospace; letter-spacing: 0; text-align: left; white-space: pre; overflow: visible; }
 .closing-ascii[data-enhanced] pre { opacity: 1; }
 .ascii-piece { opacity: .16; transition: opacity 800ms ease-in-out, text-shadow 800ms ease-in-out; }
 .ascii-piece.is-glowing { opacity: .75; text-shadow: 0 0 12px #f0883e, 0 0 30px rgb(240 136 62 / 45%); }
