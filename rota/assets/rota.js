@@ -179,7 +179,7 @@
 
     // Terminal playback: type the command, then print the output a line at a time.
     function prepTerm(term) {
-      if (term.dataset.ready) return;
+      if (term.hasAttribute("data-ready")) return;
       term.dataset.ready = "";
       term.querySelectorAll(".t-you").forEach(function (el) { el.dataset.text = el.textContent; });
       term.querySelectorAll(".t-agent").forEach(function (pre) {

@@ -75,7 +75,7 @@
     </script>
     {% capture rota_ascii %}{% include rota/ascii.txt %}{% endcapture %}
     <script>console.info("%c" + {{ rota_ascii | rstrip | jsonify }}, "color: #f0883e; font-family: monospace;");</script>
-    <script src="/rota/assets/rota.js?v=4" defer></script>
+    <script src="/rota/assets/rota.js?v=5" defer></script>
   </head>
   <body class="{{ page.body_class | default: 'is-doc' }}">
     {% if is_landing %}<div class="landing-surface">{% endif %}
