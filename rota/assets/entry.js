@@ -31,7 +31,6 @@
   var artwork = document.querySelector(".closing-ascii");
   if (!artwork) return;
   var art = artwork.querySelector("pre");
-  var toggle = document.querySelector("[data-glow-toggle]");
   var pieces = [];
   var fragment = document.createDocumentFragment();
   Array.from(art.textContent.trimEnd()).forEach(function (character) {
@@ -48,10 +47,8 @@
   art.replaceChildren(fragment);
   artwork.dataset.enhanced = "true";
   var motion = window.matchMedia("(prefers-reduced-motion: reduce)");
-  var paused = false;
   var visible = !("IntersectionObserver" in window);
   var timers = new Map();
-  try { paused = localStorage.getItem("rota-glow") === "paused"; } catch (e) {}
 
   function clearGlow() {
     timers.forEach(function (timer) { window.clearTimeout(timer); });
@@ -69,18 +66,9 @@
   }
   function sync() {
     clearGlow();
-    if (toggle) {
-      toggle.hidden = motion.matches;
-      toggle.textContent = paused ? "Resume glow" : "Pause glow";
-    }
-    if (paused || motion.matches || document.hidden || !visible) return;
+    if (motion.matches || document.hidden || !visible) return;
     pieces.forEach(function (piece) { schedule(piece, true); });
   }
-  if (toggle) toggle.addEventListener("click", function () {
-    paused = !paused;
-    try { localStorage.setItem("rota-glow", paused ? "paused" : "playing"); } catch (e) {}
-    sync();
-  });
   if ("IntersectionObserver" in window) {
     new IntersectionObserver(function (entries) {
       var next = entries[0].isIntersecting;

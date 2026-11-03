@@ -146,7 +146,6 @@ body { font-size: 1rem; line-height: 1.65; }
   isolation: isolate;
 }
 .landing-surface { position: relative; z-index: 1; background: var(--paper); }
-.landing-surface .colophon { border-bottom: 1px solid var(--rule); }
 .ascii-reveal { height: var(--ascii-reveal-height); pointer-events: none; user-select: none; }
 .closing-ascii { position: fixed; inset: auto 0 0; z-index: 0; height: var(--ascii-reveal-height); display: grid; justify-items: center; align-items: start; overflow: hidden; padding: var(--ascii-top-gap) var(--gutter) 0; pointer-events: none; user-select: none; }
 .closing-ascii pre { width: max-content; max-width: 100%; margin: 0; padding: 0; border: 0; background: none; color: var(--accent); opacity: .16; font: 600 var(--ascii-font-size)/1.1 ui-monospace, "SFMono-Regular", Consolas, monospace; letter-spacing: 0; text-align: left; white-space: pre; overflow: visible; }
@@ -155,10 +154,6 @@ body { font-size: 1rem; line-height: 1.65; }
 .ascii-piece.is-glowing { opacity: .75; text-shadow: 0 0 12px #f0883e, 0 0 30px rgb(240 136 62 / 45%); }
 :root[data-theme="light"] .ascii-piece, :root[data-theme="light"] .closing-ascii:not([data-enhanced]) pre { opacity: .2; }
 :root[data-theme="light"] .ascii-piece.is-glowing { opacity: .8; }
-.glow-toggle { border: 0; padding: 0; background: none; color: var(--muted); font: inherit; text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: .18em; cursor: pointer; }
-@media (hover: hover) {
-  .glow-toggle:hover { color: var(--ink); }
-}
 @media (prefers-reduced-motion: reduce) {
   .ascii-piece { transition: none; }
   .ascii-piece.is-glowing { opacity: .16; text-shadow: none; }
