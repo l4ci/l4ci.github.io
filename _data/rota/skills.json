@@ -910,6 +910,7 @@
    "rota-release"
   ],
   "before": [
+   "rota-init",
    "rota-capture",
    "rota-plan"
   ],
@@ -1007,6 +1008,7 @@
  },
  {
   "after": [
+   "rota-orchestrate",
    "rota-capture",
    "rota-work"
   ],

@@ -4,19 +4,19 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {% if page.permalink == "/rota/" %}
-    <title>rota · make sure what your coding agents merge works</title>
+    <title>rota · orchestrate multiple coding harnesses in parallel</title>
     {% else %}
     <title>{{ page.title | strip_html }} · rota docs</title>
     {% endif %}
-    <meta name="description" content="{{ page.description | default: 'Coding agents write fast; rota makes sure what they merge works. Issues in, reviewed and tested PRs out, for Claude Code, Codex and OpenCode.' | strip_html | escape }}">
-    <meta name="theme-color" content="#F7F8FA" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#0D1117" media="(prefers-color-scheme: dark)">
+    <meta name="description" content="{{ page.description | default: 'Run coding agents in parallel across tasks and accounts, with reviews and configured checks before merging.' | strip_html | escape }}">
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#080808" media="(prefers-color-scheme: dark)">
     <link rel="canonical" href="{{ site.url }}{{ page.url }}">
     {% assign is_landing = false %}{% if page.permalink == "/rota/" %}{% assign is_landing = true %}{% endif %}
-    {% assign desc = page.description | default: 'Coding agents write fast; rota makes sure what they merge works. Issues in, reviewed and tested PRs out, for Claude Code, Codex and OpenCode.' | strip_html | escape %}
+    {% assign desc = page.description | default: 'Run coding agents in parallel across tasks and accounts, with reviews and configured checks before merging.' | strip_html | escape %}
     {% assign og_image = site.url | append: '/rota/assets/og-image.png' %}
-    {% assign og_alt = 'rota: coding agents write fast, rota makes sure what they merge works' %}
-    {% if is_landing %}{% assign og_title = 'rota · make sure what your coding agents merge works' %}{% else %}{% capture og_title %}{{ page.title | strip_html }} · rota docs{% endcapture %}{% endif %}
+    {% assign og_alt = 'rota: run coding agents in parallel' %}
+    {% if is_landing %}{% assign og_title = 'rota · orchestrate multiple coding harnesses in parallel' %}{% else %}{% capture og_title %}{{ page.title | strip_html }} · rota docs{% endcapture %}{% endif %}
     <meta property="og:site_name" content="rota">
     <meta property="og:locale" content="en_US">
     <meta property="og:title" content="{{ og_title | escape }}">
@@ -67,20 +67,24 @@
     <link rel="icon" href="/rota/assets/favicon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/rota/assets/apple-touch-icon.png">
     <link rel="stylesheet" href="/rota/assets/fonts/fonts.css">
-    <link rel="stylesheet" href="/rota/assets/rota.css">
+    <link rel="stylesheet" href="/rota/assets/rota.css?v=2">
+    <link rel="stylesheet" href="/rota/assets/entry.css?v=16">
+    {% if is_landing %}<link rel="stylesheet" href="/rota/assets/round-example.css?v=6">{% endif %}
     <script>
-      try { var t = localStorage.getItem("rota-theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+      try { var t = localStorage.getItem("rota-theme"); document.documentElement.dataset.theme = t === "light" ? "light" : "dark"; } catch (e) { document.documentElement.dataset.theme = "dark"; }
     </script>
-    <script src="/rota/assets/rota.js" defer></script>
+    {% capture rota_ascii %}{% include rota/ascii.txt %}{% endcapture %}
+    <script>console.info("%c" + {{ rota_ascii | rstrip | jsonify }}, "color: #f0883e; font-family: monospace;");</script>
+    <script src="/rota/assets/rota.js?v=5" defer></script>
   </head>
   <body class="{{ page.body_class | default: 'is-doc' }}">
+    {% if is_landing %}<div class="landing-surface">{% endif %}
     <a class="skip" href="#main">Skip to content</a>
     <header class="masthead">
       <a class="brand" href="/rota/" aria-label="rota home">{% include rota/icon.svg %}<span class="wordmark">rota</span></a>
       <nav class="topnav" aria-label="Site">
-        <a href="/rota/examples/"{% if page.url contains '/rota/examples/' %} aria-current="page"{% endif %}>Examples</a>
-        <a href="/rota/docs/"{% if page.url contains '/rota/docs/' %} aria-current="page"{% endif %}>Docs</a>
-        <a href="/rota/docs/install/">Install</a>
+        <a href="/rota/docs/getting-started/"{% if page.url == '/rota/docs/getting-started/' %} aria-current="page"{% endif %}>Start</a>
+        <a href="/rota/docs/"{% if page.url contains '/rota/docs/' and page.url != '/rota/docs/getting-started/' %} aria-current="page"{% endif %}>Docs</a>
         <a href="https://github.com/l4ci/rota">GitHub</a>
         <button class="theme-toggle" type="button" aria-label="Switch colour theme">
           <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg>
@@ -90,7 +94,7 @@
     {{ content }}
     <footer class="colophon">
       <div class="colophon-inner">
-        <p>rota is MIT-licensed and made by <a href="/">Volker Otto</a>.</p>
+        <p class="footer-brand">{% include rota/icon.svg %}<span>rota is MIT-licensed and made by <a href="/">Volker Otto</a>.</span></p>
         <p>
           <a href="https://github.com/l4ci/rota">Source</a>
           <a href="https://github.com/l4ci/rota/releases">Releases</a>
@@ -99,5 +103,11 @@
         </p>
       </div>
     </footer>
+    {% if is_landing %}
+    </div>
+    <div class="ascii-reveal" aria-hidden="true">
+      <div class="closing-ascii"><pre>{% include rota/ascii.txt %}</pre></div>
+    </div>
+    {% endif %}
   </body>
 </html>

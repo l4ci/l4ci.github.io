@@ -1,12 +1,12 @@
 ---
 layout: rota/doc
 title: "Skills"
-description: "One page per /rota-* skill: when to use it, when another skill fits better, what usually comes before and after, and a short example. This index, the README…"
+description: "Look up a skill when you need it. For a first round, start with Getting started. Workflows shows how skills fit together."
 permalink: /rota/docs/skills/
 source: docs/skills/README.md
 ---
 {% raw %}
-One page per `/rota-*` skill: when to use it, when another skill fits better, what usually comes before and after, and a short example. This index, the README skills table and the chains in [how it works](/rota/docs/how-it-works/) are generated from these pages by `scripts/skills-docs.py`, so edit the pages, not those lists.
+Look up a skill when you need it. For a first round, start with [Getting started](/rota/docs/getting-started/). [Workflows](/rota/docs/skills/workflows/) shows how skills fit together.
 
 <!-- generated:skills:index begin -->
 <!-- edit docs/skills/*.md and run python3 scripts/skills-docs.py -->

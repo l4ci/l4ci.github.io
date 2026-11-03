@@ -1,60 +1,43 @@
 /* rota site: standalone styles, shares nothing with volkerotto.net */
 
-:root {
-  --paper: #F7F8FA;
-  --paper-2: #EEF0F3;
-  --ink: #1F2328;
-  --rule: #D0D7DE;
-  --muted: #59636E;
-  --duty: #3348D6;
-  --duty-wash: #E4E8FB;
-  --merged: #1A7F37;
-  --merged-wash: #DCF2E2;
-  --ask: #9A6700;
-  --ask-wash: #FBF0D4;
-  --danger: #CF222E;
-
-  --mono: "Martian Mono", ui-monospace, "SFMono-Regular", Menlo, monospace, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji";
-  --sans: "Atkinson Hyperlegible Next", system-ui, -apple-system, "Segoe UI", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji";
-
-  --measure: 72ch;
-  --gutter: clamp(16px, 4vw, 40px);
-  --radius: 3px;
-  color-scheme: light;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --paper: #0D1117;
-    --paper-2: #161B22;
-    --ink: #F0F6FC;
-    --rule: #30363D;
-    --muted: #9198A1;
-    --duty: #7C8CFF;
-    --duty-wash: #1B2148;
-    --merged: #3FB950;
-    --merged-wash: #12301C;
-    --ask: #D29922;
-    --ask-wash: #33270C;
-    --danger: #FF7B72;
-    color-scheme: dark;
-  }
-}
-
+:root,
 :root[data-theme="dark"] {
-  --paper: #0D1117;
-  --paper-2: #161B22;
-  --ink: #F0F6FC;
-  --rule: #30363D;
-  --muted: #9198A1;
-  --duty: #7C8CFF;
-  --duty-wash: #1B2148;
-  --merged: #3FB950;
-  --merged-wash: #12301C;
-  --ask: #D29922;
-  --ask-wash: #33270C;
-  --danger: #FF7B72;
+  --paper: #080808;
+  --paper-2: #111111;
+  --ink: #ededed;
+  --rule: #292929;
+  --muted: #a0a0a0;
+  --accent: #f0883e;
+  --duty: #ededed;
+  --duty-wash: #1b1b1b;
+  --merged: #ededed;
+  --merged-wash: #191919;
+  --ask: #f0883e;
+  --ask-wash: #191919;
+  --danger: #f0883e;
+  --mono: "Martian Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --sans: "Atkinson Hyperlegible Next", system-ui, -apple-system, sans-serif;
+  --serif: Georgia, "Times New Roman", serif;
+  --measure: 68ch;
+  --gutter: clamp(20px, 4vw, 40px);
+  --radius: 6px;
   color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --paper: #ffffff;
+  --paper-2: #f7f7f7;
+  --ink: #181818;
+  --rule: #dedede;
+  --muted: #626262;
+  --duty: #181818;
+  --duty-wash: #f0f0f0;
+  --merged: #181818;
+  --merged-wash: #f3f3f3;
+  --ask: #626262;
+  --ask-wash: #f3f3f3;
+  --danger: #181818;
+  color-scheme: light;
 }
 
 /* ---- base ---- */

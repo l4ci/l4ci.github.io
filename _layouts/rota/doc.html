@@ -20,6 +20,15 @@ layout: rota/base
       </ul>
     </section>
     {%- endfor %}
+    <section class="docnav-skills">
+      <h2>Skills</h2>
+      <ul>
+        {%- assign quick_skills = site.data.rota.skills | sort: 'skill' -%}
+        {%- for skill in quick_skills %}
+        <li><a href="{{ skill.url }}"{% if skill.url == page.url %} aria-current="page"{% endif %}>{{ skill.skill }}</a></li>
+        {%- endfor %}
+      </ul>
+    </section>
   </nav>
   <main id="main" class="article">
     <article class="prose">
