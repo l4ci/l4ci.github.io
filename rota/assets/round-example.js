@@ -113,7 +113,9 @@
     lanes.forEach(function (lane, i) {
       var state = states[step.states[i]];
       lane.dataset.state = step.states[i];
-      lane.dataset.returned = String(i === 0 && index >= 6);
+      lane.dataset.returned = String(i === 0 && state.review === "bounced");
+      var feedback = lane.querySelector(".round-return");
+      if (feedback) feedback.setAttribute("aria-hidden", String(state.review !== "bounced"));
       lane.querySelector("[data-session-status]").textContent = state.label;
       if (i === 0) lane.querySelector("[data-session-account]").textContent = index >= 7 ? "· Account D · fresh session" : "· Account A";
       ["work", "pr", "review", "gate"].forEach(function (stage) {
