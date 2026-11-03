@@ -70,20 +70,21 @@
     var orchestrator = rect('[data-node="orchestrator"]');
     var you = rect('[data-node="you"]');
     var mobile = window.matchMedia("(max-width: 620px)").matches;
-    var left = mobile ? 7 : 12;
+    var left = mobile ? 18 : 28;
     var right = bounds.width - left;
-    var corridor = orchestrator.bottom + 20;
+    var backlog = rect('[data-node="backlog"]');
+    var intakeGap = (backlog.bottom + orchestrator.top) / 2;
+    var inputOffset = (orchestrator.right - orchestrator.left) / 4;
+    connect("backlog", [[backlog.x, backlog.bottom], [backlog.x, intakeGap], [orchestrator.right - inputOffset, intakeGap], [orchestrator.right - inputOffset, orchestrator.top]], index === 1);
     [12, 13, 14].forEach(function (issue, i) {
       var worker = rect('[data-issue="' + issue + '"] .round-session');
-      var workerPath = mobile ? [[orchestrator.left, orchestrator.y], [left, orchestrator.y], [left, worker.y], [worker.left, worker.y]] :
-        [[orchestrator.left + 24, orchestrator.bottom], [orchestrator.left + 24, corridor], [left, corridor], [left, worker.y], [worker.left, worker.y]];
+      var workerPath = [[orchestrator.left, orchestrator.y], [left, orchestrator.y], [left, worker.y], [worker.left, worker.y]];
       if (issue === 14 && (index === 4 || index === 5)) workerPath.reverse();
       connect("worker-" + issue, workerPath, index === 2 || (issue === 14 && (index === 4 || index === 7)));
       var gate = rect('[data-issue="' + issue + '"] [data-stage="gate"] .stage-mark');
       connect("gate-" + issue, [[orchestrator.right, orchestrator.y], [right, orchestrator.y], [right, gate.y], [gate.right, gate.y]], steps[index].states[i] === "gate");
     });
-    var humanPath = mobile ? [[orchestrator.left, orchestrator.y], [left, orchestrator.y], [left, you.y], [you.left, you.y]] :
-      [[orchestrator.x, orchestrator.top], [orchestrator.x, 9], [you.x, 9], [you.x, you.top]];
+    var humanPath = [[orchestrator.left + inputOffset, orchestrator.top], [orchestrator.left + inputOffset, intakeGap], [you.x, intakeGap], [you.x, you.bottom]];
     if (index >= 6) humanPath.reverse();
     connect("human", humanPath, index === 5 || index === 6 || (index === 7 && motion.matches), index >= 4 && index <= 7);
   }
@@ -109,7 +110,6 @@
     var gatingIssue = step.states.indexOf("gate");
     demo.querySelector("[data-orchestrator-duty]").textContent = index === 4 ? "Receives #14's question" : index === 5 ? "Asks you for a decision" : index === 6 ? "Receives your answer" : index === 7 ? "Relays your answer to #14" : gatingIssue >= 0 ? "Runs merge gate · #" + (12 + gatingIssue) : "Spawns workers · runs merge gates";
     demo.querySelector('[data-intake-link="backlog"]').dataset.status = index === 0 ? "active" : "waiting";
-    demo.querySelector('[data-intake-link="orchestrator"]').dataset.status = index === 1 ? "active" : "waiting";
     lanes.forEach(function (lane, i) {
       var state = states[step.states[i]];
       lane.dataset.state = step.states[i];
@@ -117,7 +117,7 @@
       var feedback = lane.querySelector(".round-return");
       if (feedback) feedback.setAttribute("aria-hidden", String(state.review !== "bounced"));
       lane.querySelector("[data-session-status]").textContent = state.label;
-      if (i === 0) lane.querySelector("[data-session-account]").textContent = index >= 7 ? "· Account D · fresh session" : "· Account A";
+      if (i === 0) lane.querySelector("[data-session-account]").textContent = index >= 7 ? "Account D" : "Account A";
       ["work", "pr", "review", "gate"].forEach(function (stage) {
         var node = lane.querySelector('[data-stage="' + stage + '"]');
         node.dataset.status = state[stage];

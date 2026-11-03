@@ -1,9 +1,9 @@
 /* A round is a set of independent lanes. Orange marks work in motion. */
-.round-demo { margin: 0 auto 6rem; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); overflow: hidden; --lane-columns: minmax(240px, 1.8fr) minmax(20px, .45fr) minmax(65px, .6fr) minmax(20px, .45fr) minmax(85px, .8fr) minmax(20px, .45fr) minmax(90px, .8fr); }
+.round-demo { margin: 0 auto 6rem; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); overflow: hidden; --lane-columns: minmax(205px, 1.5fr) minmax(20px, .3fr) minmax(65px, .6fr) minmax(20px, .3fr) minmax(85px, .8fr) minmax(20px, .3fr) minmax(90px, .8fr); }
 .round-demo-heading { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1.15rem 1.6rem; border-bottom: 1px solid var(--rule); font-size: .8rem; color: var(--muted); }
 .round-count { font-size: .75rem; }
 .round-count > span[aria-hidden] { margin: 0 .35rem; }
-.round-lanes { padding: .9rem 1.6rem .4rem; }
+.round-lanes { padding: .9rem 3rem .4rem 5rem; }
 .round-columns, .round-lane { display: grid; grid-template-columns: var(--lane-columns); align-items: center; }
 .round-columns { font: 400 .68rem/1.5 var(--mono); color: var(--muted); margin-bottom: 1rem; }
 .round-columns span:not(:first-child) { text-align: center; }
@@ -84,7 +84,7 @@
 @keyframes round-return { to { stroke-dashoffset: 28; } }
 @media (max-width: 820px) {
   .round-demo { --lane-columns: minmax(205px, 1.6fr) minmax(10px, .25fr) minmax(68px, .8fr) minmax(10px, .25fr) minmax(68px, .8fr) minmax(10px, .25fr) minmax(80px, .7fr); margin-bottom: 4rem; }
-  .round-lanes { padding: .75rem 1rem; }
+  .round-lanes { padding: .75rem 2.5rem .4rem 4rem; }
   .round-session { padding: .7rem .65rem; gap: .15rem .5rem; }
   .session-status { font-size: .6rem; }
   .round-columns { font-size: .6rem; }
@@ -94,7 +94,7 @@
   .round-demo { margin-bottom: 3rem; }
   .round-demo-heading { padding: 1rem; }
   .round-count { display: none; }
-  .round-lanes { padding: .3rem 1rem 0; }
+  .round-lanes { padding: .3rem 2.5rem 0 3.25rem; }
   .round-columns { display: none; }
   .round-lane { grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 1rem 0; row-gap: .8rem; }
   .round-lane + .round-lane { border-top: 1px solid var(--rule); }
@@ -119,7 +119,9 @@
 @media (prefers-reduced-motion: reduce) {
   .round-demo *, .round-demo *::after { animation: none !important; transition: none !important; }
 }
-.round-intake { display: grid; grid-template-columns: 1fr 2rem 1fr 2rem 1.4fr; align-items: stretch; padding: 1.3rem 1.6rem 0; }
+.round-intake { display: flex; flex-direction: column; align-items: center; gap: 2.25rem; padding: 1.3rem 1.6rem 0; }
+.round-inputs { display: grid; grid-template-columns: minmax(0, 1fr) 2rem minmax(0, 1fr); align-items: stretch; width: min(100%, 560px); }
+.round-orchestrator { width: min(100%, 320px); }
 .round-node { display: flex; align-items: center; gap: .8rem; border: 1px solid var(--rule); border-radius: 5px; padding: .75rem 1rem; min-width: 0; transition: border-color 250ms; }
 .round-node > div { display: grid; gap: .2rem; }
 .round-node strong { font-weight: 500; font-size: .9rem; }
@@ -134,7 +136,7 @@
 .round-session[data-status="question"] .session-status { color: var(--ink); }
 .round-session[data-status="question"] .harness-mark { color: var(--accent); }
 @media (max-width: 820px) {
-  .round-intake { padding: 1rem 1rem 0; grid-template-columns: 1fr 1.5rem 1fr 1.5rem 1.4fr; }
+  .round-intake { padding: 1rem 1rem 0; }
   .round-node { padding: .6rem; gap: .5rem; }
   .round-node strong { font-size: .8rem; }
   .round-node span { font-size: .65rem; }
@@ -143,13 +145,18 @@
   .round-you > svg { width: 18px; flex-basis: 18px; }
 }
 @media (max-width: 620px) {
-  .round-intake { grid-template-columns: minmax(0, 1fr); padding-bottom: .5rem; }
+  .round-intake { padding-bottom: .5rem; }
+  .round-inputs { grid-template-columns: minmax(0, 1fr) 1.5rem minmax(0, 1fr); }
+  .round-orchestrator { width: calc(100% - 2.5rem); }
+  .round-inputs .round-node { padding: .6rem; gap: .4rem; }
+  .round-inputs .round-node > div { display: grid; }
+  .round-inputs .round-node span { font-size: .65rem; }
   .round-node { min-height: 56px; padding: .7rem .8rem; }
   .round-node > div { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: .65rem; }
   .round-node strong { font-size: .9rem; }
   .round-node span { font-size: .72rem; }
   .round-node code { flex-basis: 100%; font-size: .6rem; }
-  .intake-link { height: 25px; transform: rotate(90deg); line-height: 25px; }
+  .intake-link { line-height: 25px; }
   .round-spawn { height: 32px; margin: 0 1rem; }
   .round-spawn span { left: .6rem; top: 6px; transform: none; font-size: .6rem; padding: 0; }
   .round-outcome { padding: .8rem 1rem; }

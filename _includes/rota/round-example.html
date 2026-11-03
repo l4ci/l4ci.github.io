@@ -9,6 +9,7 @@
         <marker id="wire-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1 7 4 1 7"/></marker>
         <marker id="wire-arrow-active" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1 7 4 1 7"/></marker>
       </defs>
+      <g data-wire="backlog"><path class="wire-track"/><path class="wire-motion"/></g>
       <g data-wire="worker-12"><path class="wire-track"/><path class="wire-motion"/></g>
       <g data-wire="worker-13"><path class="wire-track"/><path class="wire-motion"/></g>
       <g data-wire="worker-14"><path class="wire-track"/><path class="wire-motion"/></g>
@@ -18,13 +19,14 @@
       <g data-wire="gate-14"><path class="wire-track"/><path class="wire-motion"/></g>
     </svg>
   <div class="round-intake">
+    <div class="round-inputs">
     <div class="round-node round-you" data-node="you" data-status="active">
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="7" r="3.5"/><path d="M5 21v-3a7 7 0 0 1 14 0v3"/></svg>
       <div><strong>YOU</strong><span data-you-status>Describe the work</span></div>
     </div>
     <span class="intake-link" data-intake-link="backlog" aria-hidden="true">→</span>
     <div class="round-node" data-node="backlog" data-status="waiting"><div><strong>Backlog</strong><span>Issues #12 · #13 · #14</span></div></div>
-    <span class="intake-link" data-intake-link="orchestrator" aria-hidden="true">→</span>
+    </div>
     <div class="round-node round-orchestrator" data-node="orchestrator" data-status="waiting">
       <svg class="harness-mark" aria-hidden="true"><use href="#i-claude"/></svg>
       <div><strong>Orchestrator</strong><span>Your Claude Code session</span><code>/rota-orchestrate</code><span class="orchestrator-duty" data-orchestrator-duty>Spawns workers · runs merge gates</span></div>
@@ -34,9 +36,9 @@
   <div class="round-lanes">
     <div class="round-columns" aria-hidden="true"><span>Worker sessions</span><span>PR</span><span>Reviews</span><span>Merge gate<small>Run by orchestrator</small></span></div>
     <div class="round-lane" role="group" aria-label="Issue 12" data-issue="12" data-state="queued">
-      <div class="round-session" role="group" aria-label="Worker session" data-stage="work" data-status="waiting">
-        <svg class="harness-mark" aria-hidden="true"><use href="#i-claude"/></svg>
-        <div class="session-copy"><strong>Issue #12</strong><span>Claude Code <span data-session-account>· Account A</span></span><span class="session-worktree">worktree /issue-12</span></div>
+      <div class="round-session" role="group" aria-label="Claude Code worker session" data-stage="work" data-status="waiting">
+        <svg class="harness-mark" aria-hidden="true"><title>Claude Code</title><use href="#i-claude"/></svg>
+        <div class="session-copy"><strong>Issue #12</strong><span data-session-account>Account A</span><span class="session-worktree">worktree /issue-12</span></div>
         <span class="session-status" data-session-status>Queued</span>
       </div>
       <span class="round-link" data-link="pr" aria-hidden="true"></span>
@@ -48,9 +50,9 @@
       <div class="round-return" aria-hidden="true"><svg viewBox="0 0 400 26" preserveAspectRatio="none" aria-hidden="true"><path d="M390 1V9Q390 18 380 18H20Q10 18 10 9V1"/><path d="m5 7 5-6 5 6"/></svg><span>Review feedback → fresh Claude session</span></div>
     </div>
     <div class="round-lane" role="group" aria-label="Issue 13" data-issue="13" data-state="queued">
-      <div class="round-session" role="group" aria-label="Worker session" data-stage="work" data-status="waiting">
-        <svg class="harness-mark" aria-hidden="true"><use href="#i-openai"/></svg>
-        <div class="session-copy"><strong>Issue #13</strong><span>Codex <span data-session-account>· Account B</span></span><span class="session-worktree">worktree /issue-13</span></div>
+      <div class="round-session" role="group" aria-label="Codex worker session" data-stage="work" data-status="waiting">
+        <svg class="harness-mark" aria-hidden="true"><title>Codex</title><use href="#i-openai"/></svg>
+        <div class="session-copy"><strong>Issue #13</strong><span data-session-account>Account B</span><span class="session-worktree">worktree /issue-13</span></div>
         <span class="session-status" data-session-status>Queued</span>
       </div>
       <span class="round-link" data-link="pr" aria-hidden="true"></span>
@@ -61,9 +63,9 @@
       <div class="round-stage" role="group" aria-label="Merge gate" data-stage="gate" data-status="waiting"><span class="stage-mark" aria-hidden="true"></span><span class="stage-name">Merge gate</span><span class="stage-status">Waiting</span></div>
     </div>
     <div class="round-lane" role="group" aria-label="Issue 14" data-issue="14" data-state="queued">
-      <div class="round-session" role="group" aria-label="Worker session" data-stage="work" data-status="waiting">
-        <svg class="harness-mark" aria-hidden="true"><use href="#i-opencode"/></svg>
-        <div class="session-copy"><strong>Issue #14</strong><span>OpenCode <span data-session-account>· Account C</span></span><span class="session-worktree">worktree /issue-14</span></div>
+      <div class="round-session" role="group" aria-label="OpenCode worker session" data-stage="work" data-status="waiting">
+        <svg class="harness-mark" aria-hidden="true"><title>OpenCode</title><use href="#i-opencode"/></svg>
+        <div class="session-copy"><strong>Issue #14</strong><span data-session-account>Account C</span><span class="session-worktree">worktree /issue-14</span></div>
         <span class="session-status" data-session-status>Queued</span>
       </div>
       <span class="round-link" data-link="pr" aria-hidden="true"></span>

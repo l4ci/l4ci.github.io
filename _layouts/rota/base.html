@@ -68,11 +68,13 @@
     <link rel="apple-touch-icon" href="/rota/assets/apple-touch-icon.png">
     <link rel="stylesheet" href="/rota/assets/fonts/fonts.css">
     <link rel="stylesheet" href="/rota/assets/rota.css?v=2">
-    <link rel="stylesheet" href="/rota/assets/entry.css?v=7">
-    {% if is_landing %}<link rel="stylesheet" href="/rota/assets/round-example.css?v=4">{% endif %}
+    <link rel="stylesheet" href="/rota/assets/entry.css?v=9">
+    {% if is_landing %}<link rel="stylesheet" href="/rota/assets/round-example.css?v=5">{% endif %}
     <script>
       try { var t = localStorage.getItem("rota-theme"); document.documentElement.dataset.theme = t === "light" ? "light" : "dark"; } catch (e) { document.documentElement.dataset.theme = "dark"; }
     </script>
+    {% capture rota_ascii %}{% include rota/ascii.txt %}{% endcapture %}
+    <script>console.info("%c" + {{ rota_ascii | rstrip | jsonify }}, "color: #f0883e; font-family: monospace;");</script>
     <script src="/rota/assets/rota.js?v=3" defer></script>
   </head>
   <body class="{{ page.body_class | default: 'is-doc' }}">
@@ -91,12 +93,13 @@
     {{ content }}
     <footer class="colophon">
       <div class="colophon-inner">
-        <p>rota is MIT-licensed and made by <a href="/">Volker Otto</a>.</p>
+        <p class="footer-brand">{% include rota/icon.svg %}<span>rota is MIT-licensed and made by <a href="/">Volker Otto</a>.</span></p>
         <p>
           <a href="https://github.com/l4ci/rota">Source</a>
           <a href="https://github.com/l4ci/rota/releases">Releases</a>
           <a href="https://github.com/l4ci/rota/issues">Issues</a>
           <a href="/imprint/">Imprint</a>
+          {% if is_landing %}<button class="glow-toggle" type="button" data-glow-toggle hidden>Pause glow</button>{% endif %}
         </p>
       </div>
     </footer>
