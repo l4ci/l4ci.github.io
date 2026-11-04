@@ -134,12 +134,19 @@ An active round retains its recorded host; changing a setting does not migrate i
 `rota orchestrate` runs the existing keepalive supervisor in the visible project
 terminal. An explicit conflicting launch host is refused.
 
-Core workers currently support **Codex with native OSC 7501 status reporting**.
+Core workers currently support **Codex and Claude with native OSC 7501 status reporting**.
 Rota probes the launch flags and account login, then requires the spawned process
 to report readiness. If folder trust appears first, trust the primary project in
 a regular Codex session and retry; Rota leaves that dialog untouched. Codex keeps the default account unless configured otherwise.
-Claude/OpenCode worker preflight refuses Core with guidance to use Codex or an
-existing host. No template or legacy integration installation is required.
+Claude workers need Claude Code's folder trust once for each new slot worktree
+folder: open `claude` once in that folder and accept the prompt. Until then the
+worker sits on the trust dialog and assign fails after the boot timeout with an
+error naming the dialog; accept it, then retry the assign with the same request id. Beyond that, Claude needs no
+extra setup: Claude Code reports its status to Core itself, and
+rota skips the empty-composer check for it (a half-typed human draft is not guarded
+against; Core's `blocked` status and rota's dialog check still refuse a send into a
+permission prompt or question). OpenCode preflight refuses Core with guidance to
+use Codex, Claude or an existing host. No template or legacy integration installation is required.
 
 Core launches preserve terminal identity inside Codex shell tools with per-run
 native `shell_environment_policy.set` values. They read the actual terminal's
@@ -256,6 +263,13 @@ slot `wait` named, or gate a PR in review by number (`rota worker gate 61 --base
 
 Each verb's arguments, data and exit codes are in `docs/contributing/contract/`. Every verb
 takes `--json` for a machine-readable envelope.
+
+`rota worker gate`, `rota round watch` and the sharded `test/gate.sh` also report to the terminal
+over OSC 7501 (the Program Status Protocol herdr, Ghostty and the Core app read): `working` while
+they run, then `done` or `error` (a refused or failing gate is `error`; `test/gate.sh` adds
+`progress` as its checks finish). The record goes to stderr, only when stdout and stderr are both
+terminals and not under `--json`, so piped and JSON output are unchanged. Terminals that do not
+know the sequence ignore it.
 
 ## The status screen
 
@@ -502,6 +516,14 @@ is left out when it has a recorded FAIL review or second-opinion verdict, when i
 blocking finding, when the gate sent it back at its current head (a push clears that), or when
 it is already merged or closed. The autopilot assigns by itself, so
 a watch running with `--autopilot` skips the assign line but still prints the train line.
+
+When the preview finds two of the waiting PRs conflicting, the nudge says so before any train starts:
+one `nudge train-conflict` line per pair names the PRs and paths and suggests landing the first, then
+merging the base into the other's branch or routing the conflict to its worker. The `train` line then
+names the largest conflict-free set (the `worker train --plan` landable set) as its command and lists
+the order-blocked PRs with what they conflict with; `trainNudge` in JSON gains `conflicts` and
+`orderBlocked` rows. The preview needs the base checked out in the orchestrator's repo; without it the
+nudge reads as before.
 
 Set `round.trainMax` and `round.trainFillMinutes` to wait for a fuller train or an age deadline.
 The tick and nudge wait until either threshold fires on one base. For example, `3` and `60` wait
