@@ -12,6 +12,9 @@
     - title: Behind the scenes
       url: /rota/docs/how-it-works/
       desc: "the orchestrator, CLI commands and worker sessions."
+    - title: Videos
+      url: /rota/docs/videos/
+      desc: "short episodes about why rota exists and how to use it."
 - group: Understand the checks
   items:
     - title: How changes are checked

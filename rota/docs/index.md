@@ -21,6 +21,7 @@ Alternative: [Homebrew](/rota/docs/reference/installation/#homebrew) · [curl](/
 - [Get started](/rota/docs/getting-started/): install, set up your project and start a round from your coding agent.
 - [Worker setup](/rota/docs/first-round/): harnesses, accounts and the checks for your first round.
 - [Behind the scenes](/rota/docs/how-it-works/): the orchestrator, CLI commands and worker sessions.
+- [Videos](/rota/docs/videos/): short episodes about why rota exists and how to use it.
 
 ### Understand the checks
 
