@@ -204,15 +204,38 @@ pickup even for unsigned Claude relays absorbed into a running turn. An earlier
 relay or a task brief's tag does not confirm pickup; a relay still visible in a
 queue preview stays queued, including an earlier entry when several messages
 share one footer. Claude's queue footer counts only beside the active composer;
-agent output quoting its label does not establish a queue. Startup dialogs,
-missing status and human drafts refuse input; Rota never forces a send or answers
+agent output quoting its label does not establish a queue. The captured Claude
+queue layouts have blank padding and an optional spinner above the composer
+rule. A queue with tip or todo rows below the spinner has not been captured or
+verified. Startup dialogs, missing status and human drafts refuse input; Rota
+never forces a send or answers
 an unknown dialog. Each accepted composer needs a complete read-only styled
 paint: the guard checks continuation rows as well as the prompt row, and literal
-prompt glyphs in drafts remain input.
+prompt glyphs in drafts remain input. Composer markers and empty-input
+placeholders come from the harness adapter selected by Core's native app
+identity. Legacy captures infer the adapter from the composer marker; a
+placeholder belonging to another harness remains draft text.
 Unknown layouts refuse dispatch; clear the draft or resolve the unsupported
 rendering before retrying. Retry the same message to reconcile its saved signed payload. An uncertain send is retained as
-unknown and never pasted again automatically; inspect the original worker before
-recovery. These client receipts do not promise formal exactly-once delivery
+unknown and never pasted again automatically. Inspect the original worker's
+screen first. If the maintainer confirms that nothing was typed, clear that
+unknown delivery without sending input:
+
+```bash
+rota worker dispatch ben --confirm-not-submitted
+```
+
+Then retry the original dispatch or send the next relay. Confirmation keeps the
+terminal and signing key and retracts the uncertain relay's provisional log entry,
+so retrying it keeps its sequence. It refuses accepted or queued input, positive
+pickup evidence and a replaced terminal. It also refuses when Core's turn has
+advanced or a previously idle or done worker starts working, even when the
+message echo has scrolled away. The saved delivery records that confirmation
+was made by hand and when. Use this flag alone, without a body file
+or other dispatch flags. Definite Core rejections, including `invalid_params`,
+report not submitted and allow a normal retry without confirmation.
+
+These client receipts do not promise formal exactly-once delivery
 against arbitrary concurrent human edits. Ownership records and delivery receipts
 live under `$XDG_STATE_HOME/rota/herdr-core` (default
 `~/.local/state/rota/herdr-core`); retain them through recovery so cleanup can
