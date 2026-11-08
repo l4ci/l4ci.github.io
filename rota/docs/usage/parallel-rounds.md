@@ -1067,7 +1067,7 @@ With two or more reviewed PRs waiting on one base, `rota worker train <slot|PR>.
 default way to land them; a single `gate` is for exactly one waiting PR. The train gates them together and
 pays for the verify once instead of once per PR. A gate or train takes 2 to 3 minutes: start it
 as a background command, review the next PRs meanwhile, and read the verdict when it
-exits. `round assign` and `round transfer` refuse (`gate-running`, naming the PR the gate holds the lock for) until it exits; `round watch` returns when the lock clears, so assign freed slots then. The autopilot tick reports `deferred` instead of erroring. Don't start a second gate or train beside it, and don't write tracked `.rota/` files on the base
+exits. `round assign` refuses (`gate-running`, naming the PR the gate holds the lock for) only a slot whose branch or PR the gate or train holds; other slots stay assignable, because the gate verifies in its own scratch tree. A lock that names no slot or PR, and every assign on the file backend, still refuses all slots. `round transfer` refuses while any gate or train runs. `round watch` returns when the lock clears, so retry a refused verb then. The autopilot tick reports `deferred` instead of erroring. Don't start a second gate or train beside it, and don't write tracked `.rota/` files on the base
 checkout until it exits; the checkout guard fails the gate on a changed tracked file. It checks each member the way `gate --check-only` does,
 merges them onto the base in a scratch worktree in the order it picks, runs `test.full` on that
 tree, then `test.e2e` when set (the most expensive tier runs once per train, not once per PR), and on a pass lands every member through the gate in order. If the base or a member's head moved
@@ -1091,8 +1091,11 @@ With `test.fullWhere` set to `ci` the train pushes its merged tree as `rota/ci/t
 
 A red train, from either tier, bisects (up to ceil(log2 n) extra verifies, on the assumption that the base is green; a red base is reported as such): it verifies growing prefixes of the order and names the first member whose merge
 breaks the tree as the `culprit` (the verdict is `verify-failed`). That can be an interaction with the members before it, not that PR alone.
-Nothing lands unless you pass `--land-green`, which lands the verified members before the culprit. A
-member that conflicts with the base plus the ones before it is `merge-failed` with that member named.
+Nothing lands unless you pass `--land-green`, which lands the members before the culprit, and only a
+prefix whose own verify ran green: a prefix that went red only during diagnosis never lands.
+When the failure already names the test, `--on-fail stop` skips the bisect: the train ends after the
+red run with its evidence, names no culprit and lands nothing, so `--land-green` has no effect with
+it. A member that conflicts with the base plus the ones before it is `merge-failed` with that member named.
 One merge approval covers the whole train. Bounces are not counted.
 
 To find the members that can go together before a train refuses, run `rota worker train <members> --base <branch> --plan`. It runs no tests and pushes nothing. It lists the member pairs that conflict, names the largest conflict-free subset in merge order, lists the rest as order-blocked with the member each conflicts with, and prints the `rota worker train ... --order ...` line that lands that subset. It exits 0 with or without conflicts.
