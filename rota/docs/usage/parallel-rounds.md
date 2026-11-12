@@ -504,7 +504,11 @@ The autopilot skips that refusal and continues to the next candidate.
   the second worker's brief.
 - **Open PR.** An issue an open PR already resolves (head branch `<agent>/<issue>-*` or `Closes #N`)
   is `not ready: waiting on open PR #M` in `round candidates`, and `assign` refuses it. `--accept-open-pr`
-  assigns it again for a deliberate redo.
+  assigns it again for a deliberate redo when the head belongs to the target agent. If the head
+  is another agent's round branch, assign still refuses with `blockedBy: open PR`, naming the head
+  and `rota round transfer <ID> --to <agent>` to pick it up; it creates no branch, claim or binding.
+  PRs matched only by `Closes #N` with a head outside the round-branch naming scheme keep the
+  existing redo behavior. An accepted redo binds the slot and waits for its worker's own done.
 - **Deferred follow-up.** A follow-up item filed by `rota verdict add --file-deferred` is
   `not ready: depends on PR #N` while its source PR is open. It turns ready when that PR merges
   or is closed without merging.
@@ -646,6 +650,8 @@ slot needs attention, a PR or an escalation changes, or after `--heartbeat` seco
 nothing to report, and the harness wakes the orchestrator when it exits. Keep exactly one running and
 re-arm it after every wake; a second one is refused (exit 4). The registry is read every `--poll`
 seconds and the forge every `--forge-poll`; `reason` in the result says which woke it.
+A permission prompt the watch already returned does not wake the next watch again until the slot has been
+seen working (you answered it) or a heartbeat exit passes, so a worker stuck on a prompt is returned once per heartbeat; `rota round wait` still returns it on every call.
 The exit digest says the watch is exiting and must be re-armed; the prompt hook reports
 whether a watch is currently armed.
 
@@ -1207,6 +1213,12 @@ In practice:
 4. Run the same train command again. It skips the members already merged, merges the base again, verifies the tip, and opens the one PR to `main` (or updates its body).
 5. Review the fix commits: `rota review package integration/r<round>-ui` starts at the first fix, then run /rota-review on it.
 6. Land everything with `rota worker gate <PR> --base main`. On a pass the member issues end and their slots park.
+
+#### Stack an integration branch
+
+While the maintainer reviews one integration branch, the next batch can be verified on top of it: `rota worker train 51 52 --base main --integration b --onto a` builds `integration/r<round>-b` on the tip of the open `integration/r<round>-a`, and its PR targets that branch instead of `main`. `--base` stays the base `a` integrates into. The members keep their PRs on `main`.
+
+The stacked branch cannot land while `a` is open: `rota worker gate` refuses it (`stale`) and names `a`. It refuses the same way when `a` was closed without landing. When `a` lands, rota retargets the stacked PR to `main`, merges `main` into the stacked branch and pushes it (`STACK-RETARGET`). If that merge left the tree as the train verified it, the verify stands and the landing skips a second one. If it changed the tree, the gate verifies again (`INTEGRATION-REVERIFY`). When a step fails, the landing of `a` still stands and says `pending`; gating the stacked PR repeats the move.
 
 ## Best-of: two workers on one issue
 
