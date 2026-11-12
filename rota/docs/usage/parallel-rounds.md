@@ -62,6 +62,20 @@ a round is the same idea with the assignment, waiting and merging done by verbs.
 
    `rota worker account list` then shows each Claude account with its usage verdict, plus Codex current account quota reports for configured homes, or the caller-current ambient home when none are configured. Codex weekly capacity is display-only; it does not affect account selection. See [Codex weekly capacity](/rota/docs/usage/codex-workers/#read-current-weekly-capacity).
 
+   Claude usage comes from the OAuth usage endpoint, read through the cache Claude Code's status line writes
+   (`/tmp/claude/statusline-usage[-<8 hex of sha256(config dir)>].json`, shared with the herdr `limits` mod).
+   A cache under 5 minutes old is read without a request; files that are symlinks or not yours are ignored.
+   Any failed request (an HTTP error, a transport error, a body that is not usage JSON) writes `<cache>.backoff`
+   holding the `Retry-After` as the server gave it, else 300 seconds. A wait over one hour is capped at
+   one hour when read, never when written. No request goes out for that account until it passes. rota also
+   writes `<cache>.reason` (the mod ignores it) so a held backoff keeps saying what went wrong; a backoff
+   rota did not write reads `backing off after a failed request (retry in Ns)`. The verdict says why a
+   reading is missing: `rate limited (retry in Ns)`, `login expired` (401/403), `usage endpoint returned
+   <code>` or `usage endpoint unreachable`. A utilization outside 0..100 reads as unknown, not headroom.
+   `rota worker account list` marks the account `assign` would take (`<- assign picks this`,
+   `"picked": true` in JSON): the one with the most headroom among accounts that are not cooling and have no
+   login problem. An unreadable meter is picked only when no account has a readable one.
+
 4. **Issues a worker can pick up.** A candidate needs acceptance criteria or a design or plan note,
    closed dependencies and no file overlap with work in flight (see [Picking issues](#picking-issues)).
 5. **Subagent definitions.** `rota init` runs `rota agents write`, which writes
@@ -240,6 +254,17 @@ The saved delivery records that confirmation was made by hand and when.
 Use this flag alone, without a body file
 or other dispatch flags. Definite Core rejections, including `invalid_params`,
 report not submitted and allow a normal retry without confirmation.
+
+The orchestrator does not run that itself. To keep a round moving while the
+maintainer has not answered, give the issue to another slot:
+
+```bash
+rota round transfer <id> --to <free slot>
+```
+
+Transfer parks the stuck slot and leaves its unknown delivery in place, so that
+slot stays blocked until the delivery is confirmed. The refusal message names both
+paths.
 
 These client receipts do not promise formal exactly-once delivery
 against arbitrary concurrent human edits. Ownership records and delivery receipts
@@ -591,10 +616,11 @@ gating it. Missing reviews, an incomplete probe or an unreadable PR head make it
 report the problem and wait. A known PR identity or state verdict goes to the real
 gate, which handles mismatches and already-merged PRs; it also checks reviews
 before merging. A merge conflict, failed verification (including CI and
-train checks), or vacuous-test result holds that head across watch
+train checks), vacuous-test result or train interaction holds that head across watch
 restarts, worker busy/done transitions, and moving the PR into the review queue;
-a push with a new head permits another attempt. A train member skipped because
-another member failed can still run. Temporary refusals such as a busy gate,
+a push with a new head permits another attempt. An interaction holds every member it
+names: a new head on one releases only that one (see [Merge train](#merge-train) for releasing the others). A train member skipped because
+another member failed can still run, and so can every member of a train whose red did not reproduce (`TRAIN-FAIL unreproduced`). Temporary refusals such as a busy gate,
 forge trouble, train order, missing CI or a verification timeout retry on the
 next tick without a push. Configuration, approval and assignment refusals
 (`ci-config-changed`, `no-verify`, `stale-attempt`) also retry: those conditions
@@ -634,7 +660,12 @@ Neither applies to a solo round, which has no panes to watch.
 which every worker tab has and the orchestrator and your own sessions do not, and does nothing without
 it. For a worker it refuses (exit 2, one-line reason) the commands the worker contract forbids:
 
-- `gh pr merge`
+- `gh pr merge`, and `gh api` with a write method (`-X PUT`, `--method`, or a `-f`/`-F` body) on a
+  path ending in `/merge`
+- a push to the base branch (`main`, `master`, or the base the caller passes in `GuardEnv.Base`), plain
+  or forced, including `HEAD:main` and a bare `git push origin main`; the hook does not read the
+  project base from config yet, so only `main` and `master` are covered in practice. A bare `git push`
+  that resolves to such an upstream is not inspected
 - a force-push (`--force`, `-f`, `--force-with-lease`, `+ref`) to any branch but the worker's own,
   `git push --delete`, `:ref` and `--mirror`; pushing the current branch, with or without
   `--force-with-lease`, is fine
@@ -646,14 +677,16 @@ it. For a worker it refuses (exit 2, one-line reason) the commands the worker co
 It parses the command line, so `git -C <dir> push -f`, `/usr/bin/git`, `sudo`, `env`, `timeout`, `xargs`,
 `bash -c '…'`, `$(…)` and `a && b` chains are all seen; text inside an argument or a commit message is not.
 When the line mentions `git` or `gh` and the guard cannot parse it, or cannot read the branch or worktree
-it needs, it refuses and asks for the plain command.
+it needs, it refuses and asks for the plain command. It also follows a changed directory or git dir:
+`env -C`, `sudo -D`, `pushd` (including `-n` and stack rotation) and `GIT_DIR=`. A `pushd` option it
+does not model is refused. `@` counts as `HEAD` in push refspecs.
 
 Install it in `project` or `user` scope (`rota hook install --scope project`): a worker's worktree does
 not read the untracked `.claude/settings.local.json`. `install` warns when the guard sits only there, and
 `rota doctor` fails its `guard-hook` check.
 
 Limits: this is a guardrail against a mistaken agent, not a security boundary. A script or `python -c`
-that calls git, or a binary that shells out, is not seen, and `gh api …/merge` is not blocked. Codex
+that calls git, or a binary that shells out, is not seen. Codex
 workers have no guard (`doctor` warns when Codex tiers are set); a Codex guard is a separate piece of work.
 
 ## Layout
@@ -805,7 +838,7 @@ A worker that printed `ROTA-DONE` keeps its PR open for review. When a reviewer 
 - `round.reviewLoop: manual` (the default): `rota round watch` wakes you with a `review/<slot>` change and `rota round tick` lists a `review` item. You run `rota round review-relay <slot>`.
 - `round.reviewLoop: auto`: `round watch` and `round tick` run it themselves, and a tick lists it as `did review-relay`.
 
-`review-relay` counts one bounce on the item (the same counter as the gate and `round bounce`), sends the comments to the worker as a signed `REVIEW` relay and marks the slot `busy`. The worker checks each comment against the code, fixes what holds, pushes, answers on the PR with `rota worker reply`, and prints `ROTA-DONE` again. At `round.freshAt` (default 2) the relay is a transfer instead: the branch moves to a free slot at the same tier with a brief of the findings still open in the last review and the review link, so the second attempt does not inherit a context that already holds the wrong model. With no free slot it relays in place and says so. At `round.maxBounces` nothing is relayed: the slot stays `done`, rota escalates once on the PR, and under `auto` the tick does not merge it. Hand the item to a stronger worker or to the human, as in [Bounce it](#prs-in-review). The merge stays yours: the loop never gates or merges. Under `manual` the tick only lists the review item and merges as before; under `auto` it skips the merge for a slot it relayed or could not relay. The same text is written to the slot's durable inbox first: the pane copy can cross a worker's `ROTA-DONE`, so `rota worker inbox <slot>` shows the worker what it missed and `rota worker done` refuses while that mail is unread or its request remains pending.
+`review-relay` counts one bounce on the item (the same counter as `round bounce`), sends the comments to the worker as a signed `REVIEW` relay and marks the slot `busy`. The worker checks each comment against the code, fixes what holds, pushes, answers on the PR with `rota worker reply`, and prints `ROTA-DONE` again. At `round.freshAt` (default 2) the relay is a transfer instead: the branch moves to a free slot at the same tier with a brief of the findings still open in the last review and the review link, so the second attempt does not inherit a context that already holds the wrong model. With no free slot it relays in place and says so. At `round.maxBounces` nothing is relayed: the slot stays `done`, rota escalates once on the PR, and under `auto` the tick does not merge it. Hand the item to a stronger worker or to the human, as in [Bounce it](#prs-in-review). The merge stays yours: the loop never gates or merges. Under `manual` the tick only lists the review item and merges as before; under `auto` it skips the merge for a slot it relayed or could not relay. The same text is written to the slot's durable inbox first: the pane copy can cross a worker's `ROTA-DONE`, so `rota worker inbox <slot>` shows the worker what it missed and `rota worker done` refuses while that mail is unread or its request remains pending.
 
 ### Reading and resolving inbox requests
 
@@ -1045,7 +1078,7 @@ A branch that is only behind the base is merged as is when the merge is clean, e
 changed a file: the `STALE-MERGE` note names the shared files (`round.sharedPaths` aside) and the gate
 verifies the merged tree. Only a conflict sends it back as `stale`. A `stale` or `provenance-fail` refusal is not a bounce: it is
 counted nowhere and never parks the item, because the worker repairs it (merge the base, fix the PR body). Review bounces
-still count per item; at `round.maxBounces` (default 3) the item is parked `needs-human` (a pass resets the count, and `0` turns the cap off).
+still count per item (`round bounce` and the review relay only); at `round.maxBounces` (default 3) `round bounce` refuses (exit 4) and the review relay escalates on the PR. Nothing parks the item. A pass resets the count, and `0` turns the cap off.
 
 ### CI and `GITHUB_TOKEN`
 
@@ -1090,8 +1123,14 @@ Gates and trains on one repository queue on a single lock (`<git-common-dir>/rot
 With `test.fullWhere` set to `ci` the train pushes its merged tree as `rota/ci/train` and waits for CI instead of running `test.full` here (`test.e2e` still runs here, after CI is green); bisect pushes each prefix the same way, one CI run per step. `test.ciChecks` names the checks that must pass and must not be empty. If a listed check never appears or CI does not finish in time the verdict is `ci-not-run` or `verify-timeout`, and nothing lands; a member that changes the CI definition stops it as `ci-config-changed`. See [running the full tier on CI](/rota/docs/usage/configuration/#running-the-full-tier-on-ci).
 
 A red train, from either tier, bisects (up to ceil(log2 n) extra verifies, on the assumption that the base is green; a red base is reported as such): it verifies growing prefixes of the order and names the first member whose merge
-breaks the tree as the `culprit` (the verdict is `verify-failed`). That can be an interaction with the members before it, not that PR alone.
-Nothing lands unless you pass `--land-green`, which lands the members before the culprit, and only a
+breaks the tree. Before it blames that member, the train reruns only the failing tests on the base plus that member alone, so a red ends in one of three classes:
+
+- **Culprit**: the member is red alone. The verdict is `verify-failed` and the member is named `culprit`. Send it back to its worker.
+- **Interaction**: the member is green alone, but red together with an earlier member (the train reruns the pairs in order and names the first red one), or only with all the members before it. The verdict is `interaction`, the message starts `TRAIN-INTERACTION` and names the members, and no member is the culprit: no PR notice goes out and no bounce is counted. Hold those members and fix the interaction on one of them, then train again. The autopilot holds each at its head and lists it as `train-interaction` in `needsYou` (`fix on one of: a, c; bounce neither`). A new head on the member you fix releases only that member; the others stay held at their unchanged heads. Once the fix lands, release each of them by merging the base into its branch (a new head), or land it by hand with `rota worker gate` or `rota worker train`, which do not read the autopilot's holds. When the interaction names every member up to the red one, train them two at a time to find the pair.
+- **Flake**: a command whose failing tests pass on the one sequential retry inside the run never reaches the bisect. It is recorded as `FLAKY` (see below) and blames nobody. A red that survives that retry but passes on the member alone, on every pair and on a rerun of the red prefix is a flake too: the message starts `TRAIN-FAIL unreproduced`, `FLAKY` notes name the failing tests, and no member is the culprit, sent a PR notice or blamed in the train cache. Train again. The autopilot holds no member: it skips them all, reports none in `needsYou`, and the next tick trains them again.
+
+The reruns select the failing tests through `test.vacuousCommand` (`{packages}`, `{tests}`) when the output names them, and otherwise rerun the failed command; their time counts as diagnosis. A member that does not merge on the base alone, and a train verified on CI (`test.fullWhere: ci`), keep the old culprit naming, with a `TRAIN-UNCLASSIFIED` note.
+Nothing lands unless you pass `--land-green`, which lands the members before the culprit (or before the member the bisect stopped on, for an interaction), and only a
 prefix whose own verify ran green: a prefix that went red only during diagnosis never lands.
 When the failure already names the test, `--on-fail stop` skips the bisect: the train ends after the
 red run with its evidence, names no culprit and lands nothing, so `--land-green` has no effect with
@@ -1147,6 +1186,27 @@ every time. Each approval is appended to `.rota/gate-audit.jsonl`. This policy h
 [configuration](/rota/docs/usage/configuration/#shipmergeapproval-and-shipmergeapprovalpaths).
 
 `rota worker gate <slot> --check-only` judges freshness, PR identity and provenance and merges nothing.
+
+#### Integration branch
+
+`rota worker train <PR>... --base <branch> --integration <name>` lands nothing on the base. It merges each reviewed member `--no-ff` into `integration/r<round>-<name>`, at the head its review was checked at, merges the base in after them, pushes that branch and records it under `integrations` in `workers.json`. The branch is pushed before the verify, so a red tip still leaves a branch to fix on. Members must be PRs, the round must be started, and the flag cannot go with `--plan`, `--land-green` or `--on-fail stop`. `round.batch` keeps its meaning (the in-flight item cap). An integration train takes its own lock, not the land lock, so a long verify does not hold up other landings.
+
+A rerun starts from the pushed tip. Members already in it are skipped (`INTEGRATED`), a member whose head moved merges again (its new head needs its own review first, as for any train member), and the base merges in again when it moved. The push is a plain fast-forward: a branch that moved since the run started is refused (`base-moved`), never overwritten.
+
+A member that conflicts, or a red test that passes on each member alone, is an interaction, not a culprit: the verdict is `interaction`, nothing is bounced and nothing lands. For a conflict, the members before it are pushed and the member is recorded as pending with the paths. The train files one interaction item (`INTERACTION-ITEM`), linked to the member issues and recorded on the branch, and a rerun with the same interaction reuses it. Assign it like any issue: its slot is cut from the integration branch and its PR targets that branch. The gate refuses that PR on any other base, and it gets no review of its own (`REVIEW-DEFERRED`). It is reviewed with the branch's other fix commits.
+
+Review covers only the fix commits, the first-parent commits on the branch that rota did not merge itself. A tip with none needs no review. Otherwise the gate wants the verdicts its review depth asks for, recorded at a commit after which only rota's merges follow. `rota review package integration/r<round>-<name>` defaults `--since` to just before the first fix.
+
+A green train opens one PR from the branch to the base, with `## Assumptions`, `## Rulings` and a `Closes #N` line per member issue, and prints it; a rerun rewrites that body, so a member it added is closed too. A train run with `--no-verify` (or an empty `test.full`) records no verified tip (`INTEGRATION-UNVERIFIED`), and the gate verifies instead. Land it with `rota worker gate <PR> --base <branch>`, not the merge button. When the head is the tip the train verified and the base has not moved since, the gate lands without a second verify (`INTEGRATION-VERIFIED`). Otherwise it merges the base and verifies again (`INTEGRATION-REVERIFY`). A pending member, or one whose branch moved or is gone since its merge, refuses the landing (`stale`) until a rerun of the train. A plain train refuses the integration PR as a member: only the gate lands it. On landing the member PRs leave the review queue, their issues close through the `Closes` lines, the slots that held them are parked, and the record is marked landed, so `rota round reconcile` has nothing to repair.
+
+In practice:
+
+1. Train the reviewed PRs into the branch: `rota worker train 41 42 43 --base main --integration ui`. It pushes `integration/r<round>-ui`.
+2. If it answers `interaction`, assign the item it filed (`INTERACTION-ITEM <id>`): `rota round assign <id>`. The slot's branch is cut from the integration branch and its PR targets it.
+3. Land that fix PR into the branch with `rota worker gate <slot> --base integration/r<round>-ui`. It needs no review of its own (`REVIEW-DEFERRED`).
+4. Run the same train command again. It skips the members already merged, merges the base again, verifies the tip, and opens the one PR to `main` (or updates its body).
+5. Review the fix commits: `rota review package integration/r<round>-ui` starts at the first fix, then run /rota-review on it.
+6. Land everything with `rota worker gate <PR> --base main`. On a pass the member issues end and their slots park.
 
 ## Best-of: two workers on one issue
 
@@ -1405,7 +1465,7 @@ closed (and `--json` adds it as `summary`). With no ledger it prints nothing ext
 Run it from the orchestrator that holds the lease, with the base checked out and clean in
 the project root. It re-verifies the base (`test.full`), then parks every
 roster slot on `park/<agent>` and releases the claims, then releases the lease. A red base
-(`verify-failed`, exit 1) keeps the lease. A slot with uncommitted changes or commits not on
+(`verify-failed`, exit 1) keeps the lease and leaves the autopilot stopped, so it cannot assign or merge onto a red base: fix the base, then run wind-down again (a green verify ends the round once no slot retains work). A slot with uncommitted changes or commits not on
 the base is reported as `retained` and left alone (`holds-work`, exit 4) and the lease is kept; the other slots are
 parked anyway, so fix the slot and run it again. It deletes no branch and clears no label: the
 `drift` count says what `rota round reconcile` and `rota reap` still have to do. After a round, run

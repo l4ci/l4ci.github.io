@@ -168,7 +168,7 @@ Every key, by group. Scope is the layer the key belongs in, with the file `rota 
 | `round.claimStaleMinutes` | project (tracked) | int | `240` |  | Rounds: Minutes without branch or PR activity before a bug, task or Minor/Cosmetic feature claim is stale. 0 disables stale detection for this class. |
 | `round.claimStaleMinutesMajor` | project (tracked) | int | `480` |  | Rounds: Minutes without branch or PR activity before a Major feature claim is stale. 0 disables stale detection for this class. |
 | `round.stallMinutes` | project (tracked) | int | `30` |  | Rounds: Minutes a slot with a live agent may show no commit, edit or state change before rota round reconcile reports it stalled. 0 turns the check off. |
-| `round.maxBounces` | project (tracked) | int | `3` |  | Rounds: How often rota worker gate may send one item's PR back before it parks the item as needs-human. 0 turns the cap off. |
+| `round.maxBounces` | project (tracked) | int | `3` |  | Rounds: How often one item's PR may be bounced (rota round bounce, rota round review-relay). The gate never counts or parks. At the cap round bounce refuses (exit 4) and the review relay escalates on the PR. 0 turns the cap off. |
 | `round.followupReserve` | machine (local) | int | `0` |  | Rounds: Roster slots past round.slots kept for follow-ups a person asks for on a PR whose worker moved on. Under round.reviewLoop auto the autopilot starts such a follow-up before backlog work, on an idle round slot or else one of these; backlog work never goes to them. rota round start provisions them. 0 keeps none. |
 | `round.freshAt` | project (tracked) | int | `2` |  | Rounds: Bounce count at which rota round review-relay stops resuming the worker and transfers the branch to a free slot at the same tier, with a brief of the open findings only. Must stay below round.maxBounces to act. 0 turns it off. |
 | `round.ledgerKeep` | project (tracked) | int | `0` |  | Rounds: Rounds of the round ledger (.rota/ledger.jsonl) to keep. A new round trims the entries of older rounds. 0 keeps everything. |
@@ -211,7 +211,7 @@ Every key, by group. Scope is the layer the key belongs in, with the file `rota 
 | `ship.qa` | taste (tracked) | bool | `false` |  | Opt-in product-QA gate: /rota-ship runs /rota-qa run after review and before merge or PR. |
 | `ship.uat` | taste (tracked) | bool | `false` |  | Opt-in human acceptance walk-through: /rota-ship runs /rota-qa uat after review and before merge or PR. Never part of the round merge gate. |
 | `ship.mergeApproval` | project (tracked) | enum | `"none"` | `none`, `all`, `paths` | Which merges need a human: none, all, or only those touching ship.mergeApprovalPaths. The merge verbs enforce it at every autonomy level. |
-| `ship.mergeApprovalPaths` | project (tracked) | list | `[]` |  | Repo-relative paths or globs that need human approval when ship.mergeApproval is paths. |
+| `ship.mergeApprovalPaths` | project (tracked) | list | `[]` |  | Repo-relative paths or globs that need human approval when ship.mergeApproval is paths. ** matches any number of directories. |
 
 ### qa
 
@@ -330,7 +330,7 @@ Every key, by group. Scope is the layer the key belongs in, with the file `rota 
 |-----|-------|------|---------|--------|-------------|
 | `review.fileDeferred` | taste (tracked) | enum | `"major"` | `minor`, `major`, `off` | Which deferred review findings rota verdict add --file-deferred files, as one follow-up item per PR. minor: minor and major. major: only major (minor stays in the verdict record). off: none. A PR that closes a deferred-findings item files none. |
 | `review.crossLabels` | project (tracked) | list | `["size:Major", "risk:high"]` |  | Issue labels that make a PR need a cross-harness review: one read-only review on a harness other than the author's, recorded as a review-cross verdict the merge gate requires. Applies only when round.harnesses is set. A review:<harness> label (claude or codex) picks the reviewer, review:none skips it. Empty: no PR needs one. |
-| `review.lenses` | project (tracked) | object | `{}` |  | Review lenses: per lens (security, perf, ux), the path globs and issue labels that make /rota-review run one focused reviewer on that axis, as {"security": {"paths": ["internal/git/**"], "labels": ["risk:security"]}}. Globs allow * within a segment and a trailing /** for a directory. The merge gate requires a review-<lens> verdict at head for each triggered lens. An unknown lens or a malformed glob is an error. Empty: no lens triggers. |
+| `review.lenses` | project (tracked) | object | `{}` |  | Review lenses: per lens (security, perf, ux), the path globs and issue labels that make /rota-review run one focused reviewer on that axis, as {"security": {"paths": ["internal/git/**"], "labels": ["risk:security"]}}. Globs allow * within a segment and ** as a whole segment for any number of directories; no leading /, no braces, no empty segment except one trailing /. The merge gate requires a review-<lens> verdict at head for each triggered lens. An unknown lens or a malformed glob is an error. Empty: no lens triggers. |
 
 ### roles
 

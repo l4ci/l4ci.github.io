@@ -16,7 +16,7 @@ source: docs/usage/review-and-ship.md
 
 Before dispatch, the caller runs `rota review prepare <reviewed-sha> --json` for each reviewer. It resolves the commit once and returns its `head` and disposable tree `path`, with a `.review/` directory for the copied brief and diff. Reviewers use that tree as their working directory. Missing commits, archive or extraction failures, and incomplete setup stop dispatch; the live checkout is never a fallback.
 
-The caller runs `rota review cleanup <path>` after success, failure or cancellation. Cleanup requires the matching ownership record and removes only that workspace. A cleanup failure is reported with its path. Keep the same temporary-directory environment for preparation and cleanup.
+The caller runs `rota review cleanup <path>` after success, failure or cancellation. Cleanup requires the matching ownership record and removes only that workspace. A path that reaches the workspace through a symlinked ancestor (macOS `/var/folders` for `/private/var/folders`) is resolved first; a symlinked workspace directory or `tree` is refused. A cleanup failure is reported with its path. Keep the same temporary-directory environment for preparation and cleanup.
 
 These workspaces also serve cross-harness, second-opinion and release-range reviews. Reviewers remain read-only. Run binary probes from the workspace through the caller's installed `rota review probe -- <command> [<arg>...]`, for example `rota review probe -- ./rota config show`. Each invocation creates a temporary HOME, XDG roots and tool config roots, runs the command, and removes the temporary state after success or failure. A setup failure prevents the command from starting; a cleanup failure reports the remaining path. Use `--json` before `--` for the command's `stdout`, `stderr` and `exitCode`. Seed and inspect config in one shell invocation when a probe needs several steps in the same temporary state.
 
@@ -139,7 +139,7 @@ Security, performance and UX get one line of attention in the Standards reviewer
 rota config set review.lenses '{"security": {"paths": ["internal/git/**"], "labels": ["risk:security"]}, "ux": {"paths": ["internal/cli/**"]}}'
 ```
 
-Globs allow `*` within a segment and a trailing `/**` for a directory. An unknown lens name or a malformed glob is a config error naming `review.lenses`. A lens triggers when a changed file (renames count both paths) or a label of the branch's issue, or of any issue in a bundled slot, matches. At depth `none` none triggers.
+Globs follow the shared rule: `*` within a segment, `**` as a whole segment for any number of directories, no leading `/`, no braces, no empty segment except one trailing `/` for a directory. An unknown lens name or a malformed glob is a config error naming `review.lenses`. A lens triggers when a changed file (renames count both paths) or a label of the branch's issue, or of any issue in a bundled slot, matches. At depth `none` none triggers.
 
 - **What shows.** `rota review depth --json` lists `lenses`: one `{name, why}` per triggered lens, with `why` as `path <file>` or `label <name>`. A branch that triggers none lists an empty array.
 - **What runs.** `/rota-review` runs one read-only reviewer per triggered lens beside Spec and Standards, at `full` and at `light`: `security` on `orchestrator.model`, `perf` and `ux` on the standard tier. Each records `review-security`, `review-perf` or `review-ux` (PASS, CONCERNS or FAIL) at the reviewed commit. A `--since` re-review runs the triggered lenses again on the fix range, majors only.
