@@ -272,6 +272,11 @@ All writes target the umbrella `.rota/DECISIONS.md`, reject `--repo`, and refres
 
 ## `rota milestone`
 
+For stored milestone, plan, design, spike and debug session documents, `show`
+exits 3 when the file is missing and 5 (`unavailable`) for other filesystem
+errors. Document stat or removal errors from `plan rm`, `design rm` and
+`debug session rm` follow the same rule. The error names the path and OS error.
+
 | Usage | What it does |
 |---|---|
 | `rota milestone add --title <text> --summary <text> [--depends M01,M02] [--kind <delivery\|decision>]` | mint a milestone; `--kind decision` adds `kind: decision` and empty `## Decisions` and `## Not yet specified` sections |
@@ -469,7 +474,7 @@ Read-only, runs without `.rota/`. Exit 1 when any check fails; every failure car
 
 | Usage | What it does |
 |---|---|
-| `rota reap [--kind <worktree\|branch\|tab\|process\|lease\|skillcache>[,…]] [--apply]` | list, and with `--apply` remove, what a round left behind that nothing live owns, and the extracted skill trees of other rota versions |
+| `rota reap [--kind <worktree\|branch\|tab\|lease\|skillcache>[,…]] [--apply]` | list, and with `--apply` remove, what a round left behind that nothing live owns, and the extracted skill trees of other rota versions |
 
 Previews by default. It never kills a running agent and never deletes work: a candidate that holds uncommitted changes or unmerged commits is listed with `held` and left alone. Exit 1 under `--apply` when a deletion failed. Exit 5, with nothing listed or deleted, when `.rota/workers.json` exists but does not parse; `rota worker pool reap` refuses the same way.
 
