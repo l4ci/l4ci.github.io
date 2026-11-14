@@ -12,7 +12,9 @@ Each page puts rota beside one other tool: what each is for, a side-by-side tabl
 
 - [GSD](/rota/docs/compare/gsd/): spec-driven phases from discuss to ship
 - [Superpowers](/rota/docs/compare/superpowers/): a skills methodology for many harnesses
+- [Spec Kit](/rota/docs/compare/spec-kit/): GitHub's spec, plan and tasks toolkit for 40+ agents
 - [OpenSpec](/rota/docs/compare/openspec/): living specs and delta change folders
+- [Elephant-Goldfish Model](/rota/docs/compare/elephant-goldfish/): design docs reviewed by fresh-context agents
 - [ralph](/rota/docs/compare/ralph/): a fresh-context loop over a `prd.json`
 
 **Parallel agents** in worktrees:
