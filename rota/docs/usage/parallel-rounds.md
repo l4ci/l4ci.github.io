@@ -62,6 +62,8 @@ a round is the same idea with the assignment, waiting and merging done by verbs.
 
    `rota worker account list` then shows each Claude account with its usage verdict, plus Codex current account quota reports for configured homes, or the caller-current ambient home when none are configured. Codex weekly capacity is display-only; it does not affect account selection. See [Codex weekly capacity](/rota/docs/usage/codex-workers/#read-current-weekly-capacity).
 
+   To keep a login for cross-harness review only, list it in `review.accounts` instead: it never takes a worker issue (see [review and ship](/rota/docs/usage/review-and-ship/#cross-harness-review)). A `round.harnesses` list whose harnesses all have only review logins places no worker: `rota round assign` refuses and names `round.accounts`.
+
    Claude usage comes from the OAuth usage endpoint, read through the cache Claude Code's status line writes
    (`/tmp/claude/statusline-usage[-<8 hex of sha256(config dir)>].json`, shared with the herdr `limits` mod).
    A cache under 5 minutes old is read without a request; files that are symlinks or not yours are ignored.
@@ -485,21 +487,28 @@ The autopilot skips that refusal and continues to the next candidate.
 - **Kind.** `--kind codex` starts a Codex worker instead of a Claude one; see
   [Codex workers](/rota/docs/usage/codex-workers/). An issue can ask for its own harness and model: label it
   `harness:claude` or `harness:codex`, and optionally `model:<id>` (file backend: end the bullet with
-  `Harness: codex Model: <id>`). Harness: `--kind`, then the label, then the first entry of `round.harnesses` (the project default), then the
-  slot's kind, else `claude` (a slot resuming its own issue keeps its kind ahead of the project default); `kindSource` in `round status` and `assign --check-only` names the winner. Model: `--model <id>`, then the label, then the tier map, else the harness default.
+  `Harness: codex Model: <id>`). Harness: `--kind`, then the label, then the usage pick below; a slot resuming its own issue keeps its kind and account. `kindSource` in `round status` and `assign --check-only` names the winner. Model: `--model <id>`, then the label, then the tier map, else the harness default.
   An unknown harness, two labels of one key, or a model id with anything beyond letters, digits and
   `. _ : / @ -` refuses with exit 4 (`blockedBy` `harness label` or `model label`). A model named by
   flag or label needs a `{model}` placeholder in the harness's command. `round candidates` and
   `round status` show the choice.
-  **Quota fallback.** List the harnesses a round may use in `round.harnesses` (`[claude, codex]`);
-  the first is the project default. When every account of an
-  issue's harness is cooling down and a later entry has headroom, `assign` and the tick give the
-  issue to that harness (`kindSource` `quota fallback`), label it `harness:<kind>` (file backend:
-  the `Harness:` field) and record `fallbackFrom` in the ledger. The label makes the pick explicit
-  for a later re-assign. An issue pinned by `--kind`, a `harness:` label, `--model` or a `model:`
-  label never falls back and is refused with `blockedBy: quota`. `round status` and
-  `round candidates` show `fallback` while it is active, with the first harness's reset time.
-  Unset: only the default harness.
+  **Balancing by usage.** Every `round.accounts` entry is in the worker pool, whatever its harness.
+  List the harnesses a round may use in `round.harnesses` (`[claude, codex]`; it also breaks ties) and,
+  for an issue with no `harness:` or `model:` label and no `--kind` or `--model`, `assign` and the tick
+  pick the account with the most headroom across them and run that account's harness (`kindSource`
+  `usage`). Headroom is 100 minus the highest used percent over every window the meter reports (Claude
+  5h and 7d, Codex every window of its quota report), so the numbers compare across providers. An
+  account whose reading is unavailable is unknown: it never beats a known one. A slot stays on the
+  account it ran under last unless the best account is `round.accountRebalanceMargin` points (default
+  20) ahead or its own account is cooling; `0` never moves it. Among accounts within the margin of the
+  best, a fresh slot takes the one holding the fewest slots, then the `round.harnesses` order, so one
+  tick does not send every slot to one account. `--kind` or a `harness:` label leaves that harness's
+  accounts; `--model` or a `model:` label the harness whose `round.tiers` names the model. With no
+  usable account `assign` is refused with `blockedBy: quota`, naming the restriction. The output and
+  `--json` `placement` name the account, its harness and headroom, and whether the slot kept or moved.
+  A usage pick writes no label, so the next assign balances again. The change reaches the next
+  dispatch only, never a running session. With `round.harnesses` unset and no `round.accounts`
+  entries there is nothing to balance.
 - **Overlap.** `--accept-overlap` skips the file-overlap check only. Say which PR merges first in
   the second worker's brief.
 - **Open PR.** An issue an open PR already resolves (head branch `<agent>/<issue>-*` or `Closes #N`)
@@ -771,7 +780,9 @@ Runs only under `autonomy.level: auto`; under `off` or `roundtrip` both verbs ex
    threshold is reached, or a slot is idle with nothing assignable, mint the review items
    (`round.architectureEvery` 0 never mints), one audit line per mint;
 5. assign the first ready candidate of the round's scope to each idle slot, at most
-   `round.autopilotCap`, at the default tier and never with `--accept-overlap`. Review items
+   `round.autopilotCap`, at the default tier and never with `--accept-overlap` (with
+   `round.autoBundle` on, strictly related small issues go to one slot as a bundle, see
+   [Bundles](#bundles-one-worker-several-small-issues)). Review items
    minted in the same tick go first, and count against the same cap. While every account is cooling
    down from a usage limit, steps 3 to 5 are skipped and the tick says why (`capped`). Likewise
    at `round.batch` open items: the tick assigns nothing and says `batch-full`; gating and merging
@@ -819,7 +830,13 @@ whose worker is busy, blocked or has uncommitted files is never taken.
   a gate that left the PR merged with a red verify of the landed tree (`merged-remotely` included). A merged PR never stays under `review`.
   `rota worker gate <slot>` on a slot whose PR moved to review is refused with the PR to gate, so a
   habitual slot gate never merges the slot's next branch.
-- **Bounce it**: `rota round transfer <issue> --to <free slot> --body-file <gap>` checks the
+- **Send a relay about it**: `rota worker dispatch <slot> --relay --pr <N> --body-file <brief>`
+  sends into the named slot's running session and logs the relay on PR N's review record.
+  Use this when the slot has already taken another issue. The PR must be open and on the
+  round's review list; otherwise dispatch refuses before sending or logging anything.
+  Without `--pr`, the relay belongs to the slot's current issue, or its newest queued PR
+  when the slot is parked.
+- **Bounce it**: `rota round transfer <issue> --to <free slot> --settled-file <gap>` checks the
   branch out in that slot, moves the PR back onto it and dispatches the follow-up. Use
   `--kind <harness>` and `--model <id>` to override the receiver's harness and model.
   Transfer uses the same precedence and launch checks as `round assign`: flags override
@@ -969,6 +986,11 @@ recorded with `rota proof record <ID> -- rota test run fast`. A later commit mak
 the worker records again. With `test.fast` unset it warns and skips that check. The worker brief then tells the worker to run `rota test run full` and have it green first, and `rota round start` warns once that the proof rows will be missing (reviewers treat that as minor at most). On success the slot is
 marked `done`.
 
+If a recorded PR has already merged or closed, `worker done` accepts a missing or
+stale remote branch ref after confirming that state with the forge. It warns that
+the push check was skipped; the worktree must still be clean and the other checks
+still apply. Open PRs and unavailable forge reads keep the push requirement.
+
 Before recording done, the verb also warns for each missing `## Approvals`,
 `## Rulings` or `## Assumptions` heading in the slot branch's open PR. If the slot
 has no PR URL recorded yet, done looks up the open PR by branch. Add the missing
@@ -988,7 +1010,7 @@ Items without explicit `AC-n` ids keep their existing behavior.
 For an unmet criterion, leave it unmarked and report `--outcome partial --summary-file <f>`
 (or `failed` when nothing can be delivered). The file has three lines: what changed,
 what was found, and each unmet id with its reason. These outcomes preserve the merge
-gate's hold until the orchestrator handles the gap. Non-closing `Refs` slices and file-mode
+gate's hold until the orchestrator handles the gap, unless every criterion ends up met (by proof or a maintainer decision comment, `rota plan pass <ID> AC-n --decision <comment>`): then the gate lifts a `partial` itself and audits it. A `partial` may also report a failed pre-flight on the third line; it needs no PASS `test.fast` row. Non-closing `Refs` slices and file-mode
 items keep their existing done flow. An intentional close with gaps uses
 `rota item complete <ID> --commit <sha> --unmet-reason <text>` to record the unmet criteria
 and reason. The merger handles this; a worker never closes an issue to bypass the refusal.
@@ -1221,6 +1243,15 @@ While the maintainer reviews one integration branch, the next batch can be verif
 
 The stacked branch cannot land while `a` is open: `rota worker gate` refuses it (`stale`) and names `a`. It refuses the same way when `a` was closed without landing. When `a` lands, rota retargets the stacked PR to `main`, merges `main` into the stacked branch and pushes it (`STACK-RETARGET`). If that merge left the tree as the train verified it, the verify stands and the landing skips a second one. If it changed the tree, the gate verifies again (`INTEGRATION-REVERIFY`). When a step fails, the landing of `a` still stands and says `pending`; gating the stacked PR repeats the move.
 
+#### Renew reference files
+
+A project that keeps reference images (screenshots, snapshots) often wants their renewal in its own commit, after the maintainer approved how the batch looks. Set `test.refs` (the commands that rewrite the files) and `test.refsPattern` (a regular expression matching the reference paths), record the approval, then run the verb:
+
+1. Record the approval at the branch's tip: `rota verdict add integration/r<round>-ui --kind look --verdict PASS --sha <tip>`. An integration branch lives on `origin` only; `verdict add` resolves a branch with no local copy through `origin/<branch>`, and `rota verdict show` lists the `look`. It is a sha-bound verdict, so a push after it voids it.
+2. `rota worker refs integration/r<round>-ui` (or just `ui`) runs `test.refs` in a scratch tree at the pushed tip. It commits the files that changed, which all match `test.refsPattern`, as one commit and pushes it to the branch.
+
+It refuses, exit 4 and nothing committed, when there is no `look` PASS at the tip (`refs-no-look`, naming the missing approval), when a command changed a file outside the pattern (`refs-outside`, naming it) or when a command failed (`refs-failed`). A run that changes nothing reports `refs-clean`. A mistake in the setup also refuses with a next step: `test.refs` or `test.refsPattern` unset or a bad pattern exits 4, an unknown or deleted branch exits 3, an unreachable remote exits 5. The new commit moves the tip, so a gate that needs a verdict at the tip needs it again.
+
 ## Best-of: two workers on one issue
 
 For a hard issue where you want two independent attempts, label it `best-of:2`. It costs twice
@@ -1286,6 +1317,19 @@ issue's Acceptance, Out of scope and Touches. `round.bundleMax` caps the members
 means no limit). A `best-of:2` issue cannot be bundled, and a member another slot holds is refused.
 rota does not judge whether the issues are related: that is your call.
 
+`rota round candidates` helps you look: ready, non-Major candidates that share a `## Touches`
+entry, a subsystem or an inferred scope carry `bundleWith` in `--json` and a `bundle? with ...`
+note in the text output. It is a hint, and the orchestrator skill proposes each group with its
+lead and member order.
+
+Under `autonomy.level: auto` the autopilot tick bundles on its own, but only on strict signals
+and behind `round.autoBundle` (unset, it is on under `auto` and off otherwise; an explicit value
+wins, and `rota config show round.autoBundle` names where the effective value came from). The
+items must declare overlapping `## Touches` (inferred scope never counts), all be size:Minor or
+size:Cosmetic, depend on none of the others, carry no `decision:*` or `needs-human` label, and
+number at most `round.bundleMax` including the lead. The lowest issue number leads, and the tick
+output names the bundle and the shared paths. Size:Major items are never auto-bundled.
+
 The worker opens one PR with a `Closes #N` line for every issue and records proof per issue;
 `rota worker done` refuses while any issue lacks its PASS row. `rota review depth` lists the
 bundle and resolves to the highest depth any of its issues needs, so review each issue's
@@ -1293,6 +1337,7 @@ acceptance. The gate refuses (`blockedBy: closes`) a PR that does not close ever
 lands or bounces as a unit: `rota round bounce` counts it on the lead and refuses a member.
 
 To drop one member, `rota round transfer <member> --to human`. Closing a member drops it too: `rota worker done` no longer wants its proof row, the gate no longer wants its `Closes` line, and the next `round assign` of the lead removes it from the slot's bundle.
+To move the whole bundle to another slot, `rota round transfer <lead> --to <slot>`: the lead and every member change hands in one call and keep the branch and PR. If the receiver is busy, the refusal names the members and two routes that keep the bundle whole: the same transfer to a free slot, or `rota round return <slot> --reason <text>` then `rota round assign <lead> --bundle <members>`. Transferring members out and assigning them again does not work: they return as separate branches.
 To drop the lead, `rota round transfer <lead> --to human`: the first member becomes the lead,
 and the other members stay in order. The branch and PR stay in place, and an active worker
 keeps its session. The dropped issue loses its claim and in-progress state and gets `needs-human`; the
