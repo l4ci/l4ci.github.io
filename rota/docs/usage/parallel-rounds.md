@@ -682,17 +682,21 @@ it. For a worker it refuses (exit 2, one-line reason) the commands the worker co
   `git push origin main`. When the base cannot be resolved, only `main` and `master` are guarded.
   A bare `git push` that resolves to such an upstream is not inspected
 - a force-push (`--force`, `-f`, `--force-with-lease`, `+ref`) to any branch but the worker's own,
-  `git push --delete`, `:ref` and `--mirror`; pushing the current branch, with or without
+  `git push --delete`, `:ref`, `--mirror` and `--prune`; pushing the current branch, with or without
   `--force-with-lease`, is fine
 - `git reset --hard` outside the slot's own worktree
-- `git branch -D` and `-d -f`
+- `git branch -D` and `-d -f`, and `git branch -f`, `--force`, `-m`, `-M`, `-C` or `-c -f` on a base branch or any
+  branch but the worker's own (`git branch -f <own-branch> <sha>` is fine)
+- `gh api graphql` (also `/graphql` or `https://api.github.com/graphql`) with a `mergePullRequest` or `enablePullRequestAutoMerge` mutation; other queries pass. A query the guard cannot read (`-f query=@file`, `--input`, or a value from a variable or substitution) is refused
 - `git clean -f`
 - `git add -A`, `--all` and `.`
 
 It parses the command line, so `git -C <dir> push -f`, `/usr/bin/git`, `sudo`, `env`, `timeout`, `xargs`,
 `bash -c '…'`, `$(…)` and `a && b` chains are all seen; text inside an argument or a commit message is not.
 When the line mentions `git` or `gh` and the guard cannot parse it, or cannot read the branch or worktree
-it needs, it refuses and asks for the plain command. It also follows a changed directory or git dir:
+it needs, it refuses and asks for the plain command. The same holds for a shell that reads its script from
+stdin (`bash <<<'…'`, `bash -`, `bash /dev/stdin`, `bash /dev/fd/3`, `source /dev/stdin`, a heredoc, `echo '…' | sh`; `sh -c` and `sh script.sh` are fine) and for a push
+refspec that is not a literal (`git push origin $B`, a substitution, `~`, or a glob such as `refs/heads/*`). `busybox` and `toybox` are read as the applet they run (`busybox sh -c '…'` is a shell). It also follows a changed directory or git dir:
 `env -C`, `sudo -D`, `pushd` (including `-n` and stack rotation) and `GIT_DIR=`. A `pushd` option it
 does not model is refused. `@` counts as `HEAD` in push refspecs.
 
@@ -1486,7 +1490,7 @@ unavailable metrics at exit 0, even with an explicit `--round`. Existing issue-r
 last merge observation; only the new lead-time metrics use the first.
 
 ```sh
-rota round summary              # the current round, else the highest in the ledger
+rota round summary              # the current round: live lease, else registry, else highest in the ledger
 rota round summary --round 3
 rota round summary --json
 ```
