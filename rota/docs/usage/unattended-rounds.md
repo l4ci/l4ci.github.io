@@ -72,8 +72,12 @@ This path is the orchestrator's. Every other session gets the lighter `work.cont
    (default 75) or more, the Stop hook blocks. It tells the orchestrator to write
    `.rota/handoff/<base>.md` and run `/exit`.
 3. If the hook blocked 2 more times after the first block and still
-   found no handoff, it gives up and records `handoffFailed` in the
+   found no handoff, it gives up and records `orchestratorHandoff.handoffFailed` in the
    state, so a session that cannot write a handoff is not held forever.
+
+Invalid handoff settings let the handoff rule pass; the orchestrator still gets the
+watch reminder when workers are active without a watch. The context guard reads
+only its context settings, so an invalid usage threshold does not disable it.
 
 The percentage comes from `context_window.used_percentage`, else from `current_usage` over
 `context_window_size`.
@@ -211,11 +215,37 @@ another watcher.
 - **`switch`** applies to a worker slot only. It keeps the slot's account unless it is cooling, otherwise
   takes the account with the most headroom (`rota worker account pick --exclude <account>`), the rule
   `rota round assign` uses. With such an account and an idle slot on it, the slot's issue moves there with
-  `rota round transfer`, so the work continues from its pushed branch and a handoff comment. With no usable
-  account, or no idle slot on it, the limit sleeps instead and the entry says why.
+  `rota round transfer`, so the work continues from its pushed branch and a handoff comment. With such an
+  account and no idle slot on it, the limited slot moves to the account itself with `rota round switch`
+  (below). With no usable account, or a switch that fails, the limit sleeps instead and the entry says why.
 - **The orchestrator only sleeps.** A limited session cannot write a handoff, and a restarted one with no
   handoff has nothing to continue from. Moving it to another account is opt-in and happens before the
   limit: see [switching the orchestrator's account](#switching-the-orchestrators-account).
+
+### Switching a slot in place
+
+`rota round switch <slot>` moves a slot that holds work to another account without giving up the slot. It
+commits the uncommitted work as `wip: checkpoint before switch`, stamped with the slot's attempt, pushes the
+branch, records the new account on the slot and starts a new session on it. The old session is closed first.
+The slot keeps its issue, claim, attempt, bundle, branch and PR. The new session's brief names the checkpoint,
+the commands to read the branch with, and `git revert` as the way to drop the checkpoint.
+
+```sh
+rota round switch ben                   # the other account of ben's harness with the most headroom
+rota round switch ben --account work2   # a named account; refused as `limited` if it is spent
+rota round switch ben --kind codex      # move ben to the other harness
+```
+
+The checkpoint is pushed: the branch, and any open PR on it, now shows a `wip: checkpoint before switch` head,
+and it is pushed even when nothing was uncommitted. To drop it, `git revert` it; never reset and force-push.
+
+Without `--kind` the harness stays. A refusal (an account at its limit, a gate running on the slot) changes
+nothing and comes before the checkpoint. A failed push takes the checkpoint back and leaves the worktree as it
+was; if that rollback fails too, the error says so and the commit stays on the branch.
+
+If the dispatch fails after the checkpoint (exit 5), the slot already records the new account. Run the same
+verb again with `--account <the new account>`: nothing new is committed, the account is not picked again, and
+the dispatch retries. A new account that is at its limit is refused (exit 4) before anything is written.
 
 ### The slot cap
 

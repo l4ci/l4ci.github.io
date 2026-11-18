@@ -902,7 +902,7 @@
   "skill": "rota-pause",
   "summary": "Stop cleanly and leave a handoff note for the next session.",
   "url": "/rota/docs/skills/rota-pause/",
-  "when": "Use when the session is approaching a context limit, the work must be handed off, a long /rota-work cycle should stop cleanly, or an orchestrator must stop mid-round."
+  "when": "Use when the session is approaching a context limit, the work must be handed off, a long /rota-work cycle should stop cleanly, an orchestrator must stop mid-round, or an orchestrator has just wound a round down."
  },
  {
   "after": [

@@ -592,9 +592,12 @@ When a returned slot is `done` with a PR and a candidate is ready, `round wait` 
 `assign before you gate` line with the candidate and its `rota round assign` command (`assignNudge` in
 JSON), so the slot works while you review. When two or more reviewed PRs wait on one base they add a
 `nudge train` line with the PR numbers and the `rota worker train` command (`trainNudge` in JSON). A PR
-is left out when it has a recorded FAIL review or second-opinion verdict, when its review has a
-blocking finding, when the gate sent it back at its current head (a push clears that), or when
-it is already merged or closed. The autopilot assigns by itself, so
+is left out when it has a recorded FAIL review or second-opinion verdict, when a review at its
+current head has a blocking finding or failed item, when the gate sent it back at its current
+head (a push clears that), or when it is already merged or closed. The tick and gate share this
+rule: stale CONCERNS findings alone do not block, while a stale FAIL still does. A stale cross-review
+FAIL is ignored only when the issue's `review:none` label switches cross review off; a cross FAIL
+at the current head still blocks. The autopilot assigns by itself, so
 a watch running with `--autopilot` skips the assign line but still prints the train line.
 
 When the preview finds two of the waiting PRs conflicting, the nudge says so before any train starts:
@@ -704,8 +707,24 @@ Install it in `project` or `user` scope (`rota hook install --scope project`): a
 not read the untracked `.claude/settings.local.json`. `install` warns when the guard sits only there, and
 `rota doctor` fails its `guard-hook` check.
 
-Limits: this is a guardrail against a mistaken agent, not a security boundary. A script or `python -c`
-that calls git, or a binary that shells out, is not seen. Codex
+It does not keep a list of wrapper programs. For a program it does not know (`flock`, `watch`, `su -c`,
+`chroot`, `script -c`, `python -c '…os.system("git …")'`), a later `git` or `gh` word counts as a command and an
+argument with spaces that mentions `git` or `gh` is parsed as a script. Programs that only print or search their
+arguments (`echo`, `printf`, `grep`, `cat`, …) are skipped, except `rg --pre <cmd>`, which runs `<cmd>` and is
+checked like a wrapper. Only the bare `rota` command has prose flags (not `./rota`, and not anything after
+a `--`, which runs another program). The value of one (`--title`, `--body`, `--summary`, `--reason`, `--gist`, `--message`, `--note`, `--text`,
+`--question`, `--blocked`, `--description`, as `--flag value` or `--flag=value`) is text, so mentioning
+`git push origin main` there is fine.
+Other prose is still refused when it sits in an argument with spaces and mentions `git` or `gh`
+(a flag outside that list, another unknown program): pass long text with `--body-file` or rephrase it.
+`eval "$(…)"` and `bash -c "$(…)"` build their script at
+run time, so a line with a substitution that mentions `git` or `gh` is refused.
+
+Limits: this is a guardrail against a mistaken agent, not a security boundary. It reads command lines, not
+programs: a script file that calls git, a program that builds the command from pieces
+(`python -c 'os.system("g"+"it push origin main")'`), or a binary that shells out is not seen. A harder stop
+belongs on the git or forge side (a pre-push hook, or branch protection that refuses base pushes from worker
+credentials). Codex
 workers have no guard (`doctor` warns when Codex tiers are set); a Codex guard is a separate piece of work.
 
 ## Layout
@@ -1104,7 +1123,7 @@ no suite and changes no test. A report with no missing evidence records an audit
 Two opt-in thresholds (0, the default, disables each) make `/rota-work` and `/rota-orchestrate`
 suggest a maintenance round in their reconcile step: `test.audit.maxFullGateSeconds` (the latest
 measured `test.full` after the last audit is slower) and `test.audit.prsBetweenAudits` (that many
-merged PRs since it). `rota test-audit --check` reads only the records and the checkpoint. Every item a
+merged PRs since it). `rota test-audit --check` reads only the records and the checkpoint. `rota round start` runs that check and reports it (`data.testAudit`, plus a `test-audit` text line when due); the autopilot tick raises it once per round as a `needs-you` item and does nothing else with it. Every item a
 maintenance round creates carries two rules in its Out of scope: no assertion is dropped without a note
 in the PR body, and stored refs and the pixel tolerance stay untouched.
 
@@ -1225,7 +1244,7 @@ every time. Each approval is appended to `.rota/gate-audit.jsonl`. This policy h
 
 #### Integration branch
 
-`rota worker train <PR>... --base <branch> --integration <name>` lands nothing on the base. It merges each reviewed member `--no-ff` into `integration/r<round>-<name>`, at the head its review was checked at, merges the base in after them, pushes that branch and records it under `integrations` in `workers.json`. The branch is pushed before the verify, so a red tip still leaves a branch to fix on. Members must be PRs, the round must be started, and the flag cannot go with `--plan`, `--land-green` or `--on-fail stop`. `round.batch` keeps its meaning (the in-flight item cap). An integration train takes its own lock, not the land lock, so a long verify does not hold up other landings.
+`rota worker train <PR>... --base <branch> --integration <name>` lands nothing on the base. It merges each reviewed member `--no-ff` into `integration/r<round>-<name>`, at the head its review was checked at, merges the base in after them, pushes that branch and records it under `integrations` in `workers.json`. The branch is pushed before the verify, so a red tip still leaves a branch to fix on. Members must be PRs, the round must be started, and the flag cannot go with `--plan` or `--land-green`. `--on-fail stop` works: a red verify prints the failed tests and ends, with no re-run, diagnose or bisect. Without it, a red verify prints `verify failed: <tests>` as soon as it is red, before the re-run and the diagnose estimate (`diagnose estimate: up to N run(s)`), so the orchestrator can cancel instead of waiting. `round.batch` keeps its meaning (the in-flight item cap). An integration train takes its own lock, not the land lock, so a long verify does not hold up other landings.
 
 A rerun starts from the pushed tip. Members already in it are skipped (`INTEGRATED`), a member whose head moved merges again (its new head needs its own review first, as for any train member), and the base merges in again when it moved. The push is a plain fast-forward: a branch that moved since the run started is refused (`base-moved`), never overwritten.
 
@@ -1233,7 +1252,7 @@ A member that conflicts, or a red test that passes on each member alone, is an i
 
 Review covers only the fix commits, the first-parent commits on the branch that rota did not merge itself. A tip with none needs no review. Otherwise the gate wants the verdicts its review depth asks for, recorded at a commit after which only rota's merges follow. `rota review package integration/r<round>-<name>` defaults `--since` to just before the first fix.
 
-A green train opens one PR from the branch to the base, with `## Assumptions`, `## Rulings` and a `Closes #N` line per member issue, and prints it; a rerun rewrites that body, so a member it added is closed too. A train run with `--no-verify` (or an empty `test.full`) records no verified tip (`INTEGRATION-UNVERIFIED`), and the gate verifies instead. Land it with `rota worker gate <PR> --base <branch>`, not the merge button. When the head is the tip the train verified and the base has not moved since, the gate lands without a second verify (`INTEGRATION-VERIFIED`). Otherwise it merges the base and verifies again (`INTEGRATION-REVERIFY`). A pending member, or one whose branch moved or is gone since its merge, refuses the landing (`stale`) until a rerun of the train. A plain train refuses the integration PR as a member: only the gate lands it. On landing the member PRs leave the review queue, their issues close through the `Closes` lines, the slots that held them are parked, and the record is marked landed, so `rota round reconcile` has nothing to repair.
+A green train opens one PR from the branch to the base, with `## Assumptions`, `## Rulings` and a `Closes #N` line per member issue, and prints it; a rerun rewrites that body, so a member it added is closed too. A train run with `--no-verify` builds and pushes the branch and skips the verify even when `test.full` is set (note `NO-VERIFY`); like one with an empty `test.full`, it records no verified tip (`INTEGRATION-UNVERIFIED`). The gate then verifies the final tip itself and refuses a red one, so an unverified tip never lands. That gives the order build, look, refs, verify: `train --no-verify`, the look verdict, `rota worker refs`, then the gate, with no manual `train cancel`. Land it with `rota worker gate <PR> --base <branch>`, not the merge button. When the head is the tip the train verified and the base has not moved since, the gate lands without a second verify (`INTEGRATION-VERIFIED`). Otherwise it merges the base and verifies again (`INTEGRATION-REVERIFY`). A pending member, or one whose branch moved or is gone since its merge, refuses the landing (`stale`) until a rerun of the train. A plain train refuses the integration PR as a member: only the gate lands it. On landing the member PRs leave the review queue, their issues close through the `Closes` lines, the slots that held them are parked, and the record is marked landed, so `rota round reconcile` has nothing to repair.
 
 In practice:
 
@@ -1257,7 +1276,7 @@ A project that keeps reference images (screenshots, snapshots) often wants their
 1. Record the approval at the branch's tip: `rota verdict add integration/r<round>-ui --kind look --verdict PASS --sha <tip>`. An integration branch lives on `origin` only; `verdict add` resolves a branch with no local copy through `origin/<branch>`, and `rota verdict show` lists the `look`. It is a sha-bound verdict, so a push after it voids it.
 2. `rota worker refs integration/r<round>-ui` (or just `ui`) runs `test.refs` in a scratch tree at the pushed tip. It commits the files that changed, which all match `test.refsPattern`, as one commit and pushes it to the branch.
 
-It refuses, exit 4 and nothing committed, when there is no `look` PASS at the tip (`refs-no-look`, naming the missing approval), when a command changed a file outside the pattern (`refs-outside`, naming it) or when a command failed (`refs-failed`). A run that changes nothing reports `refs-clean`. A mistake in the setup also refuses with a next step: `test.refs` or `test.refsPattern` unset or a bad pattern exits 4, an unknown or deleted branch exits 3, an unreachable remote exits 5. The new commit moves the tip, so a gate that needs a verdict at the tip needs it again.
+It refuses, exit 4 and nothing committed, when there is no `look` PASS at the tip (`refs-no-look`, naming the missing approval), when a command changed a file outside the pattern (`refs-outside`, naming it) or when a command failed (`refs-failed`). A run that changes nothing reports `refs-clean`. A mistake in the setup also refuses with a next step: `test.refs` or `test.refsPattern` unset or a bad pattern exits 4, an unknown or deleted branch exits 3, an unreachable remote exits 5. The renewal commit is rota's own, like its merges: `rota worker gate` does not count it as a fix commit, so the `look` recorded before it stays the approval and no review is asked for it. A fix pushed after it is a fix commit and needs the reviews the depth asks for; the refusal names each missing verdict kind. At review depth `none` a fix needs no verdict.
 
 ## Best-of: two workers on one issue
 
@@ -1473,10 +1492,16 @@ The summary also prints round metrics, with a counting rule on each line:
   rounds without train outcomes show unavailable.
 - **Bounces per merged PR:** all bounce events in the round divided by its distinct
   merged PRs, including bounces on work that did not land.
+- **Full verifications:** the round's `test.full` verification rows: run count, total
+  wall time, red runs, and red runs that passed later with no assign, done, bounce or
+  transfer for the issue between (a red that passed without rework). Cached and CI
+  runs write no rows. A round with none shows unavailable.
+- **Gate refusals:** gate verdicts other than `pass`, counted per verdict from the
+  ledger's gate rows (train members excluded).
 
 Missing or unreadable sources print `unavailable (<reason>)`, never a measured zero.
 JSON puts these under `metrics`: `assignToMerged`, `doneToMerged`, `redTrainRate`,
-`bouncesPerMergedPR`. Each carries `rule` and `unavailable` (null when
+`bouncesPerMergedPR`, `verifications`, `gateRefusals`. Each carries `rule` and `unavailable` (null when
 available); lead times carry `samples`, `medianSeconds` and `p90Seconds`, while ratios
 carry `numerator`, `denominator` and `value`. Unavailable numeric values, including
 `samples` counts, are null.
@@ -1535,6 +1560,8 @@ the base is reported as `retained` and left alone (`holds-work`, exit 4) and the
 parked anyway, so fix the slot and run it again. It deletes no branch and clears no label: the
 `drift` count says what `rota round reconcile` and `rota reap` still have to do. After a round, run
 `rota reap` ([doctor and reap](/rota/docs/usage/doctor-and-reap/)).
+
+The orchestrator then runs `/rota-pause` to record the next slate, open maintainer questions and anything not merged, and the maintainer continues in a fresh session, which reads the note through `rota round start --consume-handoff`.
 
 ## Solo mode
 
