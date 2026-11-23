@@ -55,6 +55,8 @@ Each key has a scope, which `rota config show` prints beside the source (`(sourc
 
 `rota config set` picks the file from the scope and says so: a machine key prints `local: <key> = <value> (.rota/config.local.json: a machine key, this machine only; ...)`. `--local` sends any key to `config.local.json`, `--global` to the global config, and `--project` to `.rota/config.json` (on a machine key it warns, after the write, that the tracked value shadows every developer's global config). `rota config show --local` lists `config.local.json`'s own values. On the config screen, Enter edits a machine key in `config.local.json`.
 
+Most lists replace the entire value from lower layers. When `rota config set` writes a local list that masks a non-empty global list for the same key, it warns and names both files. The write still succeeds; the warning appears on stderr and in `warnings` with `--json`. Non-list keys and global lists that are empty or absent produce no masking warning. Neither do `round.accounts` and `review.accounts`, which merge by harness kind, or empty local lists on keys where empty means inherit the global value.
+
 `rota setup` writes a project answer to `.rota/config.json`, a machine answer to `config.local.json`, and a taste answer to `.rota/config.json` only when you typed or `--set` it and it differs from what the project would inherit. A suggestion you accept, such as `worktree` because `.worktrees/` exists, is not written, so `rota setup --yes` pins no taste key. `rota config check` warns, without failing, about a machine key in `.rota/config.json` and about a taste key pinned there at its default, and fails on a key the schema does not know. It also reports stored values with the wrong JSON type, naming the key, expected type and config layer, including values hidden by another layer. It leaves those values for you to correct with `rota config set`.
 
 `rota config check` and `rota config fill` count a required key as supplied when the project, local or global layer holds a non-null value for it. The global layer excludes project-owned keys. For example, `docs.path` set only in `config.local.json` satisfies the check, and fill leaves it there without adding a tracked default. When every required key is supplied and no migration or removal is pending, fill reports `changed: false` and leaves the project file unchanged.
@@ -405,6 +407,22 @@ Three tiers of shell commands, each an array defaulting to `[]`:
 - `test.full`: the full suite. The merge gate (`rota worker gate`) and the merge train run it on the merged tree, and [`/rota-refactor`](/rota/docs/skills/rota-refactor/) runs it in `--fix` verification as CI-shape gates before committing. Empty means read-only verification: the gate and the train refuse to merge (exit 4, `blockedBy: no-verify`) unless `test.e2e` is set or you pass `--no-verify`, which merges and reports `NO-VERIFY`.
 - `test.e2e`: slow end-to-end checks. `rota worker gate` and the merge train run it on the merged tree after `test.full` passes, so a round pays for it at merge instead of once per branch (a train runs it once for all members). A red train run bisects like a red `test.full`. Empty skips the step.
 
+### Train rerun selection
+
+`test.rerunCheck` holds a command that runs one failed check alone, using
+`{check}` for the id reported by the gate. `test.goCheck` names the Go check in
+the gate's `FAIL <check> (exit N)` lines; it defaults to `gotest`. For a gate that
+calls its Go check `unit`, set:
+
+```sh
+rota config set test.goCheck unit
+```
+
+With `test.rerunCheck` set, that check can use `test.vacuousCommand` to select
+the failing Go tests when no other failed check is left unselected. An unknown
+check name or missing Go test names keeps the full command. See
+[train diagnosis](/rota/docs/usage/parallel-rounds/) for the log markers and full-run confirmation.
+
 ### The exclusion ledger
 
 A known-red or flaky test may be passed over by the merge gate and the merge train only through `.rota/test-ledger.json`, a tracked file you create by hand when the first entry is needed (a missing file or `[]` means no exclusions):
@@ -438,7 +456,7 @@ Example for a Python project using ruff + pytest:
 }
 ```
 
-Commands run from the repo root (or, in umbrella mode, the sub-repo's root), one after the other. To use several cores, put the concurrency in one command: this repo sets the list to `["bash test/gate.sh"]`, which runs validate, `go vet`, `go test -race` and the smoke suite together (smoke split into [`ROTA_SMOKE_SHARDS`](#smoke-shards) shards, the sharded gate takes about 2 to 3 minutes, serial smoke is several times slower). Set via `rota config set` (which parses argv[2] as JSON):
+Commands run from the repo root (or, in umbrella mode, the sub-repo's root), one after the other. To use several cores, put the concurrency in one command: this repo sets the list to `["bash test/gate.sh"]`, which runs validate, `go vet`, `go test -race` and the smoke suite together, with smoke split into [`ROTA_SMOKE_SHARDS`](#smoke-shards) shards. The sharded gate takes about 10 minutes (median; `rota test-audit` shows current timings). Set via `rota config set` (which parses argv[2] as JSON):
 
 ```bash
 rota config set test.full '["uv run ruff check .","uv run ruff format --check ."]'
@@ -483,7 +501,7 @@ CI runs the definition in the pushed tree, so a merge that changes it would choo
 
 - GitLab: pipelines run on branch pushes unless `workflow:rules` exclude them. Make sure `rota/ci/` branches are allowed.
 
-Trade-off: a CI queue can be slower than a 2-3 minute local gate. `ci` saves local or VPS CPU and avoids running the suite twice.
+Trade-off: a CI queue can be slower than a local gate, which takes about 10 minutes (median; `rota test-audit` shows current timings). `ci` saves local or VPS CPU and avoids running the suite twice.
 
 Not covered: the `rota round wind-down` base re-verify and `rota test run full` still run `test.full` locally. Tuning, in seconds: `ROTA_CI_POLL` (default 20), `ROTA_CI_START_WAIT` (300), `ROTA_CI_TIMEOUT` (overrides the config timeout).
 

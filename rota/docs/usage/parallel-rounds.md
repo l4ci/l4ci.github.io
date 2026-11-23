@@ -132,6 +132,8 @@ Where it opens depends on where you ran it:
 
 `round.dispatch: tmux` skips the herdr-session row and uses tmux. The herdr session is rota's own,
 started with `herdr --session rota-<dir> server`; your default herdr session is never driven.
+Under tmux, the boot wait answers a trust or startup dialog, up to twice. A pane that stays stuck
+reports the dialog by name instead of a generic boot timeout.
 The agent comes from `orchestrator.harness` (`claude`, `codex`, `hermes` or `opencode`; see
 [orchestrator harnesses](/rota/docs/usage/orchestrator-harnesses/)). `rota orchestrate --dry-run`
 shows what would start.
@@ -404,7 +406,7 @@ Candidates carry four checks:
 - `template`: every feature, including Cosmetic, has Acceptance and Out of scope headings. Missing headings are named; an assign `--settled-file` brief can supply them. Fresh assignment enforces this check; resuming a slot's own issue or deliberately redoing an existing open PR does not enforce it again. Research and decision items are exempt. Bugs and tasks have no required template sections. This checks presence only, so an empty heading or "nothing noted" counts. Existing items need no migration: add the missing headings to the body or supply them in the brief. `rota item ready` reports the same required headings.
 - `dependencies`: every `## Depends on` reference is closed. One that cannot be looked up fails the
   check, so fix the issue text.
-- `overlap`: no shared file with an in-flight slot, from a `## Files` section or the paths the issue
+- `overlap`: no shared file or glob with an in-flight slot (a directory-only clash, identical directories included, only warns), from a `## Files` section or the paths the issue
   text names plus the slot's real changes. A `## Touches` section (one bullet per symbol, endpoint,
   schema, migration or config key) adds a scope check: two issues naming the same entry (compared
   exactly, ignoring case and surrounding spaces) clash even in different files, and the overlap is
@@ -426,7 +428,7 @@ The overlap check cannot see files an issue will create, paths nobody wrote down
 the same function, generated files every issue touches (list those in `round.sharedPaths`), renames,
 or another machine's round. Read two issues' bodies before you run them side by side.
 
-A directory in an issue's `## Pointers` (`src/app/ui/`) matches every file below it, so it overlaps almost any other issue. The overlap detail then says `from directory src/app/ui/: name exact files in the pointers`, and the JSON overlap lists the directories under `dirs`. Name the files in the issue, or add a file every issue mentions in a footer to `round.sharedPaths`.
+A directory in an issue's `## Pointers` (`src/app/ui/`) matches every file below it, so it overlaps almost any other issue. That clash only warns, never refuses, and so does an identical directory both issues list: assign proceeds unless an exact file or glob is shared. A refusal names only the exact clashing files. The overlap detail says `from directory src/app/ui/: warning only; name exact files in the pointers`, and the JSON overlap lists the directories under `dirs`. Name the files in the issue, or add a file every issue mentions in a footer to `round.sharedPaths`.
 
 ## Assigning an issue
 
@@ -833,6 +835,10 @@ have not seen, at the heartbeat, or when the autopilot stops (a wind-down or a l
 failed for a reason a person must clear is held, not re-run on every tick. Every action is one line in
 `.rota/gate-audit.jsonl` with `"gate": "autopilot"`.
 
+While an autopilot watch is armed, a hand-started `rota worker gate` or `rota worker train` exits 4
+(`blockedBy: autopilot-armed`), because the tick trains reviewed PRs itself. Pass `--ignore-autopilot`
+to override. The watch exits when `round.roster` changes, so a new roster takes effect on the next arm.
+
 A `branch-no-pr` finding appears only after a slot is done or idle with commits and no PR.
 The watch reports it once per slot state or held-issue change, and again if it disappears and returns.
 Repeated heartbeats omit it from text and JSON; `round status` and `round reconcile` still list it.
@@ -849,7 +855,7 @@ The issue keeps its claim and in-progress label: it is still taken, just not by 
 whose worker is busy, blocked or has uncommitted files is never taken.
 
 - **See it**: `rota round status` lists each PR in review (`review` in JSON).
-- **Merge it**: `rota worker gate <PR number> --base <branch>` (or `'#<N>'`, or the PR URL). A pass drops it from the list, and so does
+- **Merge it**: `rota worker gate <PR number> --base <branch>` (or `'#<N>'`, `'!<N>'` or the full PR URL; `12/foo`, `12?x` and a scheme-less URL are refused, see [PR references](/rota/docs/reference/cli-helpers/#pr-references)). A pass drops it from the list, and so does
   a gate that left the PR merged with a red verify of the landed tree (`merged-remotely` included). A merged PR never stays under `review`.
   `rota worker gate <slot>` on a slot whose PR moved to review is refused with the PR to gate, so a
   habitual slot gate never merges the slot's next branch.
@@ -1091,10 +1097,13 @@ with `data.changed` true, and you fix forward with a new PR. With `test.fullWher
 checks the merge result first and nothing lands when it fails.
 
 For local verification, the gate and train retry a configured command once when its output
-identifies Go assertion failures (`--- FAIL: <test>` followed by a final `FAIL` summary).
+identifies assertion failures. Recognised runners: `go test` (`--- FAIL: <test>` followed by a final `FAIL` summary),
+Playwright's list reporter (numbered `N) <title>` failures plus an `N failed` line), Vitest (` FAIL  <file> > <name>` plus a
+`Tests  N failed` line) and `node --test` (TAP `not ok N - <name>` or spec `✖ <name>`, plus a `fail N` count).
+A command wrapped in `rota test lock --` is classified like the bare command.
 The retry runs sequentially in the same directory at the same clean tree. A pass stays green and
 adds `FLAKY <command>` with failing test names and rerun wall time to the result's notes and structured `data.flaky` entries; it costs no bounce. A second failure stays red.
-Build, setup, panic, infrastructure, timeout, signal and unknown failures are not retried.
+Build, setup, panic, infrastructure (connection refused, `ECONNREFUSED`, a Playwright `Test timeout of`, a bundler build error), timeout, signal and unknown failures are not retried.
 The known-red exclusion ledger keeps its existing behavior and is checked before retrying.
 
 Each recovery appends the command, failing test names, tree, PR references, round, timestamp
@@ -1153,7 +1162,7 @@ and `train --plan`) skip it.
 
 With two or more reviewed PRs waiting on one base, `rota worker train <slot|PR>... --base <branch>` is the
 default way to land them; a single `gate` is for exactly one waiting PR. The train gates them together and
-pays for the verify once instead of once per PR. A gate or train takes 2 to 3 minutes: start it
+pays for the verify once instead of once per PR. A gate or train takes about 10 minutes (median; `rota test-audit` shows current timings): start it
 as a background command, review the next PRs meanwhile, and read the verdict when it
 exits. `round assign` refuses (`gate-running`, naming the PR the gate holds the lock for) only a slot whose branch or PR the gate or train holds; other slots stay assignable, because the gate verifies in its own scratch tree. A lock that names no slot or PR, and every assign on the file backend, still refuses all slots. `round transfer` refuses while any gate or train runs. `round watch` returns when the lock clears, so retry a refused verb then. The autopilot tick reports `deferred` instead of erroring. Don't start a second gate or train beside it, and don't write tracked `.rota/` files on the base
 checkout until it exits; the checkout guard fails the gate on a changed tracked file. It checks each member the way `gate --check-only` does,
@@ -1173,7 +1182,7 @@ The train orders the members to cut conflicts: PRs that share no path with anoth
 
 Gates and trains on one repository queue on a single lock (`<git-common-dir>/rota/land.lock`), held from the scratch worktree through landing. A second gate or train waits instead of running beside the first, so neither sees the other's scratch worktree and neither lands inside the other's verify-to-land window. `--check-only` takes no lock.
 
-`rota worker gate <PR number> --base <branch>` and `rota worker train <PR>... --base <branch>` also accept PRs that no slot or review record owns (an orchestrator fix-forward PR, a PR after wind-down), reading their branches from the forge. They run the same freshness, provenance, approval, verify and land steps. The closes check takes the issue from the branch name and skips a branch that names none.
+`rota worker gate <PR number> --base <branch>` and `rota worker train <PR>... --base <branch>` (a PR is a number, `#N`, `!N` or a URL: [PR references](/rota/docs/reference/cli-helpers/#pr-references)) also accept PRs that no slot or review record owns (an orchestrator fix-forward PR, a PR after wind-down), reading their branches from the forge. They run the same freshness, provenance, approval, verify and land steps. The closes check takes the issue from the branch name and skips a branch that names none.
 
 With `test.fullWhere` set to `ci` the train pushes its merged tree as `rota/ci/train` and waits for CI instead of running `test.full` here (`test.e2e` still runs here, after CI is green); bisect pushes each prefix the same way, one CI run per step. `test.ciChecks` names the checks that must pass and must not be empty. If a listed check never appears or CI does not finish in time the verdict is `ci-not-run` or `verify-timeout`, and nothing lands; a member that changes the CI definition stops it as `ci-config-changed`. See [running the full tier on CI](/rota/docs/usage/configuration/#running-the-full-tier-on-ci).
 
@@ -1185,6 +1194,13 @@ breaks the tree. Before it blames that member, the train reruns only the failing
 - **Flake**: a command whose failing tests pass on the one sequential retry inside the run never reaches the bisect. It is recorded as `FLAKY` (see below) and blames nobody. A red that survives that retry but passes on the member alone, on every pair and on a rerun of the red prefix is a flake too: the message starts `TRAIN-FAIL unreproduced`, `FLAKY` notes name the failing tests, and no member is the culprit, sent a PR notice or blamed in the train cache. Train again. The autopilot holds no member: it skips them all, reports none in `needsYou`, and the next tick trains them again.
 
 The reruns select the failing tests through `test.vacuousCommand` (`{packages}`, `{tests}`) when the output names them, and otherwise rerun the failed command; their time counts as diagnosis. A member that does not merge on the base alone, and a train verified on CI (`test.fullWhere: ci`), keep the old culprit naming, with a `TRAIN-UNCLASSIFIED` note.
+
+With `test.rerunCheck` set, a red check runs alone: the key holds a one-check command and `{check}` is an id the gate log reported. The log contract: `FAIL <check> (exit N)` per red check, `RETRIED-CHECK <check>` under it when the gate already re-ran that check alone and it stayed red, and one `FAILED-CHECK <id>` per piece the command can run. `test/gate.sh` prints them (a smoke section path is the id, from the runner's `smoke: failed section:` line), and rota's own value is `SECTION_LIST={check} bash test/gate.sh`. A failure that names Go tests narrows through `test.vacuousCommand` as before, only when no other failed check is left unselected, and any such swap counts as narrowing: its pass needs a green full re-run before FLAKY, with the key set or not. It reaches three places:
+
+- **The re-run** runs only those checks, and is skipped when a failed check was already retried red (`RERUN-SKIPPED` note): that check is still red, so the train is no flake whatever the rest does. A narrowed run that passes is no flake until one full re-run of the failed commands is green too; red there is an interaction or ordering bug and goes on to the bisect.
+- **The bisect** runs only the failing checks at each prefix. After it names the culprit, one full run of the members that would land checks them. If that run is red, the bisect starts over on the full tier with the new failure as its subject, so the second failure is attributed to its member and the first failure stays as `Original` evidence.
+- **Only the key narrows ids and bisect steps.** With it unset, retried logs change nothing and only the Go `-run` swap remains, confirmed by a full re-run. With it set, a Go `-run` swap requires the only unselected red check to match `test.goCheck` (default `gotest`); set that name to match your gate's Go check. A log with no id and no named Go test, or a CI train, keeps the full re-run and the full prefixes.
+
 Nothing lands unless you pass `--land-green`, which lands the members before the culprit (or before the member the bisect stopped on, for an interaction), and only a
 prefix whose own verify ran green: a prefix that went red only during diagnosis never lands.
 When the failure already names the test, `--on-fail stop` skips the bisect: the train ends after the
