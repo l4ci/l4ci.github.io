@@ -60,7 +60,7 @@ The `codex` integration check uses the same resolved host as worker preflight: a
 
 `ports` also appears only when something is wrong. For each live slot that holds a port block (see [`round.portBase`](/rota/docs/usage/configuration/#roundportbase-and-roundportblock-a-port-range-per-worker-slot)), doctor lists the machine's TCP listeners with `ss -ltnp`, else `lsof`, and prints `warn ports` when one inside the block belongs to a process whose working directory is outside that slot's worktree, or whose owner cannot be read. It never fails the run; the hint names the config key that moves the range. Where `/proc` is absent (macOS) the process directory comes from `lsof`. When neither tool is installed or both fail, doctor prints `skip ports` saying the blocks were not checked.
 
-`disk` also appears only when something is wrong. When the free share of the volume holding the project (else the working directory) is under `doctor.minFreeDiskPercent` (default 10; `0` turns it off), doctor prints `warn disk`, which never fails the run, and its hint names what rota left behind that would give space back: temp dirs a smoke, gate or review run leaked (`rota-smoke.*`, `rota-gate-tmp.*`, `rota-review-<digits>` in the system temp dir; preview with `rota reap --kind systmp`, `--apply` to remove), entries older than 1h under the project temp root (`.rota/tmp/`; preview with `rota reap --kind tmp`, `--apply` to remove) and git worktrees whose directory is gone. `rota reap` lists the rest of the stale scratch worktrees. `go-cache-disk` is the same warning for the volume holding the Go build cache (`go env GOCACHE`), under the same threshold; a full cache volume fails a gate with `no space left on device`. Its hint is `go clean -cache`. See [`doctor.minFreeDiskPercent`](/rota/docs/usage/configuration/#doctorminfreediskpercent).
+`disk` also appears only when something is wrong. When the free share of the volume holding the project (else the working directory) is under `doctor.minFreeDiskPercent` (default 10; `0` turns it off), doctor prints `warn disk`, which never fails the run, and its hint names what rota left behind that would give space back: temp dirs a smoke, gate or review run leaked (`rota-smoke.*`, `rota-gate-tmp.*`, `rota-review-<digits>` in the system temp dir; preview with `rota reap --kind systmp`, `--apply` to remove), entries older than 1h under the project temp root (`.rota/tmp/`; preview with `rota reap --kind tmp`, `--apply` to remove) and scratch worktrees whose directory is gone (preview with `rota reap --kind worktree --prunable`, `--apply` to remove only those checkouts). Outside a rota project or Git repository, doctor still counts leaked system temp dirs but asks you to inspect them manually; it gives no reap command that would refuse there. An invalid registry or round config also suppresses cleanup commands until repaired. `rota reap` lists the rest of the stale scratch worktrees. `go-cache-disk` is the same warning for the volume holding the Go build cache (`go env GOCACHE`), under the same threshold; a full cache volume fails a gate with `no space left on device`. Its hint is `go clean -cache`. See [`doctor.minFreeDiskPercent`](/rota/docs/usage/configuration/#doctorminfreediskpercent).
 
 `repo config` also appears only when something is wrong. Linked worktrees share one `.git/config`, so a worker, a test or a tool such as husky that writes repo config changes it for the orchestrator, the gate and every slot. `rota round start` records a baseline of `git config --local --list` (a digest per key, no values) under `<git-common-dir>/rota/`; doctor records one the first time it runs without one. Doctor and `rota round status` then warn when keys were added, changed or removed since, naming the keys, and `round start` warns before it re-records. Rota does not pin program-running keys such as `core.hooksPath` in its own git calls; it only reports the drift.
 
@@ -79,6 +79,7 @@ lease whose orchestrator died. `rota reap` finds them.
 ```sh
 rota reap                          # preview: list candidates, delete nothing
 rota reap --apply                  # delete the candidates that hold no work
+rota reap --kind worktree --prunable # preview only missing scratch checkouts
 rota reap --kind branch,lease      # only these kinds
 ```
 
@@ -97,7 +98,7 @@ still reads the registry, round status and worktree list to establish ownership 
 | `branch` | a local `<agent>/<issue>-slug` branch checked out nowhere and owned by no registered slot | it is reachable from the base or `origin/<base>`, proven from git alone |
 | `tab` | a herdr tab inside `.worktrees/` whose panes run only plain shells | always (tmux has no agent state, so it yields none) |
 | `lease` | the round lease, when its holder is gone | the staleness is proven again under the lease lock |
-| `skillcache` | an extracted skill tree (`rota/skills/<version>/` in the user cache) of a rota version other than the running one | always; the running version's tree and a tree being written are never listed |
+| `skillcache` | an extracted skill tree (`rota/skills/<version>/` in the user cache) of a rota version other than the running one | held while this repository has a live or foreign round lease, or the lease cannot be read; the running version's tree and a tree being written are never listed |
 | `tmp` | an entry directly under the project temp root (`.rota/tmp/` of the main checkout), listed with its size and how long ago anything in it was written | held while its newest file is under an hour old, a git checkout or host agent lies under it, or any process of the current user has its cwd, executable, an open or memory-mapped file, or `HOME`/`TMPDIR` at or under it. Where `/proc` is absent (macOS) the process table comes from `lsof -w -u <uid> -Fpn` instead, which sees cwd, executable, open and memory-mapped files but not a process's `HOME`/`TMPDIR` environ. When the table cannot be fully read (no `/proc` and `lsof` missing, failing or listing nothing, or a `/proc` read that fails for a reason other than permission) every entry is held; remove entries by hand once no run is active. Reap cannot see three kinds of process: other users' processes, the user's own non-dumpable ones (`ssh-agent`, `gpg-agent`, an sshd session), whose `/proc` entries show as root's, and the user's own capability-holding ones (such as `systemd --user`), whose entries deny the read. It skips all three; a process it could only partly read still holds the entries its readable paths reach. That gap is accepted (maintainer decisions on #2499 and #3306) because the root is `0700` and the user's own, so no other user can work in it; an entry must sit an hour without a write; and `rota reap` only previews until you pass `--apply`. A root that is a symlink, or lacks the root's own `.gitignore`, lists nothing |
 | `systmp` | a `rota-smoke.*`, `rota-gate-tmp.*` or `rota-review-<digits>` directory directly in the system temp dir that the current user owns (never a symlink), listed with its size and how long ago anything in it was written | the same rules as `tmp`: held while its newest nested file is under an hour old, a git checkout or host agent lies under it, any process of the current user uses a path at or under it, or any part of its tree is unreadable. Doctor's leaked-temp count is this kind's unheld candidates |
 
@@ -106,6 +107,19 @@ gained unmerged commits since discovery stays, including a detached checkout. If
 prove its current HEAD is reachable from the base or `origin/<base>`, removal fails and the
 checkout stays. Prunable checkouts keep Git's cleanup behavior; dirty and locked checkouts
 remain protected.
+
+Before closing a tab, reap refreshes the live set and checks that the host is still readable.
+If the refreshed report is missing or the host is unavailable, the tab stays open even when
+the host can still list tabs.
+
+An old skill version may still supply absolute paths in a running round's briefs or loaded
+skills after a binary upgrade. Reap holds all old version trees while this repository's
+round lease may be live, and checks the lease again before removal. Stale `.extract-*`
+directories keep their existing age rule. The cache is shared across repositories; reap
+checks only the current repository's lease, so finish rounds in other repositories using
+the same cache before removing old skill trees.
+
+`--prunable` requires `--kind worktree` and limits both preview and apply to checkouts Git marks prunable. The same ownership and hold rules still apply.
 
 **What reap never removes.**
 

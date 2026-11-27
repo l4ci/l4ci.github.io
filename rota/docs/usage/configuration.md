@@ -337,7 +337,7 @@ rota config set plan.maxTasks 5
 
 ## work.contextGuard: warn or pause a long session
 
-Affects `/rota-work` and other solo sessions. `warn` (default), `auto` or `off`. Acts only where `rota hook install` has run, on a session that is not the orchestrator, when its fresh statusline reading is at or above `orchestrator.handoffThreshold`. `warn` adds one line to the next prompt recommending `/rota-pause`, once per crossing. `auto` also lets the Stop hook block up to 2 times, asking for `/rota-pause` at the next task boundary. See [pausing and resuming](/rota/docs/usage/pausing-and-resuming/#context-guard).
+Affects `/rota-work` and other solo sessions. `warn` (default), `auto` or `off`. Acts only where `rota hook install` has run, on a session that is not the orchestrator, when its fresh statusline reading is at or above `orchestrator.handoffThreshold`. `warn` adds one line to the next prompt recommending `/rota-pause`, once per crossing. `auto` also lets the Stop hook block up to 2 times, asking for `/rota-pause` at the next task boundary. A session with no branch to file the note under (a detached HEAD) is neither warned nor blocked. See [pausing and resuming](/rota/docs/usage/pausing-and-resuming/#context-guard).
 
 ```bash
 rota config set work.contextGuard auto
@@ -577,9 +577,13 @@ How deep a review `/rota-ship` runs before integrating.
 
 Door, risky paths and scope drift only lift a `light` review; a `default` of `none` is the review switched off and they leave it. `rota review depth --json` names the deciding signal in `signal`: `label`, `door`, `risky`, `scope-drift`, `path`, `size`, `tier` or `default`. The `tier` signal comes from the change tier (see [change](#change)): a docs-only diff resolves `none`, a small one is capped at `light`.
 
-`rota review depth [branch] [--labels a,b]` prints the depth and why. It reads the issue behind a `<agent>/<issue>-<slug>` branch itself (its labels, and its files for scope drift) and the branch's open PR for the Door line, when the depth could be light; `--labels` adds to the labels. A branch with no PR yet has no Door line to read. The diff span is `<base>...<branch>`: the open PR's base branch when there is one (a PR into a milestone branch counts only its own commits), else the slot's milestone base, `git.baseBranch` or main; a `REVIEW-BASE` line (and `data.base`, `data.baseSource`) names the base used. `/rota-ship` prints it, and `rota worker gate` applies it: the branch must have the verdicts the depth needs on record at its current head (`full` both, `light` the Standards one, `none` none; a verdict from an older commit is stale and does not count, as in `/rota-review`) or the gate refuses with `blockedBy: review-missing`. `rota config check` fails on a malformed policy.
+`rota review depth [branch] [--labels a,b]` prints the depth and why. It reads the issue behind a `<agent>/<issue>-<slug>` branch itself (its labels, and its files for scope drift) and the branch's open PR for the Door line, when the depth could be light; `--labels` adds to the labels. A branch with no PR yet has no Door line to read. The diff span is `<base>...<branch>`: the open PR's base branch when there is one (a PR into a milestone branch counts only its own commits), else the slot's milestone base, `git.baseBranch` or main; a `REVIEW-BASE` line (and `data.base`, `data.baseSource`) names the base used. Scope, brief, scaffolding, package and change classification use that same base; an explicit `--base` wins where the verb accepts it. For an open integration branch, these commands and depth measure the fix range used by the gate, starting just before the oldest fix (or at the assembled tip when there are no fixes). Package still accepts `--since` to choose a re-review range. `/rota-ship` prints it, and `rota worker gate` applies it: the branch must have the verdicts the depth needs on record at its current head (`full` both, `light` the Standards one, `none` none; a verdict from an older commit is stale and does not count, as in `/rota-review`) or the gate refuses with `blockedBy: review-missing`. `rota config check` fails on a malformed policy.
 
 See [review and ship](/rota/docs/usage/review-and-ship/) for the full `/rota-ship` workflow.
+
+## review.fileDeferred: floor for follow-up findings
+
+`review.fileDeferred` sets which deferred findings `rota verdict add --file-deferred` files in the follow-up item for a PR. `major` (default) files major and blocker findings; minor findings stay in the verdict record. `minor` files minor, major and blocker findings. `off` files none. Only non-blocking findings above `info` are deferred, and a PR that closes a deferred-findings item files none. See [review and ship](/rota/docs/usage/review-and-ship/).
 
 ## review.accounts: logins kept for cross-harness review
 
@@ -679,7 +683,7 @@ Whether a merge needs a human. The merge verbs (`rota ship merge`, `rota ship pr
 | `"all"` | Every merge needs a human. The verb refuses with exit 4 until the skill asks and re-runs it with `--confirm --confirm-note "<answer>"`. |
 | `"paths"` | Only merges that change a file matching `ship.mergeApprovalPaths` need a human. The refusal lists the matching files. |
 
-`ship.mergeApprovalPaths` is a list of repo-relative entries. A changed file matches an entry when it equals it, lies under it (`"skills/rota-release"` matches `skills/rota-release/SKILL.md`), or matches it as a glob against the whole path (`"*.md"` matches top-level Markdown only; `**` as a whole segment matches any number of directories, so `"migrations/**"` covers `migrations/v2/a.sql`). Set them with `rota config set ship.mergeApproval paths` and `rota config set ship.mergeApprovalPaths '["migrations", "*.lock"]'`. Every approval lands in `.rota/gate-audit.jsonl`; see [`references/manual-gates.md`](https://github.com/l4ci/rota/blob/main/skills/references/manual-gates.md).
+`ship.mergeApprovalPaths` is a list of repo-relative entries. In `ship merge`, `ship pr-merge`, `worker gate` and `worker train`, a renamed file counts under its old and its new name. GitHub lists at most 3000 files of a PR, so `ship pr-merge` fails on a PR that reaches that number when the policy is `paths`, and does not judge part of it. A changed file matches an entry when it equals it, lies under it (`"skills/rota-release"` matches `skills/rota-release/SKILL.md`), or matches it as a glob against the whole path (`"*.md"` matches top-level Markdown only; `**` as a whole segment matches any number of directories, so `"migrations/**"` covers `migrations/v2/a.sql`). Set them with `rota config set ship.mergeApproval paths` and `rota config set ship.mergeApprovalPaths '["migrations", "*.lock"]'`. Every approval lands in `.rota/gate-audit.jsonl`; see [`references/manual-gates.md`](https://github.com/l4ci/rota/blob/main/skills/references/manual-gates.md).
 
 ## Machine pins and the retired support label
 
@@ -1041,6 +1045,7 @@ The git remote round workers fetch from and push to. `rota worker done` checks t
 | `issues.labels.notPlanned` | `"not-planned"` | Label name. |
 | `issues.labels.blocked` | `"blocked"` | Label name set by `rota item complete --reason blocked`; the issue stays open. |
 | `issues.labels.needsHuman` | `"needs-human"` | Label `rota round transfer --to human` puts on an issue handed to the human. `rota round candidates` skips an issue that carries it; removing the label puts it back in the set. Silent default, not written by `rota init`. |
+| `issues.labels.onHold` | `"on-hold"` | Label for valid work that must wait. Round candidates, assignment and no-argument `/rota-work` skip it, and the backlog marks it. A person removes it to release the hold. Empty disables the label. Silent default, not written by `rota init`. |
 | `issues.labels.milestoneTracker` | `"milestone-tracker"` | Label name. |
 | `issues.labels.types.bug` / `.feature` / `.task` | `"type:bug"` / `"type:feature"` / `"type:task"` | Label names per item type. |
 | `issues.labels.priorityPrefix` | `"p"` | Prefix for priority labels. |
@@ -1071,7 +1076,7 @@ Outside a project, rota follows the XDG Base Directory spec. An `XDG_*` variable
 | Kind | Location | Holds |
 |---|---|---|
 | Config | `$XDG_CONFIG_HOME/rota`, default `~/.config/rota` | `config.json` (the global config layer), its `config.version` stamp and `connections.json` |
-| State | `$XDG_STATE_HOME/rota`, default `~/.local/state/rota` | `projects.json` (the project registry) and its lock. `rota doctor` prints the path. |
+| State | `$XDG_STATE_HOME/rota`, default `~/.local/state/rota` | `projects.json` (the project registry) and its lock (`rota doctor` prints the path), and herdr-core ownership records in `herdr-core/` (`ROTA_CORE_STATE_DIR` replaces that directory). |
 | Cache | `$XDG_CACHE_HOME/rota/skills` (the OS user cache dir) | the extracted embedded skills |
 | Data | `$XDG_DATA_HOME/rota`, default `~/.local/share/rota` | the secrets fallback file (`secrets.json`), in a `0700` dir |
 
@@ -1150,6 +1155,8 @@ Keys sit under their section (`orchestrator`, `work`, `ship`, `round`, ...). Eac
 | `r` | reset the key to its default: drops the `config.local.json` entry and sets (a required key) or removes (any other) the `config.json` entry |
 | `/` | filter the rows by any part of the row; `Enter` ends typing, `Esc` clears |
 | `q` / `Esc` | back (`Esc` clears a filter first) |
+
+On this and every other screen, keys read the same however the terminal splits their bytes. To tell `Esc` from the start of an arrow or page key, rota waits 50 ms after it. If the terminal gives rota no read timeout, `Esc` acts at once, and a key sequence split right after its first byte is read as separate keys.
 
 While editing, a boolean is a toggle (`Space`), a key with choices is a picker (`←` `→`), and any other key is a text field. `Enter` saves and `Esc` cancels. The text is checked as `rota config set` checks it: JSON when it parses, else a string, and a project-relative path key such as `release.versionFile` refuses a path outside the project. The value must match the key's declared JSON type, so a number key refuses text and a list key requires a JSON list. `ship.review` also accepts its documented boolean and object forms. Every save is written at once, through the code behind `config set`, so leaving the screen never loses or half-applies a change. A key set in `config.local.json` still wins on this machine after a project edit; the screen says so.
 

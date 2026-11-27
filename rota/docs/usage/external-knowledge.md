@@ -64,6 +64,8 @@ rota knowledge query --external --all Godot      # also every subtopic
 rota knowledge stats --external                  # bullets, bytes and hits per topic file
 ```
 
+An unreadable topic or subtopic makes the read fail with its path. `rota doctor` reports files it cannot measure as an `external knowledge size` warning, including unreadable indexes and stray files.
+
 Before it reads, rota makes sure the clone is current. It fetches at most once per `knowledge.externalTTL` minutes (default 10; the stamp lives in the rota state dir), then fast-forwards when the remote is ahead. It never resets anything:
 
 - A clone with uncommitted changes, or one that has diverged from its remote, is read as-is, with a one-line warning.
@@ -79,6 +81,8 @@ rota knowledge amend --external --topic Go --fragment "Per-case test names" --mo
 ```
 
 External writes (`add`, `amend`, `rm`, `replace`, `split` and migration with `--apply`) reserve the shared checkout before synchronization and reading their inputs, and keep it reserved through landing and cleanup. Another write to that checkout exits 4 without changing it; retry after the active operation finishes. Read freshening uses the same reservation: when busy, it warns and reads the current copy without fetching or fast-forwarding. The reservation is local to this checkout and releases even when an operation fails.
+
+A write never matches part of a name. `--topic` picks the topic of that exact name first, then one whose file slug matches, so an earlier topic with the same slug (a flat `Go Tests` beside the subtopic `Go: Tests`) cannot take the write.
 
 A write needs a clean clone. It pulls (fast-forward only), writes the bullet to `topics/<slug>.md`, adds the topic and its `README.md` line when the topic is new (`--hook` sets the line, default the bullet title), commits and then follows the repo's policy in `rota-knowledge.json`:
 
@@ -99,7 +103,7 @@ Without a `rota-knowledge.json` the repo is treated as `{"write": "push"}`, and 
 
 ## Split a big topic
 
-A topic read in full costs every consumer its whole file. `rota doctor` warns (`external knowledge size`) when a topic passes `knowledge.externalMaxBullets` or `knowledge.externalMaxBytes`, or the index passes `knowledge.externalMaxTopics`; `rota knowledge stats --external` shows the numbers. `/rota-learn --external-review` drafts the split for you: it groups the bullets by theme into 3 to 7 subtopics, shows the plan, and always asks before it runs the verb, whatever `autonomy.level` says.
+A topic read in full costs every consumer its whole file. `rota doctor` warns (`external knowledge size`) when a topic passes `knowledge.externalMaxBullets` or `knowledge.externalMaxBytes`, or the index passes `knowledge.externalMaxTopics`; `rota knowledge stats --external` shows the numbers. The same line warns when a topic file cannot be read (a directory or symlink in its place, say): size and layout then go unchecked. `/rota-learn --external-review` drafts the split for you: it groups the bullets by theme into 3 to 7 subtopics, shows the plan, and always asks before it runs the verb, whatever `autonomy.level` says.
 
 The verb takes a plan, a JSON file naming each subtopic and the bold titles of the bullets that move into it:
 
@@ -161,7 +165,7 @@ rota knowledge rm --external --topic Godot --title "Tween leak"
 | Verb | Edits | Exit codes |
 |------|-------|------------|
 | `amend --fragment F` with `--seen` and/or `--date` | The bullet's stamp. `--mode append --body-file` stays optional and can ride along; at least one of body, `--seen`, `--date` is required. `--seen` replaces the list, `--seen ""` drops it. `--date` rewrites the date. A bullet with no stamp gets one only when `--date` is given. Other stamp fields (`source:`) are kept as written. | 2 for a missing edit, an invalid `--seen` or a `--date` that is not a real `YYYY-MM-DD`, or `--seen` alone on an unstamped bullet; 3 for no bullet; 4 for several |
-| `replace --old X --new Y` | Title and body text. A stamp is never matched: an `--old` that sits only in it, or spans body and stamp, matches nothing. | 3 for no match; 4 for several bullets, or a `--new` with `-->` or a line break |
+| `replace --old X --new Y` | Title and body text. A stamp is never matched: an `--old` that sits only in it, or spans body and stamp, matches nothing. | 3 for no match; 4 for several bullets, a `--new` with `-->` or a line break, or a new title another bullet of the topic file holds |
 | `rm --title S` | Deletes the bullet. | 3 for an unknown title; 4 for several with that title |
 
 All three exit 4 on a dirty or diverged clone and write nothing. `rename-topic` has no `--external` form. Git history keeps what an edit or removal replaced.

@@ -447,7 +447,7 @@
      "you": "/rota-refactor internal/cli"
     },
     {
-     "agent": "Strong: split cmd dispatch from flag parsing (deletion test: parsing has one caller).\nWorth exploring: second adapter for the config store.\nFiled #71 and #72 as `refactor` issues with `## Acceptance`; skipped 1 duplicate.\nNo code changed.\n"
+     "agent": "Strong: split cmd dispatch from flag parsing (deletion test: parsing has one caller).\nWorth exploring: second adapter for the config store.\nFiled #71 and #72 as `refactor` issues with `## Acceptance`; skipped 1 duplicate.\nNo code changed.\nNot checked: test files under internal/cli.\n"
     }
    ]
   },

@@ -132,7 +132,7 @@ Where it opens depends on where you ran it:
 
 `round.dispatch: tmux` skips the herdr-session row and uses tmux. The herdr session is rota's own,
 started with `herdr --session rota-<dir> server`; your default herdr session is never driven.
-Under tmux, the boot wait answers a trust or startup dialog, up to twice. A pane that stays stuck
+Under tmux and herdr, a spawn answers up to three startup dialogs (theme, trust, bypass). A tmux pane that stays stuck
 reports the dialog by name instead of a generic boot timeout.
 The agent comes from `orchestrator.harness` (`claude`, `codex`, `hermes` or `opencode`; see
 [orchestrator harnesses](/rota/docs/usage/orchestrator-harnesses/)). `rota orchestrate --dry-run`
@@ -423,6 +423,10 @@ Every candidate has one of four scope sources, shown as `scopeSource` in `rota r
 - `none`: nothing declared or recorded; only file paths are compared.
 
 `candidates`, `assign`, `transfer` and `adopt` compare inferred entries like declared ones, but a clash that involves an inferred entry on either side only warns, even under `round.scopeOverlap: block`. The overlap detail says `inferred scopes`, and the JSON overlap carries `inferred: true`. A shared file path still blocks as before.
+
+The slot's local changes include individual untracked files, even inside a new directory.
+If a candidate names one of those files, the overlap check refuses it. Paths with spaces or
+non-ASCII characters are matched by their actual names, including when filtering `round.sharedPaths`.
 
 The overlap check cannot see files an issue will create, paths nobody wrote down, two issues editing
 the same function, generated files every issue touches (list those in `round.sharedPaths`), renames,
@@ -809,7 +813,10 @@ Runs only under `autonomy.level: auto`; under `off` or `roundtrip` both verbs ex
    `round.autoBundle` on, strictly related small issues go to one slot as a bundle, see
    [Bundles](#bundles-one-worker-several-small-issues)). A done slot whose PR this tick lands gets
    its next issue first (assign-ahead), before the gate starts, and the PR then lands from the
-   review list. A refused assign leaves the slot a plain merge target; a PR the queue does not
+   review list. Merge and assign-ahead check the same PR-head holds and train readiness.
+   If the PR head cannot be read, the slot keeps its current issue and the tick reports
+   the read failure in `needsYou`; it tries again on the next tick.
+   A refused assign leaves the slot a plain merge target; a PR the queue does not
    hold after the assign is dropped from the tick and shows in `needsYou` as kind `assign-ahead`. Review items
    minted in the same tick go first, and count against the same cap. While every account is cooling
    down from a usage limit, steps 3 to 5 are skipped and the tick says why (`capped`). Likewise
@@ -941,7 +948,8 @@ checks, `round.maxBounces` and, later, the merge gate. Under `manual` the tick o
 `round.followupReserve: N` (default 0) keeps the N roster names after the round's slots for
 follow-ups. `round start` provisions them; `round assign` and the tick never put backlog work there.
 When every round slot is busy, a follow-up takes a free reserve slot: an idle one, or one whose
-follow-up is done (its PR goes back to review). A reserve slot that holds work drains like any slot
+follow-up is done (its PR goes back to review). A slot that `round transfer` would refuse, for
+example one with uncommitted changes, is passed over. A reserve slot that holds work drains like any slot
 past `round.slots`, so restarting the watch or the round loses nothing. `round status` shows a busy
 reserve slot as `draining` and an idle one as a plain idle row.
 
@@ -1269,7 +1277,7 @@ A rerun starts from the pushed tip. Members already in it are skipped (`INTEGRAT
 
 A member that conflicts, or a red test that passes on each member alone, is an interaction, not a culprit: the verdict is `interaction`, nothing is bounced and nothing lands. For a conflict, the members before it are pushed and the member is recorded as pending with the paths. The train files one interaction item (`INTERACTION-ITEM`), linked to the member issues and recorded on the branch, and a rerun with the same interaction reuses it. Assign it like any issue: its slot is cut from the integration branch and its PR targets that branch. The gate refuses that PR on any other base, and it gets no review of its own (`REVIEW-DEFERRED`). It is reviewed with the branch's other fix commits.
 
-Review covers only the fix commits, the first-parent commits on the branch that rota did not merge itself. A tip with none needs no review. Otherwise the gate wants the verdicts its review depth asks for, recorded at a commit after which only rota's merges follow. `rota review package integration/r<round>-<name>` defaults `--since` to just before the first fix.
+Review covers only the fix commits, the first-parent commits on the branch that rota did not merge itself. A tip with none needs no review. Otherwise the gate wants the verdicts its review depth asks for, recorded at a commit after which only rota's merges follow. `rota review package integration/r<round>-<name>` defaults `--since` to just before the first fix. Review depth, scope, brief, scaffolding and change classification use the same fix range.
 
 A green train opens one PR from the branch to the base, with `## Assumptions`, `## Rulings` and a `Closes #N` line per member issue, and prints it; a rerun rewrites that body, so a member it added is closed too. A train run with `--no-verify` builds and pushes the branch and skips the verify even when `test.full` is set (note `NO-VERIFY`); like one with an empty `test.full`, it records no verified tip (`INTEGRATION-UNVERIFIED`). The gate then verifies the final tip itself and refuses a red one, so an unverified tip never lands. That gives the order build, look, refs, verify: `train --no-verify`, the look verdict, `rota worker refs`, then the gate, with no manual `train cancel`. Land it with `rota worker gate <PR> --base <branch>`, not the merge button. When the head is the tip the train verified and the base has not moved since, the gate lands without a second verify (`INTEGRATION-VERIFIED`). Otherwise it merges the base and verifies again (`INTEGRATION-REVERIFY`). A pending member, or one whose branch moved or is gone since its merge, refuses the landing (`stale`) until a rerun of the train. A plain train refuses the integration PR as a member: only the gate lands it. On landing the member PRs leave the review queue, their issues close through the `Closes` lines, the slots that held them are parked, and the record is marked landed, so `rota round reconcile` has nothing to repair.
 
@@ -1638,6 +1646,12 @@ claim, PR update or origin branch activity. `rota round candidates` keeps that i
 visible with `blockedBy: stale-claim`, `staleHolder` and `lastActivity`; `rota doctor`
 adds a warning with the same holder and time. Local held items use the existing stalled
 and claim-mismatch checks instead.
+
+Claim times come from the tracker's server timestamps, for both marker comments
+and plain claims on Jira, Linear and Itsaplan. Releasing a plain claim retains its
+original time and comment identity in the release record before deleting the claim
+comment, so adopt can still recognize a later takeover. Older releases without that
+history cannot prove a takeover.
 
 The default threshold is four hours for bugs, tasks and Minor/Cosmetic features, eight
 hours for Major features. Configure `round.claimStaleMinutes` and

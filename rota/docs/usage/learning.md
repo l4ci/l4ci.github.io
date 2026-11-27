@@ -116,7 +116,7 @@ Three explicit flags bypass the heuristic flow when you already know what you wa
 - `/rota-learn --deprecate <topic> "<title>"`: marks `deprecated`. Manual deprecations do NOT touch the contradiction queue. That queue is for heuristic candidates only.
 - `/rota-learn --amend <topic> "<title>"`: rewrites the body of one bullet while preserving its tier and hits. Use when you want sharper wording without resetting the validation history.
 
-All three operate on `(topic, title)` pairs. The tier sidecar is the source of truth for the lifecycle state. `KNOWLEDGE.md` itself stays human-readable without tier annotations.
+All three operate on `(topic, title)` pairs. `rota knowledge tier get` and `tier set` match the title as `knowledge hit` does: case and surrounding space are ignored, and a title that names no bullet under the topic is refused (exit 3). The tier sidecar is the source of truth for the lifecycle state. `KNOWLEDGE.md` itself stays human-readable without tier annotations.
 
 ### Tier identity and legacy repair
 
@@ -227,6 +227,8 @@ See [configuration](/rota/docs/usage/configuration/) for the full `learn.verify`
 ## CLAUDE.md integration
 
 Each run, `/rota-learn` rewrites the managed `rota-knowledge` block in the project instructions file (`AGENTS.md` when present, else `CLAUDE.md`) to match the topic headings in `KNOWLEDGE.md`.
+
+If a knowledge or decisions source cannot be read, `rota block` reports the source path and leaves the instructions file unchanged. A missing source still produces an empty topic list.
 
 ## Knowledge vs decisions
 
